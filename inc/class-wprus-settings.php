@@ -421,8 +421,8 @@ class Wprus_Settings {
 		ob_start();
 
 		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_export-metabox-template',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/export-metabox-template.php'
+			'wprus_template_export-metabox',
+			WPRUS_PLUGIN_PATH . 'inc/templates/admin/export-metabox.php'
 		);
 
 		echo ob_get_clean(); // @codingStandardsIgnoreLine
@@ -435,8 +435,8 @@ class Wprus_Settings {
 		ob_start();
 
 		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_import-metabox-template',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/import-metabox-template.php'
+			'wprus_template_import-metabox',
+			WPRUS_PLUGIN_PATH . 'inc/templates/admin/import-metabox.php'
 		);
 
 		echo ob_get_clean(); // @codingStandardsIgnoreLine
@@ -627,17 +627,10 @@ class Wprus_Settings {
 					$settings['sites'][ $site_id ]['outgoing_roles'] = array();
 				}
 
-				$default_actions = array(
-					'login'    => '',
-					'logout'   => '',
-					'create'   => '',
-					'update'   => '',
-					'delete'   => '',
-					'password' => '',
-					'role'     => '',
-					'meta'     => '',
+				$default_actions                                   = array_fill_keys(
+					array_keys( self::$actions ),
+					''
 				);
-
 				$settings['sites'][ $site_id ]['incoming_actions'] = array_merge(
 					$default_actions,
 					$settings['sites'][ $site_id ]['incoming_actions']

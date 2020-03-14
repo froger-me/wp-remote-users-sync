@@ -9,7 +9,7 @@ global $wpdb;
 wp_clear_scheduled_hook( 'wprus_nonce_cleanup' );
 wp_clear_scheduled_hook( 'wprus_logs_cleanup' );
 
-$option_prefix = 'wprus_';
+$option_prefix = 'wprus';
 $sql           = "DELETE FROM $wpdb->options WHERE `option_name` LIKE %s";
 
 $wpdb->query( $wpdb->prepare( $sql, '%' . $option_prefix . '%' ) ); // @codingStandardsIgnoreLine

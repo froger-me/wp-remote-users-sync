@@ -3,7 +3,7 @@
 Plugin Name: WP Remote Users Sync
 Plugin URI: https://github.com/froger-me/wp-remote-users-sync
 Description: Synchronise WordPress Users across Multiple Sites.
-Version: 1.0
+Version: 1.0.1
 Author: Alexandre Froger
 Author URI: https://froger.me/
 Text Domain: wprus
@@ -50,7 +50,10 @@ function wprus_run() {
 
 		Wprus_Nonce::init( false, true, $encryption_settings['token_expiry'] );
 
-		$wprus_logger          = new Wprus_Logger( $settings, true );
+		$wprus_logger = new Wprus_Logger( $settings, true );
+
+		do_action( 'wprus_loaded' );
+
 		$api                   = array();
 		$enabled_api_endpoints = apply_filters(
 			'wprus_enabled_api_endpoints',
@@ -80,7 +83,7 @@ function wprus_run() {
 
 				$api[ $api_endpoint ] = new $api_handler_classname( $api_endpoint, $settings, true );
 			} else {
-				$api[ $api_endpoint ] = apply_filters( 'wprus_api_endpoint', false, $api_endpoint );
+				$api[ $api_endpoint ] = apply_filters( 'wprus_api_endpoint', false, $api_endpoint, $settings );
 			}
 		}
 
@@ -106,6 +109,8 @@ function wprus_run() {
 
 		$wprus_import_export = new Wprus_Import_Export( true );
 		$wprus               = new Wprus( $settings, true );
+
+		do_action( 'wprus_ready', $wprus, $api, $settings, $wprus_logger );
 	}
 }
 add_action( 'plugins_loaded', 'wprus_run', 10, 0 );

@@ -109,8 +109,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 					$site['url'],
 					array(
 						'username' => $user->user_login,
-					),
-					$this->endpoint
+					)
 				);
 			}
 		}

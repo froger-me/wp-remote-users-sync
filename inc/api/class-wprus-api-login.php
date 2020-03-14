@@ -122,8 +122,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 					array(
 						'username' => $user_login,
 						'remember' => ( $remember ) ? 1 : 0,
-					),
-					$this->endpoint
+					)
 				);
 			}
 		}

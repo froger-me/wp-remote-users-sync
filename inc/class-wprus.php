@@ -130,8 +130,10 @@ class Wprus {
 	}
 
 	public function add_endpoints() {
-		$this->authorised_endpoints          = apply_filters( 'wprus_wp_endpoints', array() );
-		$this->authorised_endpoints['token'] = 'token/?';
+		$this->authorised_endpoints = array(
+			'token' => 'token/?',
+		);
+		$this->authorised_endpoints = apply_filters( 'wprus_wp_endpoints', $this->authorised_endpoints );
 
 		foreach ( $this->authorised_endpoints as $action => $url_suffix ) {
 			add_rewrite_rule(

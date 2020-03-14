@@ -1,6 +1,6 @@
 === WP Remote Users Sync ===
 Contributors: frogerme
-Tags: users synchronisation, share login, multiple sites
+Tags: synchronise users, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 5.3.2
 Stable tag: trunk
@@ -22,8 +22,9 @@ This plugin adds the following major features to WordPress:
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing user actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpensSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
 * **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
-* **Activity Logs:** when enabled, all communications between connected sites is logged for admin review and troubleshooting.
+* **Activity Logs:** when enabled, all communications between connected sites are logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
+* **Customizable:** developers can add their own user actions using action and filter hooks, and more - see the [developers documentation](https://github.com/froger-me/wp-remote-users-sync).
 * **Unlimited websites, unlimited features:** there are no restrictions in the number of websites to connect together, and no premium version feature restrictions shenanigans - WP Remote Users Sync is fully-featured right out of the box.
 
 == Installation ==
@@ -119,6 +120,13 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed without a fee (transfer method and amount at the discretion of the plugin author).
 
 == Changelog ==
+
+= 1.0.1 =
+* Made sure all options are deleted upon plugin uninstall
+* Adjusted template names
+* Minor fixes and refactor
+* Added 14 action and 16 filter hooks
+* Added developers documentation
 
 = 1.0 =
 * First version

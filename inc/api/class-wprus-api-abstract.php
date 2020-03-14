@@ -478,7 +478,7 @@ class Wprus_Api_Abstract {
 		}
 	}
 
-	public function add_remote_async_action( $url, $data, $endpoint ) {
+	public function add_remote_async_action( $url, $data ) {
 		$data['base_url'] = home_url();
 		$data['url']      = $url;
 
