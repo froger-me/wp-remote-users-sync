@@ -28,7 +28,7 @@ ___
 
 ## Adding User Actions
 
-Developers can extend the plugin and add their own custom user actions by using a few filters and action as well as a class inheriting `Wprus_Api_Abstract`.  
+Developers can extend the plugin and add their own custom user actions by using a few filter and action hooks as well as a class inheriting `Wprus_Api_Abstract`.  
 Below is a simple example of implementation of an `Example` action calling the `example` API endpoint, firing 1 synchronous request and 1 asynchronous request whenever the `wp` action hook is called by WordPress, and logs the received data (not to be used in production environment!).  
 
 All action and filter hooks are documented below, but some of the functions and methods in the example are not documented yet. Full source code documentation is coming soon, but this simple example should get developers going, as most of the heavy lifting is already done by the `Wprus_Api_Abstract` class.
@@ -188,16 +188,6 @@ class Wprus_Api_Example extends Wprus_Api_Abstract {
         $sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 
         if ( $user && ! empty( $sites ) ) {
-            wprus_log(
-                sprintf(
-                    // translators: %s is the username
-                    __( 'Example action - enqueueing asynchronous action for username "%s"', 'example-domain' ),
-                    $user->user_login
-                ),
-                'info',
-                'db_log'
-            );
-
             $data = array( 'username' => $user->user_login );
 
             foreach ( $sites as $index => $site ) {
@@ -660,6 +650,7 @@ apply_filters( 'wprus_wp_endpoints', (mixed) $wprus_endpoints );
 ```
 **Description**  
 Filter the endpoints to add to WordPress.  
+Documented here for the sake of completeness and in case some developers find it useful in very specific cases - adding endpoints to the list should be handled automatically by a class inheriting the `Wprus_Api_Abstract` class instead of using this filter.
 
 **Parameters**  
 $wprus_endpoints
