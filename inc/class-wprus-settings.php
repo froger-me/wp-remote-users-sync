@@ -149,7 +149,6 @@ class Wprus_Settings {
 				'lib/select2/select2.min',
 				'admin/main',
 			);
-			$css_ext       = ( $debug ) ? '.css' : '.min.css';
 			$script_params = apply_filters(
 				'wprus_js_parameters',
 				array(
@@ -167,6 +166,8 @@ class Wprus_Settings {
 			);
 
 			foreach ( $styles as $index => $style ) {
+				$is_lib  = ( false !== strpos( $style, 'lib/' ) );
+				$css_ext = ( $debug && ! $is_lib ) ? '.min.css' : '.css';
 				$version = filemtime( WPRUS_PLUGIN_PATH . 'css/' . $style . $css_ext );
 				$key     = 'wprus-' . $style . '-style';
 

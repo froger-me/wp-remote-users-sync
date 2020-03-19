@@ -1,6 +1,6 @@
 === WP Remote Users Sync ===
 Contributors: frogerme
-Tags: synchronise users, share login, multiple sites
+Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 5.3.2
 Stable tag: trunk
@@ -120,6 +120,9 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed without a fee (transfer method and amount at the discretion of the plugin author).
 
 == Changelog ==
+
+= 1.0.2 =
+* Fix css lib path
 
 = 1.0.1 =
 * Made sure all options are deleted upon plugin uninstall
