@@ -99,7 +99,7 @@ class Wprus_Settings {
 	}
 
 	public function missing_config() {
-		$href    = admin_url( 'admin.php?page=wc-settings&tab=products&section=woodigital' );
+		$href    = admin_url( 'admin.php??page=wprus' );
 		$link    = '<a href="' . $href . '">' . __( 'Edit configuration', 'wprus' ) . '</a>';
 		$class   = 'notice notice-error is-dismissible';
 		$message = __( 'WP Remote Users Sync is not ready. ', 'wprus' );

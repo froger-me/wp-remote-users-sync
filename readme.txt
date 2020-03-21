@@ -121,6 +121,9 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.0.3 =
+* Fix plugin settings link in admin notice
+
 = 1.0.2 =
 * Fix css lib path
 
