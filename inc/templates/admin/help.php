@@ -76,12 +76,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<strong><?php esc_html_e( 'HMAC signature', 'wprus' ); ?></strong><?php esc_html_e( ' - All communications are signed with a hash using the SHA256 algorithm to ensure their integrity ; it is recommended to use a strong, randomly generated Action Signature Key (the same value on all the connected websites).', 'wprus' ); ?>
 					</li>
 					<li>
-						<strong><?php esc_html_e( 'Authentication tokens', 'wprus' ); ?></strong><?php esc_html_e( ' - All communications rely on an authentication token valid only for a limited period of time (randomly generated, or the encrypted IP address for asynchronous actions) ; it is recommended to keep the Action Token Validity Duration relatively short (default is 1,800 seconds or 30 minutes, and must be the same duration on all the connected websites). ', 'wprus' ); ?>
+						<strong><?php esc_html_e( 'Authentication tokens', 'wprus' ); ?></strong><?php esc_html_e( ' - All communications rely on an authentication token (randomly generated). Asynchronous actions (Login & Logout by default) use a single-use token (true nonce), and synchronous actions use a token valid only for a limited period of time  ; it is recommended to keep the Action Token Validity Duration relatively short (default is 1,800 seconds or 30 minutes, and must be the same duration on all the connected websites). ', 'wprus' ); ?>
 					</li>
 					<li>
 						<strong><?php esc_html_e( 'IP verification', 'wprus' ); ?></strong><?php esc_html_e( ' - IP addresses are verified using the REMOTE_ADDR server environment variable, which cannot be faked (unless the servers or the network infrastructure are already highly compromised, in which case there are bigger issues to worry about).', 'wprus' ); ?><br>
-						<?php esc_html_e( 'All asynchronous action communications (Login and Logout by default) verify the identity of the caller by comparing the remote IP address with the one encrypted in the Authentication token to validate their origin.', 'wprus' ); ?><br/>
-						<?php esc_html_e( 'For all other actions, because they are fired server-side, IP verification can be enabled using the IP Whitelist setting with IP addresses to be compared against the remote IP address.', 'wprus' ); ?>
+						<?php esc_html_e( 'For all synchronous actions, because they are fired server-side, IP verification can be enabled using the IP Whitelist setting with IP addresses to be compared against the remote IP address.', 'wprus' ); ?>
 					</li>
 				</ul>
 				<p>
@@ -113,8 +112,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</li>
 				</ul>
 				<p>
-					<?php esc_html_e( 'Performance degradations are mitigated by the fact that Action Tokens (blocking request) are saved for a period of time, and by the fact that actions are fired ONLY when an operation has been performed on users (not on every page load).', 'wprus' ); ?><br/>
-					<?php esc_html_e( 'Login and Logout actions are the least costly: the operation itself is done asynchronously, and if the Action Tokens are not expired at the time of the action, the operation is virtually costless (but also more susceptible to failure if the page did not load properly for whatever reason).', 'wprus' ); ?><br/>
+					<?php esc_html_e( 'Performance degradations are mitigated by the fact that Action Tokens (blocking request) are saved for a period of time for synchronous actions, and by the fact that actions are fired ONLY when an operation has been performed on users (not on every page load).', 'wprus' ); ?><br/>
+					<?php esc_html_e( 'Asynchronous actions (Login & Logout by default) are the most costly: the operations themselves are not blocking, but their Action Tokens have to be renewed beforehand each time: true nonces, single-use tokens, are necessary for security reasons when firing actions from the browser.', 'wprus' ); ?><br/>
+					<?php esc_html_e( 'Asynchronous actions are also potentially more susceptible to failure in case of network issues, such as if the page load is interrupted or the enqueued script call failed in the browser ; this is a necessary trade-off as these actions require authentication cookie manipulations.', 'wprus' ); ?><br/>
 					<?php esc_html_e( 'Overall, performances should be marginally impacted.', 'wprus' ); ?>
 				</p>
 				<p>

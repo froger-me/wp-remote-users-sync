@@ -33,8 +33,8 @@ class Wprus_Api_Abstract {
 		if ( $init_hooks ) {
 
 			if ( $this->doing_remote_action ) {
-				$this->init_remote_hooks_authorization();
-				$this->init_remote_hooks();
+				add_action( 'init', array( $this, 'init_remote_hooks_authorization' ), -10, 0 );
+				add_action( 'init', array( $this, 'init_remote_hooks' ), -10, 0 );
 			} else {
 				add_action( 'init', array( $this, 'init_local_hooks' ), 0, 0 );
 			}
@@ -54,7 +54,6 @@ class Wprus_Api_Abstract {
 	 *******************************************************************/
 
 	public static function is_doing_remote_action() {
-
 		return strpos( $_SERVER['REQUEST_URI'], '/wprus/' ) !== false;
 	}
 
@@ -114,21 +113,22 @@ class Wprus_Api_Abstract {
 		$token_info = false;
 
 		if ( $data && isset( $data['method'] ) ) {
-
-			if ( 'post' === $data['method'] ) {
-				$token_info = Wprus_Nonce::create_nonce( true );
-			} elseif ( 'get' === $data['method'] && ! empty( $data['ip_address'] ) ) {
-				$delegate      = array( $this, 'encrypt_data' );
-				$delegate_args = array(
-					array( 'ip_address' => $data['ip_address'] ),
-				);
-				$token_info    = Wprus_Nonce::create_nonce( true, true, $delegate, $delegate_args );
-			}
-
-			Wprus_Logger::log( __( 'Token created', 'wprus' ), 'success', 'db_log' );
+			$token_info = Wprus_Nonce::create_nonce( true );
 		}
 
 		if ( $token_info ) {
+			$action_label = isset( $data['action'] ) ? $data['action'] : __( 'Token', 'wprus' );
+
+			if ( isset( self::$settings_class::$actions[ $action_label ] ) ) {
+				$action_label = self::$settings_class::$actions[ $action_label ];
+			}
+
+			Wprus_Logger::log(
+				// translators: %1$s is the remote site ; %2$s is the action
+				sprintf( __( 'Token created: site %1$s - action "%2$s"', 'wprus' ), $data['base_url'], $action_label ),
+				'info',
+				'db_log'
+			);
 			wp_send_json( $token_info );
 		}
 
@@ -186,13 +186,16 @@ class Wprus_Api_Abstract {
 			$origin = $remote_data['base_url'];
 		}
 
+		if ( 'get' === $this->method ) {
+			Wprus_Nonce::init( true, false, self::$encryption_settings['token_expiry'] );
+		}
+
 		if ( ! Wprus_Nonce::validate_nonce( $token ) ) {
 			$message = __( 'Unauthorized access (invalid token)', 'wprus' );
 		} else {
 
 			if ( 'get' === $this->method ) {
-				$data                 = $this->decrypt_data( $token );
-				$is_authorized_remote = isset( $data['ip_address'] ) && ( $_SERVER['REMOTE_ADDR'] === $data['ip_address'] );
+				$is_authorized_remote = true;
 			} elseif ( 'post' === $this->method ) {
 
 				if ( self::$ip_whitelist ) {
@@ -212,6 +215,11 @@ class Wprus_Api_Abstract {
 				$message = __( 'Unauthorized access (corrupted token)', 'wprus' );
 			}
 		}
+
+		if ( 'get' === $this->method ) {
+			Wprus_Nonce::init( false, false, self::$encryption_settings['token_expiry'] );
+		}
+
 		$message .= ( $origin ) ? ' - ' . $origin : '';
 		$log_type = ( $is_authorized_remote ) ? 'success' : 'alert';
 
@@ -596,26 +604,18 @@ class Wprus_Api_Abstract {
 		}
 
 		if ( isset( $tokens_info[ $url ] ) && 'get' === $method ) {
-			$payload = $this->decrypt_data( $tokens_info[ $url ]['nonce'] );
-
-			if ( $_SERVER['REMOTE_ADDR'] !== $payload['ip_address'] ) {
-				unset( $tokens_info[ $url ] );
-			}
+			unset( $tokens_info[ $url ] );
 		}
 
 		if (
 			! isset( $tokens_info[ $url ] ) ||
 			$tokens_info[ $url ]['expiry'] <= time() - self::TOKEN_EXPIRY_BUFFER
 		) {
-			$payload = array(
+			$payload    = array(
+				'action'   => $this->endpoint,
 				'method'   => $method,
 				'base_url' => $url,
 			);
-
-			if ( 'get' === $method ) {
-				$payload['ip_address'] = $_SERVER['REMOTE_ADDR'];
-			}
-
 			$token_info = $this->get_remote_token( $payload );
 
 			if ( $token_info ) {

@@ -61,7 +61,7 @@ Multiple layers of security are in place to protect the privacy, integrity and a
 
 * **OpenSSL encryption** - All communications are encrypted using the AES-256-CBC algorithm with a randomly generated Initialisation Vector to ensure their confidentiality  
 * **HMAC signature** - All communications are signed with a hash using the SHA256 algorithm to ensure their integrity
-* **Authentication tokens** - All communications rely on an authentication token valid only for a limited period of time
+* **Authentication tokens** - All communications rely on an authentication token valid only for a limited period of time, and asynchronous actions (Login & Logout by default) use a single-use token (true nonce).
 * **IP verification** - IP addresses are verified using the REMOTE_ADDR server environment variable, which cannot be faked (unless the servers or the network infrastructure are already highly compromised, in which case there are bigger issues to worry about).
 
 Despite these strong security measures, administrators use this plugin at their own risk ; the author will not be held liable for any damages resulting from the use of WP Remote Users Sync.
@@ -120,6 +120,12 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed without a fee (transfer method and amount at the discretion of the plugin author).
 
 == Changelog ==
+
+= 1.1 =
+* Fix plugin settings link in admin notice (for real -_-')
+* Fallback to single-use token (true nonce) instead of IP address validation for asynchronous actions (login & logout by default): REMOTE_ADDR from the client cannot be trusted to match if the websites to link are on 2 different networks, but a single-use token is as secure as it gets, with a slight performance trade off ; REMOTE_ADDR validation is kept for synchronous actions
+* Add missing Logout success log trace
+* Update documentation
 
 = 1.0.3 =
 * Fix plugin settings link in admin notice

@@ -54,6 +54,16 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 				$result = true;
 
 				wp_logout();
+				Wprus_Logger::log(
+					sprintf(
+						// translators: %1$s is the username, %2$s is the caller
+						__( 'Logout action - successfully logged out user "%1$s" from %2$s.', 'wprus' ),
+						$data['username'],
+						$site['url']
+					),
+					'success',
+					'db_log'
+				);
 			} elseif ( ! $user ) {
 				Wprus_Logger::log(
 					sprintf(
