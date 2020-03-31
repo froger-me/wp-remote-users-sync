@@ -121,6 +121,11 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.1.1 =
+* Fix metabox compatibility on plugin main settings page
+* Fix minor warning and cosmetic issues
+* Improve log entries and alert error messages
+
 = 1.1 =
 * Fix plugin settings link in admin notice (for real -_-')
 * Fallback to single-use token (true nonce) instead of IP address validation for asynchronous actions (login & logout by default): REMOTE_ADDR from the client cannot be trusted to match if the websites to link are on 2 different networks, but a single-use token is as secure as it gets, with a slight performance trade off ; REMOTE_ADDR validation is kept for synchronous actions

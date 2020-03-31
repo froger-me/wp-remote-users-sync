@@ -405,8 +405,6 @@ class Wprus_Api_Abstract {
 	}
 
 	public function notify_ping_remote() {
-		global $user;
-
 		$url          = filter_input( INPUT_POST, 'site_url', FILTER_VALIDATE_URL );
 		$direction    = filter_input( INPUT_POST, 'direction', FILTER_SANITIZE_STRING );
 		$data         = filter_input( INPUT_POST, 'data', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
@@ -460,6 +458,11 @@ class Wprus_Api_Abstract {
 				$payload .= __( 'an undefined error occured. Please make sure the address is correct and try again.', 'wprus' );
 				$payload .= "\n";
 				$payload .= __( 'On the remote site, please make sure the plugin is activated and that the permalinks are up to date by visiting the permalinks settings page.', 'wprus' );
+			}
+
+			if ( 404 === absint( $response['response_code'] ) ) {
+				$payload .= "\n";
+				$payload .= __( 'On the remote site, please make sure the permalinks are not using the "Plain" option.', 'wprus' );
 			}
 		}
 

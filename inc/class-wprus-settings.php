@@ -100,7 +100,7 @@ class Wprus_Settings {
 
 	public function missing_config() {
 		$href    = admin_url( 'admin.php?page=wprus' );
-		$link    = '<a href="' . $href . '">' . __( 'Edit configuration', 'wprus' ) . '</a>';
+		$link    = ' <a href="' . $href . '">' . __( 'Edit configuration', 'wprus' ) . '</a>';
 		$class   = 'notice notice-error is-dismissible';
 		$message = __( 'WP Remote Users Sync is not ready. ', 'wprus' );
 
@@ -452,7 +452,7 @@ class Wprus_Settings {
 		global $hook_suffix;
 
 		do_action( 'wprus_settings_page_init' );
-		do_action( 'add_meta_boxes', $hook_suffix );
+		do_action( 'add_meta_boxes', $hook_suffix, null );
 
 		ob_start();
 
@@ -462,7 +462,6 @@ class Wprus_Settings {
 		);
 
 		echo ob_get_clean(); // @codingStandardsIgnoreLine
-
 	}
 
 	public function sanitize_settings( $settings ) {
@@ -660,7 +659,10 @@ class Wprus_Settings {
 		}
 
 		if ( ! isset( $settings['logs'] ) ) {
-			$settings['logs'] = array();
+			$settings['logs'] = array(
+				'enable'  => false,
+				'min_num' => self::DEFAULT_MIN_LOG,
+			);
 		}
 
 		return $settings;
