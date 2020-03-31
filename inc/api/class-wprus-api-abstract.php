@@ -101,7 +101,7 @@ class Wprus_Api_Abstract {
 			$ip_whitelist = self::$settings_class::get_option( 'ip_whitelist' );
 
 			if ( ! empty( $ip_whitelist ) ) {
-				self::$ip_whitelist = array_filter( explode( "\n", $ip_whitelist ) );
+				self::$ip_whitelist = array_filter( array_map( 'trim', explode( "\n", $ip_whitelist ) ) );
 			} else {
 				self::$ip_whitelist = false;
 			}
@@ -178,7 +178,6 @@ class Wprus_Api_Abstract {
 		$token                = filter_input( INPUT_GET, 'token', $token_filter );
 		$token                = ( ! $token ) ? filter_input( INPUT_POST, 'token', $token_filter ) : $token;
 		$is_authorized_remote = false;
-		$data                 = false;
 		$origin               = false;
 		$remote_data          = $this->get_data();
 
@@ -199,8 +198,7 @@ class Wprus_Api_Abstract {
 			} elseif ( 'post' === $this->method ) {
 
 				if ( self::$ip_whitelist ) {
-					$data                 = array( 'ip_address' => $_SERVER['REMOTE_ADDR'] );
-					$is_authorized_remote = in_array( $data['ip_address'], self::$ip_whitelist, true );
+					$is_authorized_remote = in_array( $_SERVER['REMOTE_ADDR'], self::$ip_whitelist, true );
 				} else {
 					$is_authorized_remote = true;
 				}
@@ -208,11 +206,11 @@ class Wprus_Api_Abstract {
 
 			if ( $is_authorized_remote ) {
 				$message = __( 'Access granted', 'wprus' );
-			} elseif ( $data && isset( $data['ip_address'] ) ) {
+			} elseif ( 'post' === $this->method && self::$ip_whitelist ) {
 				// translators: %s is the remote IP address
-				$message = sprintf( __( 'Unauthorized access (invalid remote IP address %s)', 'wprus' ), $data['ip_address'] );
+				$message = sprintf( __( 'Unauthorized access (invalid remote IP address %s)', 'wprus' ), $_SERVER['REMOTE_ADDR'] );
 			} else {
-				$message = __( 'Unauthorized access (corrupted token)', 'wprus' );
+				$message = __( 'Unauthorized access (invalid method)', 'wprus' );
 			}
 		}
 

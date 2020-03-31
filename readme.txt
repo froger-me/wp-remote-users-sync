@@ -121,6 +121,10 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.1.2 =
+* IP whitelist: sanitize the option by trimming each line of whitespaces (improve configuration error tolerance)
+* Refactor IP check
+
 = 1.1.1 =
 * Fix metabox compatibility on plugin main settings page
 * Fix minor warning and cosmetic issues
