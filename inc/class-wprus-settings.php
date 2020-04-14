@@ -728,6 +728,7 @@ class Wprus_Settings {
 				WHERE m.meta_key NOT IN (" . implode( ',', array_fill( 0, count( $exclude ), '%s' ) ) . ')
 				AND m.meta_key NOT LIKE 
 				' . implode( ' AND m.meta_key NOT LIKE ', array_fill( 0, count( $exclude_like ), '%s' ) ) . '
+				ORDER BY m.meta_key ASC
 			;';
 
 			$params    = array_merge( $exclude, $exclude_like );

@@ -305,7 +305,7 @@ class Wprus_Api_Abstract {
 	}
 
 	public function get_active_site_for_action( $endpoint, $site_url = false, $direction = 'incoming' ) {
-		$site_url = ( $site_url ) ? $site_url : home_url();
+		$site_url = ( $site_url ) ? $site_url : get_option( 'home' );
 		$site     = $this->settings->get_site( $site_url, $endpoint, $direction );
 
 		return $site;
@@ -365,7 +365,7 @@ class Wprus_Api_Abstract {
 				sprintf(
 					$message,
 					$action_label,
-					home_url(),
+					get_option( 'home' ),
 					$remote_addr,
 					$direction_label
 				)
@@ -394,7 +394,7 @@ class Wprus_Api_Abstract {
 		$message = sprintf(
 			$message,
 			$action_label,
-			home_url(),
+			get_option( 'home' ),
 			$remote_addr,
 			$direction_label
 		);
@@ -488,7 +488,7 @@ class Wprus_Api_Abstract {
 	}
 
 	public function add_remote_async_action( $url, $data ) {
-		$data['base_url'] = home_url();
+		$data['base_url'] = get_option( 'home' );
 		$data['url']      = $url;
 
 		$this->remote_async_actions[] = $data;
@@ -556,7 +556,7 @@ class Wprus_Api_Abstract {
 	}
 
 	public function fire_action( $url, $data, $blocking = false, $timeout = 1, $endpoint = null ) {
-		$data['base_url'] = home_url();
+		$data['base_url'] = get_option( 'home' );
 		$endpoint         = $endpoint ? $endpoint : $this->endpoint;
 
 		do_action( 'wprus_before_firing_action', $endpoint, $url, $data );

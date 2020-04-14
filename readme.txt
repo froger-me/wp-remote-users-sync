@@ -2,7 +2,7 @@
 Contributors: frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
-Tested up to: 5.3.2
+Tested up to: 5.4
 Stable tag: trunk
 Requires PHP: 7.0
 License: GPLv3
@@ -120,6 +120,11 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed without a fee (transfer method and amount at the discretion of the plugin author).
 
 == Changelog ==
+
+= 1.1.3 =
+* Rely on `get_option( 'home' )` instead of `home_url` to get the homepage URL to avoid conflicts with plugins (in particular translation plugins) and themes filtering the value.
+* Order meta by meta_key
+* WordPress Tested up to: 5.4
 
 = 1.1.2 =
 * IP whitelist: sanitize the option by trimming each line of whitespaces (improve configuration error tolerance)
