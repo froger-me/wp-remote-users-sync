@@ -594,7 +594,7 @@ class Wprus_Api_Abstract {
 	 * Protected methods
 	 *******************************************************************/
 
-	protected function get_token( $url, $username, $method = 'get' ) {
+	protected function get_token( $url, $username, $method = 'post' ) {
 		$user        = get_user_by( 'login', $username );
 		$tokens_info = ( $user ) ? get_user_meta( $user->ID, 'wprus_api_tokens', true ) : null;
 		$tokens_info = ( null !== $tokens_info && ! $tokens_info ) ? array() : $tokens_info;
@@ -625,7 +625,9 @@ class Wprus_Api_Abstract {
 				unset( $tokens_info[ $url ] );
 			}
 
-			update_user_meta( $user->ID, 'wprus_api_tokens', $tokens_info );
+			if ( 'post' === $method ) {
+				update_user_meta( $user->ID, 'wprus_api_tokens', $tokens_info );
+			}
 		}
 
 		return isset( $tokens_info[ $url ]['nonce'] ) ? $tokens_info[ $url ]['nonce'] : false;

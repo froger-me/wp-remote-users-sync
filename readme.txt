@@ -121,6 +121,9 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.1.4 =
+* Bugfix - do not save the token for async actions: these tokens are invalidated immediately after use (nonce) and saving them triggers an Unauthorized access (invalid token) error for subsequent sync actions.
+
 = 1.1.3 =
 * Rely on `get_option( 'home' )` instead of `home_url` to get the homepage URL to avoid conflicts with plugins (in particular translation plugins) and themes filtering the value.
 * Order meta by meta_key
