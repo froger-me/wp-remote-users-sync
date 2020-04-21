@@ -121,11 +121,17 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.1.5 =
+* Integration - make sure third party plugins calling `wp_redirect()` or `wp_safe_redirect()` without calling `exit` afterwards do not interfere with asynchronous actions ; `exit` should be called after these 2 functions unless there is a documented good reason not to, but some plugins (like Gravity Forms User Registration Add-On) or themes may not follow the WordPress best practices.
+* Add missing Logout action logs
+* Update Async actions logs
+* Refactor resetting Async actions 
+
 = 1.1.4 =
 * Bugfix - do not save the token for async actions: these tokens are invalidated immediately after use (nonce) and saving them triggers an Unauthorized access (invalid token) error for subsequent sync actions.
 
 = 1.1.3 =
-* Rely on `get_option( 'home' )` instead of `home_url` to get the homepage URL to avoid conflicts with plugins (in particular translation plugins) and themes filtering the value.
+* Integration - rely on `get_option( 'home' )` instead of `home_url` to get the homepage URL to avoid conflicts with plugins (in particular translation plugins) and themes filtering the value.
 * Order meta by meta_key
 * WordPress Tested up to: 5.4
 
@@ -151,11 +157,11 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 * Fix css lib path
 
 = 1.0.1 =
-* Made sure all options are deleted upon plugin uninstall
-* Adjusted template names
+* Make sure all options are deleted upon plugin uninstall
+* Adjust template names
 * Minor fixes and refactor
-* Added 14 action and 16 filter hooks
-* Added developers documentation
+* Add 14 action and 16 filter hooks
+* Add developers documentation
 
 = 1.0 =
 * First version

@@ -507,6 +507,12 @@ class Wprus_Api_Abstract {
 	}
 
 	public function fire_remote_async_actions() {
+		$location_headers = preg_grep( '/^Location:/i', headers_list() );
+
+		if ( ! empty( $location_headers ) ) {
+
+			return;
+		}
 
 		if ( ! empty( $this->remote_async_actions ) ) {
 			$user_id = get_current_user_id();
@@ -535,24 +541,31 @@ class Wprus_Api_Abstract {
 
 				unset( $data['url'] );
 
-				$args      = array(
+				$args       = array(
 					'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
 					'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
 				);
-				$async_url = add_query_arg( $args, $async_url );
-				$output   .= '<script async src="' . $async_url . '"></script>'; // @codingStandardsIgnoreLine
+				$script_url = add_query_arg( $args, $async_url );
+				$output    .= '<script async src="' . $script_url . '"></script>'; // @codingStandardsIgnoreLine
+
+				Wprus_Logger::log(
+					sprintf(
+						// translators: %1$s is the url of the script ; %2$s is the action called
+						__( 'Added %1$s async URL in %2$s', 'wprus' ),
+						$async_url,
+						current_filter()
+					),
+					'info',
+					'db_log'
+				);
 			}
 
 			echo $output; // WPCS XSS OK
-
 			do_action( 'wprus_after_firing_async_actions', $this->endpoint, $actions );
-		}
-
-		if ( $user_id ) {
 			delete_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions' );
-		}
 
-		$this->remote_async_actions = array();
+			$this->remote_async_actions = array();
+		}
 	}
 
 	public function fire_action( $url, $data, $blocking = false, $timeout = 1, $endpoint = null ) {
