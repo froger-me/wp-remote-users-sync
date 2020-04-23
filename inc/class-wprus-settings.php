@@ -17,6 +17,7 @@ class Wprus_Settings {
 	protected $sites;
 
 	public function __construct( $init_hooks = false ) {
+		$this->load_textdomain();
 		self::$actions = apply_filters(
 			'wprus_actions',
 			array(
@@ -93,8 +94,6 @@ class Wprus_Settings {
 		$encryption = self::get_option( 'encryption' );
 
 		if ( empty( $encryption ) || empty( $encryption['hmac_key'] ) || empty( $encryption['aes_key'] ) ) {
-			$this->load_textdomain();
-
 			$error  = '<ul>';
 			$error .= ( empty( $this->aes_key ) ) ? '<li>' . __( 'Missing Encryption Key', 'wprus' ) . '</li>' : '';
 			$error .= ( empty( $this->hmac_key ) ) ? '<li>' . __( 'Missing Authentication Key', 'wprus' ) . '</li>' : '';
