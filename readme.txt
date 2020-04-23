@@ -121,6 +121,11 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.1.6 =
+* Fix: make all interface strings translatable 
+* Fix: various language domains issues
+* Adjust log messages
+
 = 1.1.5 =
 * Integration - make sure third party plugins calling `wp_redirect()` or `wp_safe_redirect()` without calling `exit` afterwards do not interfere with asynchronous actions ; `exit` should be called after these 2 functions unless there is a documented good reason not to, but some plugins (like Gravity Forms User Registration Add-On) or themes may not follow the WordPress best practices.
 * Add missing Logout action logs

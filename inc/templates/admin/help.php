@@ -8,10 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div id="help" class="wprus-help wprus-togglable">
 	<div class="wprus-help-list">
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'How does it work?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'How does it work?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
-					<?php esc_html_e( 'WP Remote Users Sync "listens" to changes related to WordPress users, and fires outgoing "actions" to registered remote sites. The registered remote sites with WP Remote Users Sync installed then catch incoming actions and react accordingly.' ); ?><br/>
+					<?php esc_html_e( 'WP Remote Users Sync "listens" to changes related to WordPress users, and fires outgoing "actions" to registered remote sites. The registered remote sites with WP Remote Users Sync installed then catch incoming actions and react accordingly.', 'wprus' ); ?><br/>
 					<?php esc_html_e( 'There is no "Master Website": each site is working independently, firing and receiving actions depending on each site\'s configuration.', 'wprus' ); ?>
 				</p>
 				<p>
@@ -53,7 +53,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'What happens to existing users after activating WP Remote Users Sync?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'What happens to existing users after activating WP Remote Users Sync?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'Existing users remain untouched, until an enabled incoming action is received from a remote site.', 'wprus' ); ?><br>
@@ -63,7 +63,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'What security measures are in place?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'What security measures are in place?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'Multiple layers of security are in place to protect the privacy, integrity and authenticity of communications between connected sites:', 'wprus' ); ?>
@@ -91,7 +91,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'What is the impact on performances?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'What is the impact on performances?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'WP Remote Users Sync needs to communicate with the remote sites to actually synchronise users.', 'wprus' ); ?><br>
@@ -131,7 +131,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'How are user roles handled when a user is synchronised?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'How are user roles handled when a user is synchronised?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'Roles can be synchronised when the Create and Update actions are fired, with the action Role enabled, and matching transferred and accepted role settings.', 'wprus' ); ?><br/>
@@ -174,7 +174,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'What about extra user information? (WooCommerce / Ultimate Member / other plugin adding user information)' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'What about extra user information? (WooCommerce / Ultimate Member / other plugin adding user information)', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'Extra user information can be synchronised too out of the box as long as they are stored in the user metadata.', 'wprus' ); ?><br>
@@ -184,7 +184,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'What about user passwords?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'What about user passwords?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'Passwords are automatically synchronised as long as the Password action is enabled (outgoing and incoming respectively).', 'wprus' ); ?><br/>
@@ -195,7 +195,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'What if the user to synchronise does not exist on the remote site?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'What if the user to synchronise does not exist on the remote site?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'If the incoming Create action is enabled along with the incoming Update action, the user will be synchronised on the remote website upon user update.', 'wprus' ); ?><br>
@@ -204,7 +204,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'Can it be tested on localhost first?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'Can it be tested on localhost first?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'Yes - as long as the websites can reach each other, WP Remote User Sync will work.', 'wprus' ); ?><br>
@@ -213,7 +213,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'How to export users from this site and import them into a remote site?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'How to export users from this site and import them into a remote site?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php esc_html_e( 'WP Remote Users Sync provides its own user import/export tool.', 'wprus' ); ?><br/>
@@ -247,14 +247,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
-			<h2 class="wprus-help-title"><?php esc_html_e( 'Where to find more help?' ); ?></h2>
+			<h2 class="wprus-help-title"><?php esc_html_e( 'Where to find more help?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
 					<?php
 					echo sprintf(
 						// translators: %1$s is the WordPress support forum URL, %2$s is the Github URL
 						esc_html__( 'More help can be found on %1$s and on %2$s.', 'wprus' ),
-						'<a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">' . esc_html( 'the WordPress support forum' ) . '</a>',
+						'<a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">' . esc_html_e( 'the WordPress support forum', 'wprus' ) . '</a>',
 						'<a href="https://github.com/froger-me/wp-remote-users-sync">' . esc_html( 'Github' ) . '</a>'
 					);
 					?>

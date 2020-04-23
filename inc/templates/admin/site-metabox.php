@@ -26,14 +26,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="dashicons dashicons-dismiss failure"></span>
 					</td>
 					<td data-direction="outgoing" data-action="<?php echo esc_attr( $action_type ); ?>" class="action-test">
-						<button <?php echo ( (bool) $action_value ) ? '' : 'disabled="disabled"'; ?> class="button"><?php esc_html_e( 'Test' ); ?></button>
+						<button <?php echo ( (bool) $action_value ) ? '' : 'disabled="disabled"'; ?> class="button"><?php esc_html_e( 'Test', 'wprus' ); ?></button>
 					</td>
 				</tr>
 			<?php endforeach; ?>
 		</table>
 		<hr/>
 		<div class="row-outgoing-metadata wprus-site-row">
-			<label for=""><?php esc_html_e( 'List of metadata to transfer (leave empty to transfer none):' ); ?></label>
+			<label for=""><?php esc_html_e( 'List of metadata to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
 			<select class="wprus-select" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][outgoing_meta][]" multiple>
 			<?php if ( ! empty( $meta_keys ) ) : ?>
 				<?php foreach ( $meta_keys as $meta_key ) : ?>
@@ -43,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</select>
 		</div>
 		<div class="row-outgoing-roles wprus-site-row">
-			<label for=""><?php esc_html_e( 'List of roles to transfer (leave empty to transfer none):' ); ?></label>
+			<label for=""><?php esc_html_e( 'List of roles to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
 			<select class="wprus-select" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][outgoing_roles][]" multiple>
 			<?php if ( ! empty( $roles ) ) : ?>
 				<?php foreach ( $roles as $role ) : ?>
@@ -72,14 +72,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="dashicons dashicons-dismiss failure"></span>
 					</td>
 					<td data-direction="incoming" data-action="<?php echo esc_attr( $action_type ); ?>" class="action-test">
-						<button <?php echo ( (bool) $action_value ) ? '' : 'disabled="disabled"'; ?> class="button"><?php esc_html_e( 'Test' ); ?></button>
+						<button <?php echo ( (bool) $action_value ) ? '' : 'disabled="disabled"'; ?> class="button"><?php esc_html_e( 'Test', 'wprus' ); ?></button>
 					</td>
 				</tr>
 			<?php endforeach; ?>
 		</table>
 		<hr/>
 		<div class="row-incoming-metadata wprus-site-row">
-			<label for=""><?php esc_html_e( 'List of metadata to accept (leave empty to accept all):' ); ?></label>
+			<label for=""><?php esc_html_e( 'List of metadata to accept (leave empty to accept all):', 'wprus' ); ?></label>
 			<select class="wprus-select-tag" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][incoming_meta][]" multiple>
 			<?php $meta_keys = array_unique( array_merge( $meta_keys, $site['incoming_meta'] ) ); ?>
 			<?php if ( ! empty( $meta_keys ) ) : ?>
@@ -90,7 +90,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</select>
 		</div>
 		<div class="row-incoming-roles wprus-site-row">
-			<label for=""><?php esc_html_e( 'List of roles to accept (leave empty to accept all):' ); ?></label>
+			<label for=""><?php esc_html_e( 'List of roles to accept (leave empty to accept all):', 'wprus' ); ?></label>
 			<select class="wprus-select" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][incoming_roles][]" multiple>
 			<?php if ( ! empty( $roles ) ) : ?>
 				<?php foreach ( $roles as $role ) : ?>

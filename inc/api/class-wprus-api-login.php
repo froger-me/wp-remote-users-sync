@@ -109,7 +109,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the username
-					__( 'Login action - enqueueing asynchronous action for username "%s"', 'wprus' ),
+					__( 'Login action - enqueueing asynchronous actions for username "%s"', 'wprus' ),
 					$user_login
 				),
 				'info',

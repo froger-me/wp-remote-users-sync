@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</tr>
 	</table>
 	<div class="row-export-roles wprus-export-row">
-		<label for=""><?php esc_html_e( 'Filter users by role (leave empty to export all users):' ); ?></label>
+		<label for=""><?php esc_html_e( 'Filter users by role (leave empty to export all users):', 'wprus' ); ?></label>
 		<select id="wprus_roles_export_select" class="wprus-select" multiple>
 		<?php if ( ! empty( $roles ) ) : ?>
 			<?php foreach ( $roles as $role ) : ?>
@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<div class="row-export-metadata wprus-export-row">
-		<label for=""><?php esc_html_e( 'List of metadata to export (leave empty to export none):' ); ?></label>
+		<label for=""><?php esc_html_e( 'List of metadata to export (leave empty to export none):', 'wprus' ); ?></label>
 		<select id="wprus_metadata_export_select" class="wprus-select" multiple>
 		<?php if ( ! empty( $meta_keys ) ) : ?>
 			<?php foreach ( $meta_keys as $meta_key ) : ?>

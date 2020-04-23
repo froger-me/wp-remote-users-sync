@@ -114,6 +114,16 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 
 		if ( ! empty( $sites ) ) {
 
+			Wprus_Logger::log(
+				sprintf(
+					// translators: %s is the username
+					__( 'Logout action - enqueueing asynchronous actions for username "%s"', 'wprus' ),
+					$user->user_login
+				),
+				'info',
+				'db_log'
+			);
+
 			foreach ( $sites as $index => $site ) {
 				$this->add_remote_async_action(
 					$site['url'],

@@ -12,19 +12,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<h2 class="nav-tab-wrapper">
 		<a href="#" data-toggle="wprus-site" class="nav-tab nav-tab-active">
-			<span class='dashicons dashicons-networking'></span> <?php esc_html_e( 'Remote Sites', 'wppus' ); ?>
+			<span class='dashicons dashicons-networking'></span> <?php esc_html_e( 'Remote Sites', 'wprus' ); ?>
 		</a>
 		<a href="#" data-toggle="wprus-security" class="nav-tab">
-			<span class='dashicons dashicons-shield'></span> <?php esc_html_e( 'Security', 'wppus' ); ?>
+			<span class='dashicons dashicons-shield'></span> <?php esc_html_e( 'Security', 'wprus' ); ?>
 		</a>
 		<a href="#" data-toggle="wprus-users" class="nav-tab">
-			<span class="dashicons dashicons-groups"></span> <?php esc_html_e( 'Import / Export', 'wppus' ); ?>
+			<span class="dashicons dashicons-groups"></span> <?php esc_html_e( 'Import / Export', 'wprus' ); ?>
 		</a>
 		<a href="#" data-toggle="wprus-logs" class="nav-tab">
-			<span class='dashicons dashicons-visibility'></span> <?php esc_html_e( 'Activity Logs', 'wppus' ); ?>
+			<span class='dashicons dashicons-visibility'></span> <?php esc_html_e( 'Activity Logs', 'wprus' ); ?>
 		</a>
 		<a href="#" data-toggle="wprus-help" class="nav-tab">
-			<span class='dashicons dashicons-editor-help'></span> <?php esc_html_e( 'Help', 'wppus' ); ?>
+			<span class='dashicons dashicons-editor-help'></span> <?php esc_html_e( 'Help', 'wprus' ); ?>
 		</a>
 	</h2>
 
