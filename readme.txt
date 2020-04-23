@@ -121,6 +121,9 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.1.7 =
+* Fix: make all interface strings translatable (hopefully for real)
+
 = 1.1.6 =
 * Fix: make all interface strings translatable 
 * Fix: various language domains issues

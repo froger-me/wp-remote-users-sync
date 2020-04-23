@@ -255,7 +255,7 @@ class Wprus_Settings {
 				),
 			),
 			'export'        => array(
-				'title'    => 'Export Users',
+				'title'    => __( 'Export Users', 'wprus' ),
 				'callback' => 'get_export_metabox_template',
 				'position' => 'normal',
 				'priority' => 'default',
@@ -265,7 +265,7 @@ class Wprus_Settings {
 				),
 			),
 			'import'        => array(
-				'title'    => 'Import Users',
+				'title'    => __( 'Import Users', 'wprus' ),
 				'callback' => 'get_import_metabox_template',
 				'position' => 'normal',
 				'priority' => 'default',
