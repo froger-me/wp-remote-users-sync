@@ -121,6 +121,9 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.1.9 =
+* Adjust hook calls
+
 = 1.1.8 =
 * Adjust language domain path to take into account `plugins/wp-remote-users-sync/languages`
 
