@@ -116,7 +116,7 @@ class Wprus {
 	}
 
 	public function load_textdomain() {
-		load_plugin_textdomain( 'wprus', false, 'wprus/languages' );
+		load_plugin_textdomain( 'wprus', false, 'wp-remote-users-sync/languages' );
 	}
 
 	public function add_query_vars( $vars ) {
