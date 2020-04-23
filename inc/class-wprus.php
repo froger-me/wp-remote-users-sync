@@ -12,10 +12,6 @@ class Wprus {
 		$this->wprus_settings = $wprus_settings;
 
 		if ( $init_hooks ) {
-			// Make sure we're not caching in a persistent object cache if a persistent plugin is installed
-			add_action( 'init', array( $this, 'set_cache_policy' ), 0, 0 );
-			// Add translation
-			add_action( 'init', array( $this, 'load_textdomain' ), 0, 0 );
 			// Add the API endpoints
 			add_action( 'init', array( $this, 'add_endpoints' ), 0, 0 );
 			// Parse the endpoint request
@@ -109,14 +105,6 @@ class Wprus {
 		}
 
 		return true;
-	}
-
-	public function set_cache_policy() {
-		wp_cache_add_non_persistent_groups( 'wprus' );
-	}
-
-	public function load_textdomain() {
-		load_plugin_textdomain( 'wprus', false, 'wp-remote-users-sync/languages' );
 	}
 
 	public function add_query_vars( $vars ) {

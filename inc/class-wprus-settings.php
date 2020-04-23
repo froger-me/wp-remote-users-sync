@@ -34,6 +34,8 @@ class Wprus_Settings {
 		self::$settings = $this->sanitize_settings( self::get_options() );
 
 		if ( $init_hooks ) {
+			add_action( 'init', array( $this, 'load_textdomain' ), 0, 0 );
+			add_action( 'init', array( $this, 'set_cache_policy' ), 0, 0 );
 			add_action( 'admin_menu', array( $this, 'plugin_options_menu_main' ), 10, 0 );
 			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 0 );
 		}
@@ -77,6 +79,14 @@ class Wprus_Settings {
 		$value   = isset( $options[ $key ] ) ? $options[ $key ] : $default;
 
 		return apply_filters( 'wprus_option', $value );
+	}
+
+	public function set_cache_policy() {
+		wp_cache_add_non_persistent_groups( 'wprus' );
+	}
+
+	public function load_textdomain() {
+		load_plugin_textdomain( 'wprus', false, 'wp-remote-users-sync/languages' );
 	}
 
 	public function validate() {
