@@ -2,7 +2,7 @@
 Contributors: frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
-Tested up to: 5.4
+Tested up to: 5.4.1
 Stable tag: trunk
 Requires PHP: 7.0
 License: GPLv3
@@ -70,7 +70,8 @@ Despite these strong security measures, administrators use this plugin at their 
 WP Remote Users Sync needs to communicate with the remote sites to actually synchronise users. This means the impact on performances depends on the response time between the connected websites.
 
 Performance degradations are mitigated by the fact that Action Tokens (blocking request) are saved for a period of time, and by the fact that actions are fired ONLY when an operation has been performed on users (not on every page load).  
-Login and Logout actions are the least costly: the operation itself is done asynchronously, and if the Action Tokens are not expired at the time of the action, the operation is virtually costless (but also more susceptible to failure if the page did not load properly for whatever reason).  
+Asynchronous actions (Login & Logout by default) are the most costly: the operations themselves are not blocking, but their Action Tokens have to be renewed beforehand each time: true nonces, single-use tokens, are necessary for security reasons when firing actions from the browser.  
+Asynchronous actions are also potentially more susceptible to failure in case of network issues, such as if the page load is interrupted or the enqueued script call failed in the browser ; this is a necessary trade-off as these actions require authentication cookie manipulations.  
 Overall, performances should be marginally impacted.  
 
 The main takeaway is this:
@@ -79,7 +80,7 @@ The main takeaway is this:
 * The worse the connection between the remote sites is, the bigger the relatively negative impact on performances.
 
 = How are user roles handled when a user is synchronised? =
-Roles can be synchronised when the Create and Update actions are fired, with the action Role enabled, and matching transferred and accepted role settings.
+Roles can be synchronised when the Create and Update actions are fired, with the Role action enabled, and matching transferred and accepted role settings.
 
 = What about extra user information? (WooCommerce / Ultimate Member / other plugin adding user information) =
 Extra user information can be synchronised too out of the box as long as they are stored in the user metadata.  
@@ -120,6 +121,10 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed without a fee (transfer method and amount at the discretion of the plugin author).
 
 == Changelog ==
+
+= 1.1.11 =
+* WordPress tested up to: 5.4.1
+* Update FAQ
 
 = 1.1.10 =
 * Add full Chinese translation (Thank you @倡萌 from https://www.wpdaxue.com/)

@@ -134,7 +134,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h2 class="wprus-help-title"><?php esc_html_e( 'How are user roles handled when a user is synchronised?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
-					<?php esc_html_e( 'Roles can be synchronised when the Create and Update actions are fired, with the action Role enabled, and matching transferred and accepted role settings.', 'wprus' ); ?><br/>
+					<?php esc_html_e( 'Roles can be synchronised when the Create and Update actions are fired, with the Role action enabled, and matching transferred and accepted role settings.', 'wprus' ); ?><br/>
 					<?php esc_html_e( 'When synchronising, the following role are assigned exclusively to the user and will not be merged: administrator, editor, author, contributor, subscriber. All other roles can be merged upon incoming action if the "Merge with existing roles" box is checked.', 'wprus' ); ?>
 				</p>
 				<p>
