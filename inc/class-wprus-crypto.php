@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 class Wprus_Crypto {
 
 	const METHOD        = 'aes-256-cbc';

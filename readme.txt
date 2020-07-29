@@ -2,7 +2,7 @@
 Contributors: frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
-Tested up to: 5.4.1
+Tested up to: 5.4.2
 Stable tag: trunk
 Requires PHP: 7.0
 License: GPLv3
@@ -20,12 +20,25 @@ This plugin adds the following major features to WordPress:
 
 * **WP Remote Users Sync admin page:** to manage remote sites, security settings, import/export users, and view activity logs.
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing user actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
-* **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpensSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
+* **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
 * **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
 * **Activity Logs:** when enabled, all communications between connected sites are logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
 * **Customizable:** developers can add their own user actions using action and filter hooks, and more - see the [developers documentation](https://github.com/froger-me/wp-remote-users-sync).
 * **Unlimited websites, unlimited features:** there are no restrictions in the number of websites to connect together, and no premium version feature restrictions shenanigans - WP Remote Users Sync is fully-featured right out of the box.
+
+== Troubleshooting ==
+
+Please read the plugin FAQ, there is a lot that may help you there!  
+WP Remote Users Sync is regularly updated, and bug reports are welcome, preferably on [Github](https://github.com/froger-me/wp-remote-users-sync/issues), especially for advanced troubleshooting. Each **bug** report will be addressed in a timely manner, but general inquiries and issues reported on the WordPress forum may take significantly longer to receive a response.
+
+== Integrations ==
+
+Although WP Remote Users Sync works out of the box with most combinations of WordPress plugins and themes, there are some edge cases necessitating integration, with code included in the core files of WP Remote Users Sync executing under certain conditions.  
+Integrations are limited to popular plugins and themes: any extra code specific to a handful of installations require a separate custom plugin not shared with the community (decision at the discretion of the WP Remote Users Sync plugin author).  
+A typical example of case needing integration is autologin (like in WooCommerce during checkout): some plugins may set the current user and session upon user creation without calling `wp_login` WordPress action hook (even though they absolutely **should**), which can result in the user being logged in on the local site but not the remote sites.  
+Other examples include plugins or themes directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.  
+If such need for plugin integration arises, website administrators may contact the author of WP Remote Users Sync to become a patron. **All integrations are to be funded by plugin users, with downpayment and delivery payment, at the plugin author's discretion, without exception**. The patron in return may be credited with their name (or company name) and a link to a page of their choice in the plugin's Changelog.  
 
 == Installation ==
 
@@ -50,6 +63,17 @@ This section describes how to install the plugin and get it working.
 = How does it work? =
 WP Remote Users Sync "listens" to changes related to WordPress users, and fires outgoing "actions" to registered remote sites. The registered remote sites with WP Remote Users Sync installed then catch incoming actions and react accordingly.  
 There is no "Master Website": each site is working independently, firing and receiving actions depending on each site's configuration.
+
+= It's not working! =
+Before opening a new issue on <a href="https://github.com/froger-me/wp-remote-users-sync">Github</a> or contacting the author, please check the following:
+
+* The URLs used in settings of WP Remote Users Sync **exactly** match the URL in your WordPress settings: the protocol (`https` vs. `https`) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the `home` option in the `wp_options` table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.
+* Visit the permalinks page of each connected site (Settings > Permalinks)
+* Activate and check the logs on both local and remote sites when testing (WP Remote Users Sync > Activity Logs > Enable Logs) ; try to find any discrepancies and adjust the settings
+* Read the Resolved threads of the support forum - your issue might have already been addressed there
+
+Only then should you open a support thread, with as much information as possible, including logs (with critical information obfuscated if necessary).  
+Also please note this plugin is provided for free to the community and being maintained during the author's free time: unless there is a prior arrangement with deadlines and financial compensation, the author will work on it at their own discretion. Insisting to contact the author multiple times via multiple channels in a short amount of time will simply result in the response being delayed further or even completely ignored.
 
 = What happens to existing users after activating WP Remote Users Sync? =
 Existing users remain untouched, until an enabled incoming action is received from a remote site.  
@@ -117,10 +141,34 @@ User passwords cannot be and are NOT exported.
 
 = Where to find more help? =
 
-More help can be found on <a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">the WordPress support forum</a> and on <a href="https://github.com/froger-me/wp-remote-users-sync">Github</a>.  
+More help can be found on <a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">the WordPress support forum</a> for general inquiries and on <a href="https://github.com/froger-me/wp-remote-users-sync">Github</a> for advanced troubleshooting.  
+
 Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed without a fee (transfer method and amount at the discretion of the plugin author).
 
 == Changelog ==
+
+= 1.2.1 =
+* Even more verbose log in case of communication error
+* Fix minor typos
+* Update help page
+* Update `readme.txt`
+* WordPress Tested up to: 5.4.2
+
+= 1.2 =
+* Trigger Update action on role add, set, and remove instead of only user update
+* Add `wprus_before_init_notification_hooks` and `wprus_after_init_notification_hooks` action hooks
+* Fix Delete action log message
+* Fix `Wprus_Crypto` class inclusion (no direct access)
+* Add integration logic ; future additions to integrations made upon donation 
+* Add integration - Woocommerce ; login on remote sites as well when creating an account at checkout time (depending on user actions settings). Many thanks to the generous patron who decided to remain anonymous.
+* Add `wprus_integration` filter
+* Data is encoded with `JSON_UNESCAPED_UNICODE` flag to support a wider range of characters (Chinese, Greek, etc)
+* Better error message handling in case of syntax error in payload
+* Full documentation of the `Wprus_Api_Abstract` class for developers of custom user actions
+* Update documentation
+
+= 1.1.12 =
+* Add `wprus_is_authorized_remote` filter
 
 = 1.1.11 =
 * WordPress tested up to: 5.4.1

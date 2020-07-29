@@ -17,7 +17,7 @@ This plugin adds the following major features to WordPress:
 
 * **WP Remote Users Sync admin page:** to manage remote sites, security settings, import/export users, and view activity logs.
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing user actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
-* **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpensSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
+* **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
 * **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
 * **Activity Logs:** when enabled, all communications between connected sites is logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
@@ -30,8 +30,6 @@ ___
 
 Developers can extend the plugin and add their own custom user actions by using a few filter and action hooks as well as a class inheriting `Wprus_Api_Abstract`.  
 Below is a simple example of implementation of an `Example` action calling the `example` API endpoint, firing 1 synchronous request and 1 asynchronous request whenever the `wp` action hook is called by WordPress, and logs the received data (not to be used in production environment!).  
-
-All action and filter hooks are documented below, but some of the functions and methods in the example are not documented yet. Full source code documentation is coming soon, but this simple example should get developers going, as most of the heavy lifting is already done by the `Wprus_Api_Abstract` class.
 
 ### Implementing filter and actions hooks and including a custom User Action API class - example
 
@@ -245,6 +243,8 @@ Actions index:
 * [wprus_after_firing_action](#user-content-wprus_after_firing_action)
 * [wprus_before_handle_action_notification](#user-content-wprus_before_handle_action_notification)
 * [wprus_after_handle_action_notification](#user-content-wprus_after_handle_action_notification)
+* [wprus_before_init_notification_hooks](#user-content-wprus_before_init_notification_hooks)
+* [wprus_after_init_notification_hooks](#user-content-wprus_after_init_notification_hooks)
 
 ___
 
@@ -551,6 +551,42 @@ $result
 > (bool) Wether handling the notification was successful or failed ; any change to user data is considered successful even if warnings were raised (for example, if the Update action was received and a user was created instead of updated).  
 ___
 
+
+#### wprus_before_init_notification_hooks
+
+```php
+do_action( 'wprus_before_init_notification_hooks', (string) $endpoint, (mixed) $wprus_api_object );
+```
+
+**Description**  
+Fired before adding hooks used to notify remote sites.  
+
+**Parameters**  
+$endpoint
+> (string) The API endpoint name of the object adding the notification hooks.  
+
+$wprus_api_object
+> (mixed) The `Wprus_Api_Abstract` object adding the notification hooks.  
+___
+
+#### wprus_after_init_notification_hooks
+
+```php
+do_action( 'wprus_after_init_notification_hooks', (string) $endpoint, (mixed) $wprus_api_object );
+```
+
+**Description**  
+Fired after adding hooks used to notify remote sites.  
+
+**Parameters**  
+$endpoint
+> (string) The API endpoint name of the object adding the notification hooks.  
+
+$wprus_api_object
+> (mixed) The `Wprus_Api_Abstract` object adding the notification hooks.  
+___
+
+
 ### Filters
 
 Filters index:
@@ -571,6 +607,8 @@ Filters index:
 * [wprus_init_notification_hooks](#user-content-wprus_init_notification_hooks)
 * [wprus_request_token_timeout](#user-content-wprus_request_token_timeout)
 * [wprus_request_token_retry_timeout](#user-content-wprus_request_token_retry_timeout)
+* [wprus_is_authorized_remote](#user-content-wprus_is_authorized_remote)
+* [wprus_integration](#user-content-wprus_integration)
 
 ___
 
@@ -904,3 +942,43 @@ Filter the retry timeout for an authentication token request, in case the first 
 **Parameters**  
 $token_retry_timeout
 > (int) The retry timeout for token request expressed in seconds. Default `5`.  
+
+___
+
+#### wprus_is_authorized_remote
+
+```php
+apply_filters( 'wprus_is_authorized_remote', (bool) $is_authorized_remote, (string) $method, (string) $remote_addr, (mixed) $ip_whitelist );
+```
+**Description**  
+Filter wether the received request should be authorised.  
+
+**Parameters**  
+$is_authorized_remote
+> (bool) Whether the request is authorised.  
+
+$method
+> (string) The request's method - `post` or `get`.
+
+$remote_addr
+> (string) The IP address received in the `REMOTE_ADDR` header.  
+
+$ip_whitelist
+> (mixed) And array of strings as defined in the "IP Whitelist" settings.
+
+___
+
+#### wprus_integration
+
+```php
+apply_filters( 'wprus_integration', (mixed) $wprus_integration_obj, (string) $plugin_slug );
+```
+**Description**  
+Filter the integration object used to provide extended features. An object inheriting `Wprus_Integration`.  
+
+**Parameters**  
+$is_authorized_remote
+> (mixed) The `Wprus_Integration` object used to provide features integration.  
+
+$method
+> (string) The slug of the plugin integrated.

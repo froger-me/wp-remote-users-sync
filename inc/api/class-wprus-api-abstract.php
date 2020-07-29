@@ -7,20 +7,88 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Wprus_Api_Abstract {
 	const TOKEN_EXPIRY_BUFFER = MINUTE_IN_SECONDS / 2;
 
+	/**
+	 * The encryption settings.
+	 *
+	 * @var array
+	 */
 	protected static $encryption_settings;
+	/**
+	 * The whitelist of IP addresses.
+	 *
+	 * @var array
+	 */
 	protected static $ip_whitelist;
+	/**
+	 * The settings class.
+	 *
+	 * @var string
+	 */
 	protected static $settings_class;
+	/**
+	 * Whether the token can be requested - used to retry if failed first.
+	 *
+	 * @var bool
+	 */
 	protected static $can_request_token = true;
 
+	/**
+	 * The settings object.
+	 *
+	 * @var Wprus_Settings|mixed
+	 */
 	protected $settings;
+	/**
+	 * The endpoint method - 'post' or 'get'.
+	 *
+	 * @var string
+	 */
 	protected $method;
+	/**
+	 * The endpoint key.
+	 *
+	 * @var string
+	 */
 	protected $endpoint;
+	/**
+	 * The data received from remote sites.
+	 *
+	 * @var array
+	 */
 	protected $data;
+	/**
+	 * The user ID used to save and fire async actions.
+	 *
+	 * @var int
+	 */
 	protected $async_user_id;
+	/**
+	 * Whether the current request is received from a remote website.
+	 *
+	 * @var bool
+	 */
 	protected $doing_remote_action = false;
+	/**
+	 * The list of async actions to add to the footer.
+	 *
+	 * @var array
+	 */
 	protected $remote_async_actions;
+	/**
+	 * The urole handler object.
+	 *
+	 * @var Wprus_Api_Role|mixed
+	 */
 	protected $role_handler;
 
+
+	/**
+	 * Constructor
+	 *
+	 * @param string $endpoint The endpoint key of the current instance.
+ 	 * @param Wprus_Settings|mixed $settings The settings object.
+ 	 * @param bool $init_hooks Whether to add WordPress action and filter hooks on object creation ; default `false`.
+	 */
 	public function __construct( $endpoint, $settings, $init_hooks = false ) {
 		$this->endpoint             = $endpoint;
 		$this->settings             = $settings;
@@ -53,13 +121,24 @@ class Wprus_Api_Abstract {
 	 * Public methods
 	 *******************************************************************/
 
+	/**
+	 * Determine whether the current request is received from a remote website.
+	 *
+	 * @return bool whether the current request comes from a remote site
+	 */
 	public static function is_doing_remote_action() {
 		return strpos( $_SERVER['REQUEST_URI'], '/wprus/' ) !== false;
 	}
 
+	/**
+	 * Encrypt data to be sent to remote sites
+	 *
+	 * @param mixed $data The data to encrypt.
+	 * @return string the encrypted bundle
+	 */
 	public function encrypt_data( $data ) {
 		$bundle = Wprus_Crypto::encrypt(
-			wp_json_encode( $data ),
+			wp_json_encode( $data, JSON_UNESCAPED_UNICODE ),
 			self::$encryption_settings['aes_key'],
 			self::$encryption_settings['hmac_key']
 		);
@@ -67,6 +146,12 @@ class Wprus_Api_Abstract {
 		return $bundle;
 	}
 
+	/**
+	 * Decrypt data received from remote sites
+	 *
+	 * @param string $bundle The bundle to decrypt.
+	 * @return mixed The decrypted data
+	 */
 	public function decrypt_data( $bundle ) {
 		$data    = false;
 		$payload = false;
@@ -90,6 +175,10 @@ class Wprus_Api_Abstract {
 		return $data;
 	}
 
+	/**
+	 * Initialise the current API endpoint with its configuration
+	 *
+	 */
 	public function init() {
 		self::$settings_class = get_class( $this->settings );
 
@@ -108,6 +197,10 @@ class Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Handle request for security tokens and reply with JSON data
+	 *
+	 */
 	public function handle_token_request() {
 		$data       = $this->get_data_post();
 		$token_info = false;
@@ -137,6 +230,10 @@ class Wprus_Api_Abstract {
 		exit();
 	}
 
+	/**
+	 * Inititialise WordPress action hooks to process remote sites requests
+	 *
+	 */
 	public function init_remote_hooks() {
 		$data = $this->get_data();
 
@@ -149,18 +246,34 @@ class Wprus_Api_Abstract {
 		add_action( 'wprus_api_token', array( $this, 'handle_token_request' ), 10, 0 );
 	}
 
+	/**
+	 * Inititialise WordPress action hooks to authorise remote sites requests
+	 *
+	 */
 	public function init_remote_hooks_authorization() {
 		add_action( 'wprus_api_' . $this->endpoint, array( $this, 'authorize_notification' ), 5, 0 );
 	}
 
+	/**
+	 * Inititialise the endpoint's role handler object
+	 *
+	 */
 	public function init_role_handler( $role_api ) {
 		$this->role_handler = $role_api;
 	}
 
+	/**
+	 * Inititialise the endpoint's password handler object
+	 *
+	 */
 	public function init_password_handler( $password_api ) {
 		$this->password_handler = $password_api;
 	}
 
+	/**
+	 * Process a remote site request
+	 *
+	 */
 	public function handle_request() {
 		$data = $this->get_data();
 
@@ -173,6 +286,10 @@ class Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Authorise or deny a remote site request
+	 *
+	 */
 	public function authorize_notification() {
 		$token_filter         = FILTER_SANITIZE_STRING;
 		$token                = filter_input( INPUT_GET, 'token', $token_filter );
@@ -203,6 +320,14 @@ class Wprus_Api_Abstract {
 					$is_authorized_remote = true;
 				}
 			}
+
+			$is_authorized_remote = apply_filters(
+				'wprus_is_authorized_remote',
+				$is_authorized_remote,
+				$this->method,
+				$_SERVER['REMOTE_ADDR'],
+				self::$ip_whitelist
+			);
 
 			if ( $is_authorized_remote ) {
 				$message = __( 'Access granted', 'wprus' );
@@ -238,6 +363,10 @@ class Wprus_Api_Abstract {
 		do_action( 'wprus_authorized_access', $this->endpoint, $remote_data, $token, $this );
 	}
 
+	/**
+	 * Inititialise WordPress action hooks to send requests to remote sites
+	 *
+	 */
 	public function init_local_hooks() {
 		$init_notification_hooks = apply_filters( 'wprus_init_notification_hooks', true );
 
@@ -247,15 +376,28 @@ class Wprus_Api_Abstract {
 		}
 
 		if ( method_exists( $this, 'init_notification_hooks' ) ) {
+			do_action( 'wprus_before_init_notification_hooks', $this->endpoint, $this );
+
 			$this->init_notification_hooks();
+
+			do_action( 'wprus_after_init_notification_hooks', $this->endpoint, $this );
 		}
 	}
 
+	/**
+	 * Determine whether the endpoint can handle async actions.
+	 *
+	 * @return bool whether the endpoint can handle async actions
+	 */
 	public function has_remote_async_actions() {
 
 		return false;
 	}
 
+	/**
+	 * Inititialise WordPress action hooks used to process async actions
+	 *
+	 */
 	public function init_async_hooks() {
 		$init_notification_hooks = apply_filters( 'wprus_init_notification_hooks', true );
 
@@ -285,6 +427,10 @@ class Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Inititialise data received from remote sites
+	 *
+	 */
 	public function init_data() {
 		$data_get     = filter_input( INPUT_GET, 'wprusdata', FILTER_SANITIZE_STRING );
 		$data_post    = filter_input( INPUT_POST, 'wprusdata', FILTER_SANITIZE_STRING );
@@ -295,6 +441,12 @@ class Wprus_Api_Abstract {
 		);
 	}
 
+	/**
+	 * Add endpoint entries to a list of endpoints
+	 *
+	 * @param array $endpoints The list of endpoints
+	 * @return array The list of endpoints
+	 */
 	public function add_action_endpoints( $endpoints ) {
 		$endpoints = array_merge(
 			$endpoints,
@@ -304,6 +456,14 @@ class Wprus_Api_Abstract {
 		return $endpoints;
 	}
 
+	/**
+	 * Get the site information where the specified endpoint is active for the specify direction
+	 *
+	 * @param string $endpoint The endpoints key
+ 	 * @param string $site_url The URL of the site ; `false` will use the URL of the local site 
+ 	 * @param string $direction The direction for which the endpoint is active - 'incoming' or 'outgoing' ; 'incoming by default'
+	 * @return array|bool The site information ; `false` if no corresponding site information
+	 */
 	public function get_active_site_for_action( $endpoint, $site_url = false, $direction = 'incoming' ) {
 		$site_url = ( $site_url ) ? $site_url : get_option( 'home' );
 		$site     = $this->settings->get_site( $site_url, $endpoint, $direction );
@@ -311,6 +471,10 @@ class Wprus_Api_Abstract {
 		return $site;
 	}
 
+	/**
+	 * Handle requests for test pings and reply with JSON data
+	 *
+	 */
 	public function handle_ping_notification() {
 		$data = $this->get_data_post();
 
@@ -402,6 +566,10 @@ class Wprus_Api_Abstract {
 		wp_send_json_error( $message );
 	}
 
+	/**
+	 * Send a test ping request to a remote website and send the response to the user interface
+	 *
+	 */
 	public function notify_ping_remote() {
 		$url          = filter_input( INPUT_POST, 'site_url', FILTER_VALIDATE_URL );
 		$direction    = filter_input( INPUT_POST, 'direction', FILTER_SANITIZE_STRING );
@@ -428,19 +596,20 @@ class Wprus_Api_Abstract {
 
 		do_action( 'wprus_ping_fired', $this->endpoint, $data, $response );
 
-		if ( 200 === $response['response_code'] ) {
+		if ( 200 === absint( $response['response_code'] ) ) {
 			$data = json_decode( $response['body'], true );
 
 			if ( JSON_ERROR_NONE !== json_last_error() ) {
-				$payload = json_last_error_msg();
-			}
+				$payload  = __( 'Error contacting the remote site: ', 'wprus' );
+				$payload .= __( 'Payload error - ' ) . json_last_error_msg();
+			} else {
 
-			if ( $data['success'] ) {
-				$success = true;
+				if ( $data['success'] ) {
+					$success = true;
+				}
+
 				$payload = $data['data'];
 			}
-
-			$payload = $data['data'];
 		}
 
 		if ( ! $success && ! $payload ) {
@@ -453,6 +622,8 @@ class Wprus_Api_Abstract {
 			) {
 				$payload .= $response['response_code'] . ' - ' . $response['response_message'];
 			} else {
+				// translators: %s is the error code
+				$payload .= ( ! empty( $response['response_code'] ) ) ? sprintf( __( ' - code: %s - ', 'wprus' ), $response['response_code'] )  : '';
 				$payload .= __( 'an undefined error occured. Please make sure the address is correct and try again.', 'wprus' );
 				$payload .= "\n";
 				$payload .= __( 'On the remote site, please make sure the plugin is activated and that the permalinks are up to date by visiting the permalinks settings page.', 'wprus' );
@@ -468,6 +639,17 @@ class Wprus_Api_Abstract {
 
 		Wprus_Logger::log( $payload, $log_type, 'db_log' );
 
+		if ( ! $success ) {
+			Wprus_Logger::log(
+				array(
+					'message' => 'Response data received from the remote site: ', 
+					$response
+				),
+				'info',
+				'db_log'
+			);
+		}
+
 		if ( $success ) {
 			wp_send_json_success( $payload );
 		}
@@ -475,6 +657,10 @@ class Wprus_Api_Abstract {
 		wp_send_json_error( $payload );
 	}
 
+	/**
+	 * Persist the user ID used to save and fire async actions.
+	 *
+	 */
 	public function set_pending_async_actions_user_id() {
 
 		if ( 0 !== get_current_user_id() ) {
@@ -487,6 +673,10 @@ class Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Add async action to the list of async actions to add to the footer
+	 *
+	 */
 	public function add_remote_async_action( $url, $data ) {
 		$data['base_url'] = get_option( 'home' );
 		$data['url']      = $url;
@@ -494,7 +684,10 @@ class Wprus_Api_Abstract {
 		$this->remote_async_actions[] = $data;
 	}
 
-
+	/**
+	 * Persist the list of async actions to add to the footer
+	 *
+	 */
 	public function save_async_actions() {
 
 		if ( ! empty( $this->remote_async_actions ) && $this->async_user_id ) {
@@ -506,6 +699,10 @@ class Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Add the list of async actions to the footer to fire them on page load
+	 *
+	 */
 	public function fire_remote_async_actions() {
 		$location_headers = preg_grep( '/^Location:/i', headers_list() );
 
@@ -568,6 +765,16 @@ class Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Fire a sync action
+	 *
+	 * @param string $url The remote website's URL
+	 * @param mixed $data The data to send
+	 * @param bool $blocking whether the request needs to wait for a response - default `false`
+	 * @param int $timeout the maximum time to wait for a response in seconds - default `1` 
+	 * @param string $endpoint the endpoint to send the request to - default `null` ; will use the $endpoint attribute value of the instance
+	 * @return array Response data
+	 */
 	public function fire_action( $url, $data, $blocking = false, $timeout = 1, $endpoint = null ) {
 		$data['base_url'] = get_option( 'home' );
 		$endpoint         = $endpoint ? $endpoint : $this->endpoint;
@@ -607,6 +814,14 @@ class Wprus_Api_Abstract {
 	 * Protected methods
 	 *******************************************************************/
 
+	/**
+	 * Get security token for the specified remote site URL and username
+	 *
+	 * @param string $url The remote website's URL
+	 * @param string $username The WordPress user login name
+	 * @param string $method The request method - `'get'` or `'post'` ; if `'get'`, the token will not be stored ; default `'post'`
+	 * @return string|bool The security token
+	 */
 	protected function get_token( $url, $username, $method = 'post' ) {
 		$user        = get_user_by( 'login', $username );
 		$tokens_info = ( $user ) ? get_user_meta( $user->ID, 'wprus_api_tokens', true ) : null;
@@ -646,6 +861,12 @@ class Wprus_Api_Abstract {
 		return isset( $tokens_info[ $url ]['nonce'] ) ? $tokens_info[ $url ]['nonce'] : false;
 	}
 
+	/**
+	 * Renew the security token for a specific payload
+	 *
+	 * @param array $payload The payload to send to the remote site
+	 * @return array|bool The security token information on success - `false` on failure
+	 */
 	protected function get_remote_token( $payload ) {
 
 		if ( self::$can_request_token ) {
@@ -688,7 +909,7 @@ class Wprus_Api_Abstract {
 			$token_info              = $this->get_remote_token( $payload );
 		}
 
-		if ( false === $token_info && ! self::$can_request_token ) {
+		if ( ! $token_info && ! self::$can_request_token ) {
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller
@@ -698,11 +919,50 @@ class Wprus_Api_Abstract {
 				'alert',
 				'db_log'
 			);
+
+			if ( is_wp_error( $response ) ) {
+				Wprus_Logger::log(
+					array(
+						'message' => 'A WordPress error was triggered: ', 
+						$response->get_error_code() . ' ' . $response->get_error_message(),
+					),
+					'info',
+					'db_log'
+				);
+			} else {
+				$headers = wp_remote_retrieve_headers( $response );
+
+				if ( ! empty( $headers ) ) {
+					$headers = $headers->getAll();
+				}
+
+				Wprus_Logger::log(
+					array(
+						'message' => 'Response data received from the remote site: ', 
+						array(
+							'headers'          => $headers,
+							'response_code'    => wp_remote_retrieve_response_code( $response ),
+							'response_message' => wp_remote_retrieve_response_message( $response ),
+							'body'             => wp_remote_retrieve_body( $response ),
+						),
+					),
+					'info',
+					'db_log'
+				);
+			}
 		}
 
 		return $token_info;
 	}
 
+	/**
+	 * Set cookie helper
+	 *
+	 * @param string $name The name of the cookie
+	 * @param mixed $value The cookie value
+	 * @param int $expire The time the cookie expires ; this is a Unix timestamp so is in number of seconds since the epoch - default `0`
+	 * @return array|bool The security token information on success - `false` on failure
+	 */
 	protected function setcookie( $name, $value, $expire = 0 ) {
 
 		if ( ! headers_sent() ) {
@@ -716,18 +976,33 @@ class Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Get data received from remote site with GET method
+	 *
+	 * @return mixed The data
+	 */
 	protected function get_data_get() {
 		$data_get = $this->data['get'];
 
 		return $data_get;
 	}
 
+	/**
+	 * Get data received from remote site with POST method
+	 *
+	 * @return mixed The data
+	 */
 	protected function get_data_post() {
 		$data_post = $this->data['post'];
 
 		return $data_post;
 	}
 
+	/**
+	 * Get data received from remote site with both GET and POST methods
+	 *
+	 * @return array The data
+	 */
 	protected function get_data() {
 		$data = array();
 
@@ -746,6 +1021,11 @@ class Wprus_Api_Abstract {
 		return $data;
 	}
 
+	/**
+	 * Check whether the data received from remote site is valid
+	 * @param array The data to validate
+	 * @return bool Whether the data is valid
+	 */
 	protected function validate( $data ) {
 		$valid =
 			isset( $data['username'] ) &&
@@ -756,11 +1036,21 @@ class Wprus_Api_Abstract {
 		return $valid;
 	}
 
+	/**
+	 * Sanitize data received from remote site
+	 * @param array The data to sanitize
+	 * @return bool The sanitized data
+	 */
 	protected function sanitize( $data ) {
 
 		return $data;
 	}
 
+	/**
+	 * Get endpoints entires for this instance
+	 *
+	 * @return array The instance's endpoint entries
+	 */
 	protected function get_endpoints() {
 
 		return array(

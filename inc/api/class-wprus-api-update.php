@@ -12,6 +12,12 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 
 	public function init_notification_hooks() {
 		add_action( 'profile_update', array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
+		add_action( 'add_user_role',  array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
+		add_action( 'remove_user_role',  array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
+		add_action( 'set_user_role',  array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
+
+		// There is no 'before_profile_update' action so we do what we need to do in a filter (bad practice but no choice)
+		add_filter( 'pre_user_login', array( $this, 'remove_set_user_role_action' ), 10, 1 );
 	}
 
 	public function handle_notification() {
@@ -174,6 +180,12 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 				$this->fire_action( $site['url'], $data );
 			}
 		}
+	}
+
+	public function remove_set_user_role_action( $user_login ) {
+		remove_action( 'set_user_role', array( $this, 'notify_remote' ), PHP_INT_MAX );
+
+		return $user_login;
 	}
 
 	/*******************************************************************

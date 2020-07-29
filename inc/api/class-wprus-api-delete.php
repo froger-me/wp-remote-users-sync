@@ -117,7 +117,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 				sprintf(
 					// translators: %s is the username
 					__( 'Delete action - firing action for username "%s"', 'wprus' ),
-					$this->user_info['username']
+					$user->user_login
 				),
 				'info',
 				'db_log'

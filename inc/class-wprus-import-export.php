@@ -219,7 +219,6 @@ class Wprus_Import_Export {
 
 		if ( isset( $_FILES['file'] ) ) {
 			$file_info = filter_var( $_FILES['file'], FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
-			wprus_log( $_FILES['file'] );
 		} else {
 			$file_info = false;
 		}

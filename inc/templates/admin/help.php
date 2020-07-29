@@ -53,6 +53,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
+			<h2 class="wprus-help-title"><?php esc_html_e( 'It\'s not working!', 'wprus' ); ?></h2>
+			<div class="wprus-help-inner">
+				<p>
+					<?php esc_html_e( 'Before opening a new thread in the WordPres Support forum, please check the following:', 'wprus' ); ?>
+				</p>
+				<ul>
+					<li>
+						<?php
+							// translators: %1$s is the bold englisg word "exactly" ; %2$s is 'http'; %3$s is 'https'; %4$s is 'home' option key in the database ; %5$s is 'wp_options' table name
+							printf( __( 'The URLs used in settings of WP Remote Users Sync %1$s match the URL in your WordPress settings: the protocol (%2$s vs. %3$s) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the %4$s option in the %5$s table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.', 'wprus' ), '<strong>' . __( 'exactly', 'wprus' ) . '</strong>', '<code>' . 'http' . '</code>', '<code>' . 'https' . '</code>', '<code>' . 'home' . '</code>', '<code>' . 'wp_options' . '</code>' );
+						?>
+					</li>
+					<li><?php esc_html_e( 'Visit the permalinks page of each connected site (Settings > Permalinks)', 'wprus' ); ?></li>
+					<li><?php esc_html_e( 'Activate and check the logs on both local and remote sites when testing (WP Remote Users Sync > Activity Logs > Enable Logs) ; try to find any discrepancies and adjust the settings', 'wprus' ); ?></li>
+					<li><?php esc_html_e( 'Read the Resolved threads of the support forum - your issue might have already been addressed there', 'wprus' ); ?></li>
+				</ul>
+				<p>
+					<?php esc_html_e( 'Only then should you open a support thread, with as much information as possible, including logs (with critical information obfuscated if necessary).', 'wprus' ); ?>
+				</p>
+			</div>
+		</div>
+		<div class="wprus-help">
 			<h2 class="wprus-help-title"><?php esc_html_e( 'What happens to existing users after activating WP Remote Users Sync?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
@@ -253,7 +275,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					echo sprintf(
 						// translators: %1$s is the WordPress support forum URL, %2$s is the Github URL
-						esc_html__( 'More help can be found on %1$s and on %2$s.', 'wprus' ),
+						esc_html__( 'More help can be found on %1$s for general inquiries and on %2$s for advanced troubleshooting.', 'wprus' ),
 						'<a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">' . esc_html_e( 'the WordPress support forum', 'wprus' ) . '</a>',
 						'<a href="https://github.com/froger-me/wp-remote-users-sync">' . esc_html( 'Github' ) . '</a>'
 					);

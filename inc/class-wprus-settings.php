@@ -46,7 +46,7 @@ class Wprus_Settings {
 	 * Public methods
 	 *******************************************************************/
 
-	public static function setings_page_id() {
+	public static function settings_page_id() {
 
 		return 'toplevel_page_wprus';
 	}
@@ -135,7 +135,7 @@ class Wprus_Settings {
 
 		$settings_page = add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon );
 		$menu_title    = __( 'WP Remote Users Sync', 'wprus' );
-		$page_hook_id  = self::setings_page_id();
+		$page_hook_id  = self::settings_page_id();
 
 		add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
 
@@ -147,7 +147,7 @@ class Wprus_Settings {
 	}
 
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		$page_hook_id = self::setings_page_id();
+		$page_hook_id = self::settings_page_id();
 
 		if ( $hook_suffix === $page_hook_id ) {
 			$debug         = apply_filters( 'wprus_debug', WP_DEBUG );
@@ -205,7 +205,7 @@ class Wprus_Settings {
 	}
 
 	public function screen_layout_column( $columns, $screen ) {
-		$page_hook_id = self::setings_page_id();
+		$page_hook_id = self::settings_page_id();
 
 		if ( $screen === $page_hook_id ) {
 			$columns[ $page_hook_id ] = 2;
@@ -215,7 +215,7 @@ class Wprus_Settings {
 	}
 
 	public function add_settings_meta_boxes() {
-		$page_hook_id = self::setings_page_id();
+		$page_hook_id = self::settings_page_id();
 		$sites        = $this->get_sites();
 		$meta_keys    = $this->get_user_meta_keys();
 		$roles        = $this->get_roles();
