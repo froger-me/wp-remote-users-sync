@@ -86,8 +86,8 @@ class Wprus_Api_Abstract {
 	 * Constructor
 	 *
 	 * @param string $endpoint The endpoint key of the current instance.
- 	 * @param Wprus_Settings|mixed $settings The settings object.
- 	 * @param bool $init_hooks Whether to add WordPress action and filter hooks on object creation ; default `false`.
+	 * @param Wprus_Settings|mixed $settings The settings object.
+	 * @param bool $init_hooks Whether to add WordPress action and filter hooks on object creation ; default `false`.
 	 */
 	public function __construct( $endpoint, $settings, $init_hooks = false ) {
 		$this->endpoint             = $endpoint;
@@ -101,14 +101,19 @@ class Wprus_Api_Abstract {
 		if ( $init_hooks ) {
 
 			if ( $this->doing_remote_action ) {
-				add_action( 'init', array( $this, 'init_remote_hooks_authorization' ), -10, 0 );
-				add_action( 'init', array( $this, 'init_remote_hooks' ), -10, 0 );
+				add_action( 'init', array( $this, 'init_remote_hooks_authorization' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'init', array( $this, 'init_remote_hooks' ), PHP_INT_MIN - 10, 0 );
 			} else {
-				add_action( 'init', array( $this, 'init_local_hooks' ), 0, 0 );
+				add_action( 'init', array( $this, 'init_local_hooks' ), PHP_INT_MIN - 10, 0 );
 			}
 
 			if ( $this->has_remote_async_actions() ) {
-				add_action( 'init', array( $this, 'init_async_hooks' ), 0, 0 );
+
+				if ( ! has_action( 'init', array( $this, 'set_pending_async_actions_user_id' ) ) ) {
+					add_action( 'init', array( $this, 'set_pending_async_actions_user_id' ), PHP_INT_MIN - 10, 0 );
+				}
+
+				add_action( 'init', array( $this, 'init_async_hooks' ), PHP_INT_MIN - 10, 0 );
 			}
 
 			add_action( 'wp_ajax_wprus_' . $endpoint . '_notify_ping_remote', array( $this, 'notify_ping_remote' ), 10, 0 );
@@ -407,19 +412,15 @@ class Wprus_Api_Abstract {
 		}
 
 		if ( ! has_action( 'wp_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
-			add_action( 'wp_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN, 0 );
+			add_action( 'wp_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
 		}
 
 		if ( ! has_action( 'admin_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
-			add_action( 'admin_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN, 0 );
+			add_action( 'admin_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
 		}
 
 		if ( ! has_action( 'login_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
-			add_action( 'login_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN, 0 );
-		}
-
-		if ( ! has_action( 'init', array( $this, 'set_pending_async_actions_user_id' ) ) ) {
-			add_action( 'init', array( $this, 'set_pending_async_actions_user_id' ), 10, 0 );
+			add_action( 'login_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
 		}
 
 		if ( ! has_action( 'shutdown', array( $this, 'save_async_actions' ) ) ) {
@@ -460,8 +461,8 @@ class Wprus_Api_Abstract {
 	 * Get the site information where the specified endpoint is active for the specify direction
 	 *
 	 * @param string $endpoint The endpoints key
- 	 * @param string $site_url The URL of the site ; `false` will use the URL of the local site 
- 	 * @param string $direction The direction for which the endpoint is active - 'incoming' or 'outgoing' ; 'incoming by default'
+	 * @param string $site_url The URL of the site ; `false` will use the URL of the local site
+	 * @param string $direction The direction for which the endpoint is active - 'incoming' or 'outgoing' ; 'incoming by default'
 	 * @return array|bool The site information ; `false` if no corresponding site information
 	 */
 	public function get_active_site_for_action( $endpoint, $site_url = false, $direction = 'incoming' ) {
@@ -623,7 +624,7 @@ class Wprus_Api_Abstract {
 				$payload .= $response['response_code'] . ' - ' . $response['response_message'];
 			} else {
 				// translators: %s is the error code
-				$payload .= ( ! empty( $response['response_code'] ) ) ? sprintf( __( ' - code: %s - ', 'wprus' ), $response['response_code'] )  : '';
+				$payload .= ( ! empty( $response['response_code'] ) ) ? sprintf( __( ' - code: %s - ', 'wprus' ), $response['response_code'] ) : '';
 				$payload .= __( 'an undefined error occured. Please make sure the address is correct and try again.', 'wprus' );
 				$payload .= "\n";
 				$payload .= __( 'On the remote site, please make sure the plugin is activated and that the permalinks are up to date by visiting the permalinks settings page.', 'wprus' );
@@ -642,8 +643,8 @@ class Wprus_Api_Abstract {
 		if ( ! $success ) {
 			Wprus_Logger::log(
 				array(
-					'message' => 'Response data received from the remote site: ', 
-					$response
+					'message' => 'Response data received from the remote site: ',
+					$response,
 				),
 				'info',
 				'db_log'
@@ -757,7 +758,7 @@ class Wprus_Api_Abstract {
 				);
 			}
 
-			echo $output; // WPCS XSS OK
+			echo $output; // @codingStandardsIgnoreLine
 			do_action( 'wprus_after_firing_async_actions', $this->endpoint, $actions );
 			delete_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions' );
 
@@ -771,7 +772,7 @@ class Wprus_Api_Abstract {
 	 * @param string $url The remote website's URL
 	 * @param mixed $data The data to send
 	 * @param bool $blocking whether the request needs to wait for a response - default `false`
-	 * @param int $timeout the maximum time to wait for a response in seconds - default `1` 
+	 * @param int $timeout the maximum time to wait for a response in seconds - default `1`
 	 * @param string $endpoint the endpoint to send the request to - default `null` ; will use the $endpoint attribute value of the instance
 	 * @return array Response data
 	 */
@@ -923,7 +924,7 @@ class Wprus_Api_Abstract {
 			if ( is_wp_error( $response ) ) {
 				Wprus_Logger::log(
 					array(
-						'message' => 'A WordPress error was triggered: ', 
+						'message' => 'A WordPress error was triggered: ',
 						$response->get_error_code() . ' ' . $response->get_error_message(),
 					),
 					'info',
@@ -938,7 +939,7 @@ class Wprus_Api_Abstract {
 
 				Wprus_Logger::log(
 					array(
-						'message' => 'Response data received from the remote site: ', 
+						'message' => 'Response data received from the remote site: ',
 						array(
 							'headers'          => $headers,
 							'response_code'    => wp_remote_retrieve_response_code( $response ),

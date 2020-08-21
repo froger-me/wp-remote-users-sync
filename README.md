@@ -15,7 +15,7 @@ If you run multiple websites and want to keep users separated, but synchronise t
 
 This plugin adds the following major features to WordPress:
 
-* **WP Remote Users Sync admin page:** to manage remote sites, security settings, import/export users, and view activity logs.
+* **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, import/export users, and view activity logs.
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing user actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
 * **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
@@ -230,6 +230,7 @@ WP Remote Users Sync gives developers the possibilty to customise its behavior w
 ### Actions
 
 Actions index:
+* [wprus_init](#user-content-wprus_init)
 * [wprus_loaded](#user-content-wprus_loaded)
 * [wprus_ready](#user-content-wprus_ready)
 * [wprus_unauthorized_access](#user-content-wprus_unauthorized_access)
@@ -245,6 +246,19 @@ Actions index:
 * [wprus_after_handle_action_notification](#user-content-wprus_after_handle_action_notification)
 * [wprus_before_init_notification_hooks](#user-content-wprus_before_init_notification_hooks)
 * [wprus_after_init_notification_hooks](#user-content-wprus_after_init_notification_hooks)
+* [wprus_integration](#user-content-wprus_integration)
+* [wprus_integration_run](#user-content-wprus_integration_run)
+
+___
+
+#### wprus_loaded
+
+```php
+do_action( 'wprus_init' );
+```
+
+**Description**  
+Fired before initializing the plugin's settings.   
 
 ___
 
@@ -255,7 +269,7 @@ do_action( 'wprus_loaded' );
 ```
 
 **Description**  
-Fired when the required files have been loaded and the plugin is ready to be extended.   
+Fired when all the required files have been loaded and the plugin settings are valid.   
 
 ___
 
@@ -586,6 +600,36 @@ $wprus_api_object
 > (mixed) The `Wprus_Api_Abstract` object adding the notification hooks.  
 ___
 
+#### wprus_integration
+
+```php
+do_action( 'wprus_integration', (mixed) $wprus_integration_obj, (string) $plugin_slug );
+```
+**Description**  
+Fired when an integration with a third-party plugin is active and loaded.  
+
+**Parameters**  
+$wprus_integration_obj
+> (mixed) The `Wprus_Integration` object used to provide features integration.  
+
+$plugin_slug
+> (string) The slug of the plugin integrated.
+
+___
+
+#### wprus_integration
+
+```php
+do_action( 'wprus_integration_run', (mixed) $wprus_integration_obj );
+```
+**Description**  
+Fired when an integration with a third-party plugin' hooks are fully initialized.  
+
+**Parameters**  
+$wprus_integration_obj
+> (mixed) The `Wprus_Integration` object used to provide features integration.  
+
+___
 
 ### Filters
 
@@ -608,7 +652,6 @@ Filters index:
 * [wprus_request_token_timeout](#user-content-wprus_request_token_timeout)
 * [wprus_request_token_retry_timeout](#user-content-wprus_request_token_retry_timeout)
 * [wprus_is_authorized_remote](#user-content-wprus_is_authorized_remote)
-* [wprus_integration](#user-content-wprus_integration)
 
 ___
 
@@ -749,7 +792,7 @@ ___
 #### wprus_option
 
 ```php
-apply_filters( 'wprus_option', (mixed) $value );
+apply_filters( 'wprus_option', (mixed) $value, (string) $key );
 ```
 **Description**  
 Filter a single setting's option value.  
@@ -757,6 +800,8 @@ Filter a single setting's option value.
 **Parameters**  
 $value
 > (mixed) the value of the option  
+$key
+> (string) the key used to retrieve the option value
 ___
 
 #### wprus_settings_valid
@@ -818,7 +863,7 @@ Possible values for `$template_slug`:
 * `site-metabox-template`
 * `export-metabox`
 * `import-metabox`
-* `main-setting-page`
+* `main-settings-page`
 * `log-row`
 
 **Parameters**  
@@ -967,18 +1012,3 @@ $ip_whitelist
 > (mixed) And array of strings as defined in the "IP Whitelist" settings.
 
 ___
-
-#### wprus_integration
-
-```php
-apply_filters( 'wprus_integration', (mixed) $wprus_integration_obj, (string) $plugin_slug );
-```
-**Description**  
-Filter the integration object used to provide extended features. An object inheriting `Wprus_Integration`.  
-
-**Parameters**  
-$is_authorized_remote
-> (mixed) The `Wprus_Integration` object used to provide features integration.  
-
-$method
-> (string) The slug of the plugin integrated.

@@ -205,7 +205,7 @@ msgstr "操作签名密钥"
 msgid "Action Token Validity Duration"
 msgstr "动作令牌有效期"
 
-#: inc/templates/admin/main-setting-page.php:24
+#: inc/templates/admin/main-settings-page.php:24
 msgid "Activity Logs"
 msgstr "活动日志"
 
@@ -583,7 +583,7 @@ msgid ""
 "Users Sync provides its own user import/export tool."
 msgstr "对于需要立即同步的现有用户数据库，WP Remote Users Sync提供了自己的用户导入/导出工具。"
 
-#: inc/templates/admin/main-setting-page.php:27
+#: inc/templates/admin/main-settings-page.php:27
 msgid "Help"
 msgstr "帮助"
 
@@ -658,7 +658,7 @@ msgstr "如果远程站点上不存在该用户，并且启用了传入的“创
 msgid "Import"
 msgstr "导入设置"
 
-#: inc/templates/admin/main-setting-page.php:21
+#: inc/templates/admin/main-settings-page.php:21
 msgid "Import / Export"
 msgstr "导入/导出"
 
@@ -1107,7 +1107,7 @@ msgid ""
 "users in multiple batches with the help of the \"Offset\" option below."
 msgstr "备注：在具有大量用户的站点上，建议借助下面的“偏移”选项分批导出用户。"
 
-#: inc/templates/admin/main-setting-page.php:15
+#: inc/templates/admin/main-settings-page.php:15
 msgid "Remote Sites"
 msgstr "远程站点"
 
@@ -1152,7 +1152,7 @@ msgstr "当启用“创建角色”和“更新”操作并启用角色操作以
 msgid "Save Settings"
 msgstr "保存设置"
 
-#: inc/templates/admin/main-setting-page.php:18
+#: inc/templates/admin/main-settings-page.php:18
 msgid "Security"
 msgstr "安全"
 
@@ -1186,7 +1186,7 @@ msgstr "发生了非常错误的事情。"
 msgid "Sorry, you are not allowed to access this page."
 msgstr "抱歉，您无权访问此页面。"
 
-#: inc/templates/admin/main-setting-page.php:45
+#: inc/templates/admin/main-settings-page.php:45
 msgid "Start with adding a Remote Site"
 msgstr "从添加远程站点开始"
 
@@ -1527,7 +1527,7 @@ msgstr "WP Remote User Sync与任何插件更新密码集成在一起，前提�
 
 #. Plugin Name of the plugin/theme
 #: inc/class-wprus-settings.php:121 inc/class-wprus-settings.php:136
-#: inc/templates/admin/main-setting-page.php:9
+#: inc/templates/admin/main-settings-page.php:9
 msgid "WP Remote Users Sync"
 msgstr "WP远程用户同步"
 

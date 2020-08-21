@@ -187,7 +187,7 @@ msgstr ""
 msgid "Action Token Validity Duration"
 msgstr ""
 
-#: inc/templates/admin/main-setting-page.php:24
+#: inc/templates/admin/main-settings-page.php:24
 msgid "Activity Logs"
 msgstr ""
 
@@ -559,7 +559,7 @@ msgid ""
 "Users Sync provides its own user import/export tool."
 msgstr ""
 
-#: inc/templates/admin/main-setting-page.php:27
+#: inc/templates/admin/main-settings-page.php:27
 msgid "Help"
 msgstr ""
 
@@ -632,7 +632,7 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
-#: inc/templates/admin/main-setting-page.php:21
+#: inc/templates/admin/main-settings-page.php:21
 msgid "Import / Export"
 msgstr ""
 
@@ -1087,7 +1087,7 @@ msgid ""
 "users in multiple batches with the help of the \"Offset\" option below."
 msgstr ""
 
-#: inc/templates/admin/main-setting-page.php:15
+#: inc/templates/admin/main-settings-page.php:15
 msgid "Remote Sites"
 msgstr ""
 
@@ -1133,7 +1133,7 @@ msgstr ""
 msgid "Save Settings"
 msgstr ""
 
-#: inc/templates/admin/main-setting-page.php:18
+#: inc/templates/admin/main-settings-page.php:18
 msgid "Security"
 msgstr ""
 
@@ -1165,7 +1165,7 @@ msgstr ""
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: inc/templates/admin/main-setting-page.php:45
+#: inc/templates/admin/main-settings-page.php:45
 msgid "Start with adding a Remote Site"
 msgstr ""
 
@@ -1500,7 +1500,7 @@ msgstr ""
 
 #. Name of the plugin
 #: inc/class-wprus-settings.php:121 inc/class-wprus-settings.php:136
-#: inc/templates/admin/main-setting-page.php:9
+#: inc/templates/admin/main-settings-page.php:9
 msgid "WP Remote Users Sync"
 msgstr ""
 

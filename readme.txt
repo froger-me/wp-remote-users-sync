@@ -2,7 +2,7 @@
 Contributors: frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
-Tested up to: 5.4.2
+Tested up to: 5.5
 Stable tag: trunk
 Requires PHP: 7.0
 License: GPLv3
@@ -18,7 +18,7 @@ If you run multiple websites and want to keep users separated, but synchronise t
 
 This plugin adds the following major features to WordPress:
 
-* **WP Remote Users Sync admin page:** to manage remote sites, security settings, import/export users, and view activity logs.
+* **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, import/export users, and view activity logs.
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing user actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
 * **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
@@ -30,15 +30,33 @@ This plugin adds the following major features to WordPress:
 == Troubleshooting ==
 
 Please read the plugin FAQ, there is a lot that may help you there!  
-WP Remote Users Sync is regularly updated, and bug reports are welcome, preferably on [Github](https://github.com/froger-me/wp-remote-users-sync/issues), especially for advanced troubleshooting. Each **bug** report will be addressed in a timely manner, but general inquiries and issues reported on the WordPress forum may take significantly longer to receive a response.
+
+WP Remote Users Sync is regularly updated, and bug reports are welcome, preferably on [Github](https://github.com/froger-me/wp-remote-users-sync/issues), especially for advanced troubleshooting.  
+
+Each **bug** report will be addressed in a timely manner, but general inquiries and issues reported on the WordPress forum may take significantly longer to receive a response.  
+
+**Only issues occurring with included integrated plugins (or plugin features), core WordPress and default WordPress themes (incl. WooCommerce Storefront) will be considered without compensation.**  
+
+**Troubleshooting involving 3rd-party plugins or themes will require compensation in any case, and will not be addressed on the WordPress support forum**.
 
 == Integrations ==
 
 Although WP Remote Users Sync works out of the box with most combinations of WordPress plugins and themes, there are some edge cases necessitating integration, with code included in the core files of WP Remote Users Sync executing under certain conditions.  
-Integrations are limited to popular plugins and themes: any extra code specific to a handful of installations require a separate custom plugin not shared with the community (decision at the discretion of the WP Remote Users Sync plugin author).  
+
+Integrations added to core are limited to popular plugins and themes: any extra code specific to a handful of installations require a separate custom plugin not shared with the community (decision at the discretion of the WP Remote Users Sync plugin author).  
+
 A typical example of case needing integration is autologin (like in WooCommerce during checkout): some plugins may set the current user and session upon user creation without calling `wp_login` WordPress action hook (even though they absolutely **should**), which can result in the user being logged in on the local site but not the remote sites.  
+
 Other examples include plugins or themes directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.  
-If such need for plugin integration arises, website administrators may contact the author of WP Remote Users Sync to become a patron. **All integrations are to be funded by plugin users, with downpayment and delivery payment, at the plugin author's discretion, without exception**. The patron in return may be credited with their name (or company name) and a link to a page of their choice in the plugin's Changelog.  
+
+If such need for plugin integration arises, website administrators may contact the author of WP Remote Users Sync to become a patron.
+
+**All integrations are to be funded by plugin users, with downpayment and delivery payment, at the plugin author's discretion, without exception**.  
+The patron in return may be credited with their name (or company name) and a link to a page of their choice in the plugin's Changelog.  
+
+== Upgrade Notice ==
+
+Because WP Remote Users Sync settings do not need to be changed often once set, the settings page has been moved under "Settings > WP Remote Users Sync" to avoid making the main WordPress admin menu more crowded than necessary.
 
 == Installation ==
 
@@ -74,6 +92,11 @@ Before opening a new issue on <a href="https://github.com/froger-me/wp-remote-us
 
 Only then should you open a support thread, with as much information as possible, including logs (with critical information obfuscated if necessary).  
 Also please note this plugin is provided for free to the community and being maintained during the author's free time: unless there is a prior arrangement with deadlines and financial compensation, the author will work on it at their own discretion. Insisting to contact the author multiple times via multiple channels in a short amount of time will simply result in the response being delayed further or even completely ignored.
+
+= Login & Logout are not working =
+Login and Logout user actions need to output some code in the browser to have an effect on the remote website because of the cookies used for authentication.
+
+What this means in practice is that if your theme or a third party plugin allows users to login/logout without page reload, WP Remote Users Sync cannot output its code on the page, and without extra change to your website code base, the synchronisation can only happen after the page where the user logged in or logged out is actually reloaded.
 
 = What happens to existing users after activating WP Remote Users Sync? =
 Existing users remain untouched, until an enabled incoming action is received from a remote site.  
@@ -147,6 +170,21 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.2.2 =
+* Move settings page under "Settings > WP Remote Users Sync"
+* Add link to settings on installed plugins page
+* Add `$key` parameter to `wprus_option` filter
+* Change template name from `main-setting-page.php` to `main-settings-page.php`
+* Fix minified scripts inclusion
+* Removed unused URL parameter from the API
+* Fix flushing of rewrite rules
+* Set priority of all `init` action hooks to `PHP_INT_MIN - 10` to maximize compatibility with third party plugins
+* Refactor integrations
+* Remove `wprus_integration` filter ; add `wprus_integration` action instead.
+* Add `wprus_init` action.
+* Update FAQ and help
+* WordPress Tested up to: 5.5
+
 = 1.2.1 =
 * Even more verbose log in case of communication error
 * Fix minor typos
@@ -160,7 +198,7 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 * Fix Delete action log message
 * Fix `Wprus_Crypto` class inclusion (no direct access)
 * Add integration logic ; future additions to integrations made upon donation 
-* Add integration - Woocommerce ; login on remote sites as well when creating an account at checkout time (depending on user actions settings). Many thanks to the generous patron who decided to remain anonymous.
+* Add integration - WooCommerce ; login on remote sites as well when creating an account at checkout time (depending on user actions settings). Many thanks to the generous patron who decided to remain anonymous.
 * Add `wprus_integration` filter
 * Data is encoded with `JSON_UNESCAPED_UNICODE` flag to support a wider range of characters (Chinese, Greek, etc)
 * Better error message handling in case of syntax error in payload

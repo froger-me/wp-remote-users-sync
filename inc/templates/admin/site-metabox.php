@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<select class="wprus-select" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][outgoing_meta][]" multiple>
 			<?php if ( ! empty( $meta_keys ) ) : ?>
 				<?php foreach ( $meta_keys as $meta_key ) : ?>
-					<option<?php echo ( in_array( $meta_key, $site['outgoing_meta'], true ) ) ? esc_attr( ' selected="selected"' ) : ''; // WPCS XSS OK ?> value="<?php echo esc_attr( $meta_key ); ?>"><?php echo esc_html( $meta_key ); ?></option>
+					<option<?php echo ( in_array( $meta_key, $site['outgoing_meta'], true ) ) ? esc_attr( ' selected="selected"' ) : ''; // @codingStandardsIgnoreLine ?> value="<?php echo esc_attr( $meta_key ); ?>"><?php echo esc_html( $meta_key ); ?></option>
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</select>
@@ -46,8 +46,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<label for=""><?php esc_html_e( 'List of roles to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
 			<select class="wprus-select" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][outgoing_roles][]" multiple>
 			<?php if ( ! empty( $roles ) ) : ?>
-				<?php foreach ( $roles as $role ) : ?>
-					<option<?php echo ( in_array( $role, $site['outgoing_roles'], true ) ) ? esc_attr( ' selected="selected"' ) : ''; // WPCS XSS OK ?> value="<?php echo esc_attr( $role ); ?>"><?php echo esc_html( $role ); ?></option>
+				<?php foreach ( $roles as $user_role ) : ?>
+					<option<?php echo ( in_array( $user_role, $site['outgoing_roles'], true ) ) ? esc_attr( ' selected="selected"' ) : ''; // @codingStandardsIgnoreLine ?> value="<?php echo esc_attr( $user_role ); ?>"><?php echo esc_html( $user_role ); ?></option>
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</select>
@@ -65,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<input type="checkbox" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][incoming_actions][<?php echo esc_attr( $action_type ); ?>]" <?php checked( (bool) $action_value, true ); ?> value="1">
 					</td>
 					<td class="action-label">
-						<label for=""><?php echo esc_html( $labels[ $action_type ], 'wprus' ); ?></label>
+						<label for=""><?php echo esc_html( $labels[ $action_type ] ); ?></label>
 					</td>
 					<td class="action-test-result">
 						<span class="dashicons dashicons-yes-alt success"></span>
@@ -84,7 +84,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php $meta_keys = array_unique( array_merge( $meta_keys, $site['incoming_meta'] ) ); ?>
 			<?php if ( ! empty( $meta_keys ) ) : ?>
 				<?php foreach ( $meta_keys as $meta_key ) : ?>
-					<option<?php echo ( in_array( $meta_key, $site['incoming_meta'], true ) ) ? esc_attr( ' selected="selected"' ) : ''; // WPCS XSS OK ?> value="<?php echo esc_attr( $meta_key ); ?>"><?php echo esc_html( $meta_key ); ?></option>
+					<option<?php echo ( in_array( $meta_key, $site['incoming_meta'], true ) ) ? esc_attr( ' selected="selected"' ) : ''; // @codingStandardsIgnoreLine ?> value="<?php echo esc_attr( $meta_key ); ?>"><?php echo esc_html( $meta_key ); ?></option>
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</select>
@@ -93,8 +93,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<label for=""><?php esc_html_e( 'List of roles to accept (leave empty to accept all):', 'wprus' ); ?></label>
 			<select class="wprus-select" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][incoming_roles][]" multiple>
 			<?php if ( ! empty( $roles ) ) : ?>
-				<?php foreach ( $roles as $role ) : ?>
-					<option<?php echo ( in_array( $role, $site['incoming_roles'], true ) ) ? esc_attr( ' selected="selected"' ) : ''; // WPCS XSS OK ?> value="<?php echo esc_attr( $role ); ?>"><?php echo esc_html( $role ); ?></option>
+				<?php foreach ( $roles as $user_role ) : ?>
+					<option<?php echo ( in_array( $user_role, $site['incoming_roles'], true ) ) ? esc_attr( ' selected="selected"' ) : ''; // @codingStandardsIgnoreLine ?> value="<?php echo esc_attr( $user_role ); ?>"><?php echo esc_html( $user_role ); ?></option>
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</select>

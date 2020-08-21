@@ -340,7 +340,7 @@ class Wprus_Import_Export {
 		}
 
 		$time     = time();
-		$filename = 'wprus-user-export-' . date( 'Y-m-d-H-i-s', $time ) . '.dat';
+		$filename = 'wprus-user-export-' . gmdate( 'Y-m-d-H-i-s', $time ) . '.dat';
 		$filepath = $dir_path . DIRECTORY_SEPARATOR . $filename;
 		$file     = $wp_filesystem->touch( $filepath, $time, $time );
 

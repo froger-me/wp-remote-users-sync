@@ -58,8 +58,8 @@ class Wprus_Logger {
 		global $wpdb;
 
 		$result = $wpdb->query(
-			$wpdb->prepare( "
-				DELETE FROM {$wpdb->prefix}wprus_logs
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->prefix}wprus_logs
 				WHERE id <= (
 					SELECT id
 					FROM (
@@ -102,8 +102,8 @@ class Wprus_Logger {
 
 				ob_start();
 
-				include apply_filters( // @codingStandardsIgnoreLine
-					'wprus_template_log-row',
+				include apply_filters(
+					'wprus_template_log-row', // @codingStandardsIgnoreLine
 					WPRUS_PLUGIN_PATH . 'inc/templates/admin/log-row.php'
 				);
 

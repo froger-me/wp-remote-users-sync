@@ -13,7 +13,7 @@ class Wprus {
 
 		if ( $init_hooks ) {
 			// Add the API endpoints
-			add_action( 'init', array( $this, 'add_endpoints' ), 0, 0 );
+			add_action( 'init', array( $this, 'add_endpoints' ), PHP_INT_MIN - 10, 0 );
 			// Parse the endpoint request
 			add_action( 'parse_request', array( $this, 'parse_request' ), 10, 0 );
 
@@ -118,6 +118,12 @@ class Wprus {
 	}
 
 	public function add_endpoints() {
+
+		if ( get_transient( 'wprus_flush' ) ) {
+			delete_transient( 'wprus_flush' );
+			flush_rewrite_rules();
+		}
+
 		$this->authorised_endpoints = array(
 			'token' => 'token/?',
 		);
@@ -126,7 +132,7 @@ class Wprus {
 		foreach ( $this->authorised_endpoints as $action => $url_suffix ) {
 			add_rewrite_rule(
 				'^wprus/' . $url_suffix,
-				'index.php?__wprus_api=1&action=' . $action . '&data=$matches[1]',
+				'index.php?__wprus_api=1&action=' . $action,
 				'top'
 			);
 		}
@@ -136,11 +142,6 @@ class Wprus {
 			'index.php?wprus_download=1',
 			'top'
 		);
-
-		if ( get_transient( 'wprus_flush' ) ) {
-			delete_transient( 'wprus_flush' );
-			flush_rewrite_rules();
-		}
 	}
 
 	public function parse_request() {
@@ -164,7 +165,7 @@ class Wprus {
 	 * Protected methods
 	 *******************************************************************/
 
-	protected function parse_error( $action = 'none' ) {
+	protected function parse_error() {
 		global $wp_query;
 
 		$wp_query->set_404();

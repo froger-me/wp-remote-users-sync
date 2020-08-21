@@ -34,8 +34,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<label for=""><?php esc_html_e( 'Filter users by role (leave empty to export all users):', 'wprus' ); ?></label>
 		<select id="wprus_roles_export_select" class="wprus-select" multiple>
 		<?php if ( ! empty( $roles ) ) : ?>
-			<?php foreach ( $roles as $role ) : ?>
-				<option value="<?php echo esc_attr( $role ); ?>"><?php echo esc_html( $role ); ?></option>
+			<?php foreach ( $roles as $user_role ) : ?>
+				<option value="<?php echo esc_attr( $user_role ); ?>"><?php echo esc_html( $user_role ); ?></option>
 			<?php endforeach; ?>
 		<?php endif; ?>
 		</select>

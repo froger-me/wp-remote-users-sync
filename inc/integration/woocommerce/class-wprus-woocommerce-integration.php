@@ -6,17 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Wprus_Woocommerce_Integration extends Wprus_Integration {
 
-	public function __construct( $init_hooks = false ) {
-		parent::__construct( $init_hooks );
-
-		if ( $init_hooks ) {
-			add_action( 'woocommerce_checkout_process', array( $this, 'checkout_process' ), 10, 0 );
-		}
-	}
-
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
+
+	public function init_hooks() {
+		add_action( 'woocommerce_checkout_process', array( $this, 'checkout_process' ), 10, 0 );
+	}
 
 	public function checkout_process() {
 		$wc_checkout = WC_Checkout::instance();

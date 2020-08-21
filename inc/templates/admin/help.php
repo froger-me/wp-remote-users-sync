@@ -56,13 +56,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h2 class="wprus-help-title"><?php esc_html_e( 'It\'s not working!', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
-					<?php esc_html_e( 'Before opening a new thread in the WordPres Support forum, please check the following:', 'wprus' ); ?>
+					<?php esc_html_e( 'Before opening a new thread in the WordPress Support forum, please check the following:', 'wprus' ); ?>
 				</p>
 				<ul>
 					<li>
 						<?php
 							// translators: %1$s is the bold englisg word "exactly" ; %2$s is 'http'; %3$s is 'https'; %4$s is 'home' option key in the database ; %5$s is 'wp_options' table name
-							printf( __( 'The URLs used in settings of WP Remote Users Sync %1$s match the URL in your WordPress settings: the protocol (%2$s vs. %3$s) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the %4$s option in the %5$s table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.', 'wprus' ), '<strong>' . __( 'exactly', 'wprus' ) . '</strong>', '<code>' . 'http' . '</code>', '<code>' . 'https' . '</code>', '<code>' . 'home' . '</code>', '<code>' . 'wp_options' . '</code>' );
+							printf( __( 'The URLs used in settings of WP Remote Users Sync %1$s match the URL in your WordPress settings: the protocol (%2$s vs. %3$s) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the %4$s option in the %5$s table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.', 'wprus' ), '<strong>' . esc_html_e( 'exactly', 'wprus' ) . '</strong>', '<code>http</code>', '<code>https</code>', '<code>home</code>', '<code>wp_options</code>' ); // @codingStandardsIgnoreLine
 						?>
 					</li>
 					<li><?php esc_html_e( 'Visit the permalinks page of each connected site (Settings > Permalinks)', 'wprus' ); ?></li>
@@ -71,6 +71,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</ul>
 				<p>
 					<?php esc_html_e( 'Only then should you open a support thread, with as much information as possible, including logs (with critical information obfuscated if necessary).', 'wprus' ); ?>
+				</p>
+			</div>
+		</div>
+		<div class="wprus-help">
+			<h2 class="wprus-help-title"><?php esc_html_e( 'Login & Logout are not working', 'wprus' ); ?></h2>
+			<div class="wprus-help-inner">
+				<p>
+					<?php esc_html_e( 'Login and Logout user actions need to output some code in the browser to have an effect on the remote website because of the cookies used for authentication.', 'wprus' ); ?>
+				</p>
+				<p>
+					<?php esc_html_e( 'What this means in practice is that if your theme or a third party plugin allows users to login/logout without page reload, WP Remote Users Sync cannot output its code on the page, and without extra change to your website code base, the synchronisation can only happen after the page where the user logged in or logged out is actually reloaded.', 'wprus' ); ?>
 				</p>
 			</div>
 		</div>

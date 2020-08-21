@@ -11,7 +11,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 	 *******************************************************************/
 
 	public function init_notification_hooks() {
-		add_action( 'wp_login', array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
+		add_action( 'wp_login', array( $this, 'notify_remote' ), PHP_INT_MIN, 2 );
 	}
 
 	public function has_remote_async_actions() {

@@ -35,10 +35,13 @@ class Wprus_Settings {
 		self::$settings = $this->sanitize_settings( self::get_options() );
 
 		if ( $init_hooks ) {
-			add_action( 'init', array( $this, 'load_textdomain' ), 0, 0 );
-			add_action( 'init', array( $this, 'set_cache_policy' ), 0, 0 );
+			add_action( 'init', array( $this, 'load_textdomain' ), PHP_INT_MIN - 10, 0 );
+			add_action( 'init', array( $this, 'set_cache_policy' ), PHP_INT_MIN - 10, 0 );
 			add_action( 'admin_menu', array( $this, 'plugin_options_menu_main' ), 10, 0 );
 			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 0 );
+
+			add_filter( 'pre_update_option_wprus_settings', array( $this, 'require_rewrite_flush' ), 10, 2 );
+			add_filter( 'plugin_action_links_wp-remote-users-sync/wprus.php', array( $this, 'plugin_action_links' ), 10, 1 );
 		}
 	}
 
@@ -48,12 +51,7 @@ class Wprus_Settings {
 
 	public static function settings_page_id() {
 
-		return 'toplevel_page_wprus';
-	}
-
-	public static function get_settings() {
-
-		return 'toplevel_page_wprus';
+		return 'settings_page_wprus';
 	}
 
 	public static function get_options() {
@@ -79,7 +77,17 @@ class Wprus_Settings {
 		$options = self::$settings;
 		$value   = isset( $options[ $key ] ) ? $options[ $key ] : $default;
 
-		return apply_filters( 'wprus_option', $value );
+		return apply_filters( 'wprus_option', $value, $key );
+	}
+
+	public function plugin_action_links( $links ) {
+		$links[] = '<a href="' . admin_url( 'options-general.php?page=wprus' ) . '">' . __( 'Settings' ) . '</a>';
+
+		return $links;
+	}
+
+	public function require_rewrite_flush() {
+		set_transient( 'wprus_flush', 1, 60 );
 	}
 
 	public function set_cache_policy() {
@@ -110,34 +118,28 @@ class Wprus_Settings {
 	}
 
 	public function missing_config() {
-		$href    = admin_url( 'admin.php?page=wprus' );
+		$href    = admin_url( 'options-general.php?page=wprus' );
 		$link    = ' <a href="' . $href . '">' . __( 'Edit configuration', 'wprus' ) . '</a>';
 		$class   = 'notice notice-error is-dismissible';
 		$message = __( 'WP Remote Users Sync is not ready. ', 'wprus' );
 
-		printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message . $link . $this->error ); // WPCS XSS OK
+		printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message . $link . $this->error ); // @codingStandardsIgnoreLine
 	}
 
 	public function plugin_options_menu_main() {
-		$page_title  = __( 'WP Remote Users Sync', 'wprus' );
-		$menu_title  = $page_title;
-		$capability  = 'manage_options';
-		$menu_slug   = 'wprus';
-		$parent_slug = $menu_slug;
-		$function    = array( $this, 'plugin_main_page' );
-		$icon        = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE4LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDQ5NC44MzkgNDk0LjgzOSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDk0LjgzOSA0OTQuODM5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8cGF0aCBkPSJNMTUwLjI5OCwxNTEuNjI3YzAuMzI1LTIuOTQ1LTEuMTQ3LTUuNzU4LTMuNzMzLTcuMTk3bC00MC4xNjctMjIuMTY0YzM1LjAwNS00MC43NjIsODYuNDQ2LTY1LjM1LDE0MS4wMjEtNjUuMzUNCgkJYzEwMi41MjMsMCwxODUuOTI3LDgzLjQwNCwxODUuOTI3LDE4NS45MjhjMCwxMy43MTcsMTEuMTEyLDI0Ljg0NywyNC44NDMsMjQuODQ3YzEzLjcxOSwwLDI0Ljg0OS0xMS4xMywyNC44NDktMjQuODQ3DQoJCWMwLTEyOS45MjYtMTA1LjcxMS0yMzUuNjE5LTIzNS42MTktMjM1LjYxOWMtNjcuMTc3LDAtMTMwLjg5NiwyOS4xMTUtMTc1LjEzOCw3OC4xMTFMNTMuNTY1LDUxLjQ1DQoJCWMtMS40MDItMi41ODgtNC4yMzctNC4wNjItNy4xODItMy43MzZjLTIuOTI1LDAuMzIyLTUuMzY4LDIuMzYxLTYuMjA4LDUuMTkyTDAuMjk5LDE4OC42N2MtMC43NiwyLjUzNy0wLjA0Niw1LjMwNywxLjg0NCw3LjIxMg0KCQljMS44NjEsMS44NjIsNC42NDIsMi41ODgsNy4yLDEuODEzbDEzNS43NS0zOS44OTFDMTQ3LjkzOCwxNTcuMDAxLDE0OS45NzMsMTU0LjUyMiwxNTAuMjk4LDE1MS42Mjd6Ii8+DQoJPHBhdGggZD0iTTQ5Mi42OTcsMjk4Ljk3M2MtMS44NjMtMS44NzctNC42NDUtMi41ODktNy4yLTEuODI2bC0xMzUuNzUsMzkuODg4Yy0yLjg0NywwLjgzOS00Ljg4MywzLjI4My01LjIwNSw2LjE5Ng0KCQljLTAuMzI3LDIuOTI4LDEuMTQ1LDUuNzU5LDMuNzMzLDcuMTgybDQwLjE2NywyMi4xNzZjLTM1LjAwNyw0MC43NS04Ni40NDgsNjUuMzM4LTE0MS4wMjMsNjUuMzM4DQoJCWMtMTAyLjUyMSwwLTE4NS45MjUtODMuNDA0LTE4NS45MjUtMTg1LjkyOGMwLTEzLjcxNy0xMS4xMTItMjQuODQ4LTI0Ljg0NS0yNC44NDhjLTEzLjcxOSwwLTI0Ljg0OSwxMS4xMzEtMjQuODQ5LDI0Ljg0OA0KCQljMCwxMjkuOTI2LDEwNS43MTQsMjM1LjYxNSwyMzUuNjE5LDIzNS42MTVjNjcuMTc3LDAsMTMwLjg3OS0yOS4xMTcsMTc1LjEzOC03OC4xMTJsMTguNzE2LDMzLjg4OQ0KCQljMS40MDIsMi41OTEsNC4yMzcsNC4wNiw3LjE4MSwzLjc1NGMyLjkyNi0wLjM0MSw1LjM3LTIuMzYyLDYuMjA5LTUuMjA4bDM5Ljg3Ny0xMzUuNzUNCgkJQzQ5NS4yOTksMzAzLjYzMSw0OTQuNTg1LDMwMC44OCw0OTIuNjk3LDI5OC45NzN6Ii8+DQoJPHBhdGggZD0iTTE2NS4yMTYsMjQ3LjQyYzAsNDUuNDA1LDM2Ljc5OSw4Mi4yMDMsODIuMjAzLDgyLjIwM2M0NS4zOTEsMCw4Mi4yMDYtMzYuNzk4LDgyLjIwNi04Mi4yMDMNCgkJYzAtNDUuMzg5LTM2LjgxNC04Mi4yMDktODIuMjA2LTgyLjIwOUMyMDIuMDE1LDE2NS4yMTEsMTY1LjIxNiwyMDIuMDMyLDE2NS4yMTYsMjQ3LjQyeiIvPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPC9zdmc+DQo=';
-
 		register_setting(
 			'wprus',
 			'wprus',
 			array( $this, 'sanitize_settings' )
 		);
 
-		$settings_page = add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon );
-		$menu_title    = __( 'WP Remote Users Sync', 'wprus' );
+		$title         = __( 'WP Remote Users Sync', 'wprus' );
+		$capability    = 'manage_options';
+		$menu_slug     = 'wprus';
+		$parent_slug   = 'options-general.php';
+		$callback      = array( $this, 'plugin_main_page' );
 		$page_hook_id  = self::settings_page_id();
-
-		add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
+		$settings_page = add_submenu_page( $parent_slug, $title, $title, $capability, $menu_slug, $callback );
 
 		if ( ! empty( $settings_page ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10, 1 );
@@ -178,7 +180,7 @@ class Wprus_Settings {
 
 			foreach ( $styles as $index => $style ) {
 				$is_lib  = ( false !== strpos( $style, 'lib/' ) );
-				$css_ext = ( $debug && ! $is_lib ) ? '.min.css' : '.css';
+				$css_ext = ( $debug || $is_lib ) ? '.css' : '.min.css';
 				$version = filemtime( WPRUS_PLUGIN_PATH . 'css/' . $style . $css_ext );
 				$key     = 'wprus-' . $style . '-style';
 
@@ -188,7 +190,7 @@ class Wprus_Settings {
 			foreach ( $scripts as $script ) {
 				$key     = 'wprus-' . $script . '-script';
 				$is_lib  = ( false !== strpos( $script, 'lib/' ) );
-				$js_ext  = ( $debug && ! $is_lib ) ? '.min.js' : '.js';
+				$js_ext  = ( $debug || $is_lib ) ? '.js' : '.min.js';
 				$version = filemtime( WPRUS_PLUGIN_PATH . 'js/' . $script . $js_ext );
 
 				wp_enqueue_script( $key, WPRUS_PLUGIN_URL . 'js/' . $script . $js_ext, array( 'jquery' ), $version, true );
@@ -328,8 +330,8 @@ class Wprus_Settings {
 	public function get_submit_metabox() {
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_submit-settings-metabox',
+		include apply_filters(
+			'wprus_template_submit-settings-metabox', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/submit-settings-metabox.php'
 		);
 
@@ -339,8 +341,8 @@ class Wprus_Settings {
 	public function get_add_site_metabox() {
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_add-site-metabox',
+		include apply_filters(
+			'wprus_template_add-site-metabox', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/add-site-metabox.php'
 		);
 
@@ -352,8 +354,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_encryption-metabox',
+		include apply_filters(
+			'wprus_template_encryption-metabox', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/encryption-metabox.php'
 		);
 
@@ -365,8 +367,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_ip-whitelist-metabox',
+		include apply_filters(
+			'wprus_template_ip-whitelist-metabox', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/ip-whitelist-metabox.php'
 		);
 
@@ -386,8 +388,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_logs-metabox',
+		include apply_filters(
+			'wprus_template_logs-metabox', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/logs-metabox.php'
 		);
 
@@ -403,8 +405,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_site-metabox',
+		include apply_filters(
+			'wprus_template_site-metabox', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/site-metabox.php'
 		);
 
@@ -418,8 +420,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_site-metabox-template',
+		include apply_filters(
+			'wprus_template_site-metabox-template', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/site-metabox-template.php'
 		);
 
@@ -432,8 +434,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_export-metabox',
+		include apply_filters(
+			'wprus_template_export-metabox', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/export-metabox.php'
 		);
 
@@ -446,8 +448,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_import-metabox',
+		include apply_filters(
+			'wprus_template_import-metabox', // @codingStandardsIgnoreLine
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/import-metabox.php'
 		);
 
@@ -467,9 +469,9 @@ class Wprus_Settings {
 
 		ob_start();
 
-		require_once apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_main-setting-page',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/main-setting-page.php'
+		require_once apply_filters(
+			'wprus_template_main-settings-page', // @codingStandardsIgnoreLine
+			WPRUS_PLUGIN_PATH . 'inc/templates/admin/main-settings-page.php'
 		);
 
 		echo ob_get_clean(); // @codingStandardsIgnoreLine

@@ -46,8 +46,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<label for=""><?php esc_html_e( 'List of roles to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
 				<select class="wprus-select" data-name="[outgoing_roles][]" multiple>
 				<?php if ( ! empty( $roles ) ) : ?>
-					<?php foreach ( $roles as $role ) : ?>
-						<option value="<?php echo esc_attr( $role ); ?>"><?php echo esc_html( $role ); ?></option>
+					<?php foreach ( $roles as $user_role ) : ?>
+						<option value="<?php echo esc_attr( $user_role ); ?>"><?php echo esc_html( $user_role ); ?></option>
 					<?php endforeach; ?>
 				<?php endif; ?>
 				</select>
@@ -92,8 +92,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<label for=""><?php esc_html_e( 'List of roles to accept (leave empty to accept all):', 'wprus' ); ?></label>
 			<select class="wprus-select" data-name="[incoming_roles][]" multiple>
 			<?php if ( ! empty( $roles ) ) : ?>
-				<?php foreach ( $roles as $role ) : ?>
-					<option value="<?php echo esc_attr( $role ); ?>"><?php echo esc_html( $role ); ?></option>
+				<?php foreach ( $roles as $user_role ) : ?>
+					<option value="<?php echo esc_attr( $user_role ); ?>"><?php echo esc_html( $user_role ); ?></option>
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</select>

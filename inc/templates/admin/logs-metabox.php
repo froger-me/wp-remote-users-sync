@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</table>
 	<div class="logs-container">
 		<div id="logs_view">
-			<?php echo $logs; // WPCS XSS OK ?>
+			<?php echo $logs; // @codingStandardsIgnoreLine ?>
 		</div>
 		<button class="button" id="wprus_log_refresh"><?php esc_html_e( 'Refresh', 'wprus' ); ?></button>		
 	</div>
