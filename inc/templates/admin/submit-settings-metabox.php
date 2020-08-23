@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="major-publishing-actions">
 		<div id="publishing-action">
 			<span class="spinner"></span>
-			<?php submit_button( esc_attr_e( 'Save', 'wprus' ), 'primary', 'submit', false ); ?>
+			<?php submit_button( esc_attr( __( 'Save', 'wprus' ) ), 'primary', 'submit', false ); ?>
 		</div>
 		<div class="clear"></div>
 	</div>

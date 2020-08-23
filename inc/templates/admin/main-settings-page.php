@@ -7,9 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="wrap">
 	<h1><?php esc_html_e( 'WP Remote Users Sync', 'wprus' ); ?></h1>
-
-	<?php settings_errors(); ?>
-
 	<h2 class="nav-tab-wrapper">
 		<a href="#" data-toggle="wprus-site" class="nav-tab nav-tab-active">
 			<span class='dashicons dashicons-networking'></span> <?php esc_html_e( 'Remote Sites', 'wprus' ); ?>
@@ -27,7 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class='dashicons dashicons-editor-help'></span> <?php esc_html_e( 'Help', 'wprus' ); ?>
 		</a>
 	</h2>
-
 	<div class="wprus-meta-box-wrap wprus-ui-wait">
 		<form id="wprus-form" method="post" action="options.php">
 			<?php settings_fields( 'wprus' ); ?>
@@ -53,4 +49,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</form>
 	</div>
 </div>
-

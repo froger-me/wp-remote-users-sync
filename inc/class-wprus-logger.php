@@ -102,8 +102,8 @@ class Wprus_Logger {
 
 				ob_start();
 
-				include apply_filters(
-					'wprus_template_log-row', // @codingStandardsIgnoreLine
+				include apply_filters( // @codingStandardsIgnoreLine
+					'wprus_template_log-row',
 					WPRUS_PLUGIN_PATH . 'inc/templates/admin/log-row.php'
 				);
 

@@ -130,7 +130,9 @@ class Wprus_Settings {
 		register_setting(
 			'wprus',
 			'wprus',
-			array( $this, 'sanitize_settings' )
+			array(
+				'sanitize_callback' => array( $this, 'sanitize_settings' ),
+			)
 		);
 
 		$title         = __( 'WP Remote Users Sync', 'wprus' );
@@ -341,8 +343,8 @@ class Wprus_Settings {
 	public function get_add_site_metabox() {
 		ob_start();
 
-		include apply_filters(
-			'wprus_template_add-site-metabox', // @codingStandardsIgnoreLine
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_add-site-metabox',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/add-site-metabox.php'
 		);
 
@@ -354,8 +356,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters(
-			'wprus_template_encryption-metabox', // @codingStandardsIgnoreLine
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_encryption-metabox',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/encryption-metabox.php'
 		);
 
@@ -367,8 +369,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters(
-			'wprus_template_ip-whitelist-metabox', // @codingStandardsIgnoreLine
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_ip-whitelist-metabox',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/ip-whitelist-metabox.php'
 		);
 
@@ -388,8 +390,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters(
-			'wprus_template_logs-metabox', // @codingStandardsIgnoreLine
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_logs-metabox',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/logs-metabox.php'
 		);
 
@@ -405,8 +407,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters(
-			'wprus_template_site-metabox', // @codingStandardsIgnoreLine
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_site-metabox',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/site-metabox.php'
 		);
 
@@ -420,8 +422,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters(
-			'wprus_template_site-metabox-template', // @codingStandardsIgnoreLine
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_site-metabox-template',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/site-metabox-template.php'
 		);
 
@@ -434,8 +436,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters(
-			'wprus_template_export-metabox', // @codingStandardsIgnoreLine
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_export-metabox',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/export-metabox.php'
 		);
 
@@ -448,8 +450,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		include apply_filters(
-			'wprus_template_import-metabox', // @codingStandardsIgnoreLine
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_import-metabox',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/import-metabox.php'
 		);
 
@@ -469,8 +471,8 @@ class Wprus_Settings {
 
 		ob_start();
 
-		require_once apply_filters(
-			'wprus_template_main-settings-page', // @codingStandardsIgnoreLine
+		require_once apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_main-settings-page',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/main-settings-page.php'
 		);
 

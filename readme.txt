@@ -170,6 +170,12 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.2.3 =
+* Include logger class earlier
+* Fix save button text
+* Fix duplicate "Settings save." notice
+* Minor UI fixes
+
 = 1.2.2 =
 * Move settings page under "Settings > WP Remote Users Sync"
 * Add link to settings on installed plugins page

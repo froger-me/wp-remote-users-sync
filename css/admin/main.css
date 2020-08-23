@@ -8,6 +8,11 @@
 	display: none;
 }
 
+.settings_page_wprus .handle-order-lower,
+.settings_page_wprus .handle-order-higher {
+	display: none;
+}
+
 .js .postbox .hndle {
     cursor: default;
 }
