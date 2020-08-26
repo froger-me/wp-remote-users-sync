@@ -34,6 +34,7 @@ class Wprus {
 		}
 
 		set_transient( 'wprus_flush', 1, 60 );
+		wp_cache_flush();
 	}
 
 	public static function deactivate() {

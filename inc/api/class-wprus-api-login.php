@@ -54,7 +54,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 				$result = true;
 
 				wp_set_current_user( $user->ID, $data['username'] );
-				wp_set_auth_cookie( $user->ID, $data['remember'] );
+				wprus_set_auth_cookie( $user->ID, $data['remember'] );
 				do_action( 'wp_login', $data['username'], $user );
 				Wprus_Logger::log(
 					sprintf(

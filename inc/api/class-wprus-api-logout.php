@@ -53,7 +53,10 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 			if ( $user && get_current_user_id() === $user->ID ) {
 				$result = true;
 
-				wp_logout();
+				wp_destroy_current_session();
+				wprus_clear_auth_cookie();
+				wp_set_current_user( 0 );
+				do_action( 'wp_logout' );
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller

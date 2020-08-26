@@ -170,6 +170,11 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.2.4 =
+* Fix "SameSite" cookie attribute when doing cross-site login
+* Fix settings cache issues
+* Minor refactor of `Wprus_Api_Abstract`
+
 = 1.2.3 =
 * Include logger class earlier
 * Fix save button text

@@ -105,18 +105,22 @@ class Wprus_Api_Abstract {
 				add_action( 'init', array( $this, 'init_remote_hooks' ), PHP_INT_MIN - 10, 0 );
 			} else {
 				add_action( 'init', array( $this, 'init_local_hooks' ), PHP_INT_MIN - 10, 0 );
-			}
+				add_action(
+					'wp_ajax_wprus_' . $endpoint . '_notify_ping_remote',
+					array( $this, 'notify_ping_remote' ),
+					10,
+					0
+				);
 
-			if ( $this->has_remote_async_actions() ) {
+				if ( $this->has_remote_async_actions() ) {
 
-				if ( ! has_action( 'init', array( $this, 'set_pending_async_actions_user_id' ) ) ) {
-					add_action( 'init', array( $this, 'set_pending_async_actions_user_id' ), PHP_INT_MIN - 10, 0 );
+					if ( ! has_action( 'init', array( $this, 'set_pending_async_actions_user_id' ) ) ) {
+						add_action( 'init', array( $this, 'set_pending_async_actions_user_id' ), PHP_INT_MIN - 10, 0 );
+					}
+
+					add_action( 'init', array( $this, 'init_async_hooks' ), PHP_INT_MIN - 10, 0 );
 				}
-
-				add_action( 'init', array( $this, 'init_async_hooks' ), PHP_INT_MIN - 10, 0 );
 			}
-
-			add_action( 'wp_ajax_wprus_' . $endpoint . '_notify_ping_remote', array( $this, 'notify_ping_remote' ), 10, 0 );
 
 			add_filter( 'wprus_wp_endpoints', array( $this, 'add_action_endpoints' ), 10, 1 );
 		}
@@ -739,12 +743,12 @@ class Wprus_Api_Abstract {
 
 				unset( $data['url'] );
 
-				$args       = array(
+				$args      = array(
 					'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
 					'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
 				);
-				$script_url = add_query_arg( $args, $async_url );
-				$output    .= '<script async src="' . $script_url . '"></script>'; // @codingStandardsIgnoreLine
+				$async_url = add_query_arg( $args, $async_url );
+				$output   .= '<iframe style="display:none" src="' . $async_url . '"></iframe>'; // @codingStandardsIgnoreLine
 
 				Wprus_Logger::log(
 					sprintf(
@@ -967,7 +971,23 @@ class Wprus_Api_Abstract {
 	protected function setcookie( $name, $value, $expire = 0 ) {
 
 		if ( ! headers_sent() ) {
-			setcookie( $name, $value, $expire, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl() );
+
+			if ( PHP_VERSION_ID < 70300 ) {
+				setcookie( $name, $value, $expire, COOKIEPATH ? COOKIEPATH . '; SameSite=None' : '/; SameSite=None', COOKIE_DOMAIN, true, false );
+			} else {
+				setcookie(
+					$name,
+					$value,
+					array(
+						'expires'  => $expire,
+						'path'     => COOKIEPATH ? COOKIEPATH : '/',
+						'domain'   => COOKIE_DOMAIN,
+						'secure'   => true,
+						'httponly' => false,
+						'samesite' => 'None',
+					)
+				);
+			}
 		} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			headers_sent( $file, $line );
 			trigger_error(  // @codingStandardsIgnoreLine

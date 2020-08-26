@@ -88,6 +88,7 @@ class Wprus_Settings {
 
 	public function require_rewrite_flush() {
 		set_transient( 'wprus_flush', 1, 60 );
+		wp_cache_flush();
 	}
 
 	public function set_cache_policy() {
