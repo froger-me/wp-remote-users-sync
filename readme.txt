@@ -181,10 +181,10 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 = 1.2.6 =
 
 * Fix Object Cache compatibility
-* Optimize compatibility with Safari and iOS devices: use 303 redirects when reaching the login endpoint
+* Optimize compatibility with Safari and iOS devices: use 303 redirects when reaching endpoint needing redirect to avoid further loding WordPress
 * Optimize compatibility with Safari and iOS devices: better logout
-* Refactor asynchroneous User Actions firing
-* Remove outdated Query Monitor integration
+* Refactor asynchronous User Actions firing
+* Remove unused Query Monitor integration
 * Remove `wait.css`, `wait.min.css`, `wait.js`, `wait.min.js`, `wprus-wait.php`
 * Add `wprus-async-processing.php` and `wprus-async-processing-script.php`
 * Update documentation
