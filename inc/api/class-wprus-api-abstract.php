@@ -14,6 +14,12 @@ class Wprus_Api_Abstract {
 	 */
 	protected static $encryption_settings;
 	/**
+	 * The browser support settings.
+	 *
+	 * @var array
+	 */
+	protected static $browser_support_settings;
+	/**
 	 * The whitelist of IP addresses.
 	 *
 	 * @var array
@@ -75,12 +81,23 @@ class Wprus_Api_Abstract {
 	 */
 	protected $remote_async_actions;
 	/**
-	 * The urole handler object.
+	 * The role handler object.
 	 *
 	 * @var Wprus_Api_Role|mixed
 	 */
 	protected $role_handler;
-
+	/**
+	 * Whether the current action is authorized
+	 *
+	 * @var bool
+	 */
+	protected $is_authorized_remote;
+	/**
+	 * The callback URL to return to after processing the action
+	 *
+	 * @var bool
+	 */
+	protected $callback_url;
 
 	/**
 	 * Constructor
@@ -195,6 +212,10 @@ class Wprus_Api_Abstract {
 			self::$encryption_settings = self::$settings_class::get_option( 'encryption' );
 		}
 
+		if ( ! isset( self::$browser_support_settings ) ) {
+			self::$browser_support_settings = self::$settings_class::get_option( 'browser_support' );
+		}
+
 		if ( ! isset( self::$ip_whitelist ) ) {
 			$ip_whitelist = self::$settings_class::get_option( 'ip_whitelist' );
 
@@ -291,8 +312,18 @@ class Wprus_Api_Abstract {
 
 			$result = $this->handle_notification();
 
+			if ( $this->needs_redirect() ) {
+				$url = isset( $data['callback_url'] ) ? $data['callback_url'] : home_url();
+
+				wp_redirect( $url, 303 );
+
+				exit();
+			}
+
 			do_action( 'wprus_after_handle_action_notification', $this->endpoint, $data, $result );
 		}
+
+		add_filter( 'wprus_api_needs_redirect', array( $this, 'needs_redirect' ), 10, 0 );
 	}
 
 	/**
@@ -352,8 +383,9 @@ class Wprus_Api_Abstract {
 			Wprus_Nonce::init( false, false, self::$encryption_settings['token_expiry'] );
 		}
 
-		$message .= ( $origin ) ? ' - ' . $origin : '';
-		$log_type = ( $is_authorized_remote ) ? 'success' : 'alert';
+		$message                   .= ( $origin ) ? ' - ' . $origin : '';
+		$log_type                   = ( $is_authorized_remote ) ? 'success' : 'alert';
+		$this->is_authorized_remote = $is_authorized_remote;
 
 		Wprus_Logger::log( $message, $log_type, 'db_log' );
 
@@ -364,9 +396,16 @@ class Wprus_Api_Abstract {
 				$message = __( 'The remote website encountered the following error: ', 'wprus' ) . $message;
 
 				wp_send_json_error( $message );
-			}
+			} elseif ( $this->needs_redirect() ) {
+				$url = isset( $remote_data['callback_url'] ) ? $remote_data['callback_url'] : home_url();
 
-			exit();
+				wp_redirect( $url, 303 );
+
+				exit();
+			} else {
+
+				exit();
+			}
 		}
 
 		do_action( 'wprus_authorized_access', $this->endpoint, $remote_data, $token, $this );
@@ -399,7 +438,6 @@ class Wprus_Api_Abstract {
 	 * @return bool whether the endpoint can handle async actions
 	 */
 	public function has_remote_async_actions() {
-
 		return false;
 	}
 
@@ -415,16 +453,32 @@ class Wprus_Api_Abstract {
 			return;
 		}
 
-		if ( ! has_action( 'wp_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
-			add_action( 'wp_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
-		}
+		if ( $this->needs_redirect() ) {
 
-		if ( ! has_action( 'admin_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
-			add_action( 'admin_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
-		}
+			if ( ! has_action( 'wp_head', array( $this, 'fire_remote_async_actions' ) ) ) {
+				add_action( 'wp_head', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
+			}
 
-		if ( ! has_action( 'login_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
-			add_action( 'login_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
+			if ( ! has_action( 'admin_head', array( $this, 'fire_remote_async_actions' ) ) ) {
+				add_action( 'admin_head', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
+			}
+
+			if ( ! has_action( 'login_head', array( $this, 'fire_remote_async_actions' ) ) ) {
+				add_action( 'login_head', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
+			}
+		} else {
+
+			if ( ! has_action( 'wp_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
+				add_action( 'wp_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
+			}
+
+			if ( ! has_action( 'admin_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
+				add_action( 'admin_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
+			}
+
+			if ( ! has_action( 'login_footer', array( $this, 'fire_remote_async_actions' ) ) ) {
+				add_action( 'login_footer', array( $this, 'fire_remote_async_actions' ), PHP_INT_MIN - 10, 0 );
+			}
 		}
 
 		if ( ! has_action( 'shutdown', array( $this, 'save_async_actions' ) ) ) {
@@ -733,13 +787,14 @@ class Wprus_Api_Abstract {
 		}
 
 		if ( $actions && $user_id ) {
-			$output = '';
 
-			do_action( 'wprus_before_firing_async_actions', $this->endpoint, $actions );
+			if ( $this->needs_redirect() ) {
+				do_action( 'wprus_before_firing_async_actions', $this->endpoint, $actions );
 
-			foreach ( $actions as $action_index => $data ) {
-				$url       = trailingslashit( $data['url'] );
-				$async_url = $url . 'wprus/' . trailingslashit( $this->endpoint );
+				$data                 = array_pop( $actions );
+				$data['callback_url'] = $this->get_redirect_url();
+				$url                  = trailingslashit( $data['url'] );
+				$async_url            = $url . 'wprus/' . trailingslashit( $this->endpoint );
 
 				unset( $data['url'] );
 
@@ -748,26 +803,70 @@ class Wprus_Api_Abstract {
 					'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
 				);
 				$async_url = add_query_arg( $args, $async_url );
-				$output   .= '<iframe style="display:none" src="' . $async_url . '"></iframe>'; // @codingStandardsIgnoreLine
+				$output    = $this->get_async_action_output( $async_url, true );
 
+				update_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions', $actions );
 				Wprus_Logger::log(
 					sprintf(
-						// translators: %1$s is the url of the script ; %2$s is the action called
-						__( 'Added %1$s async URL in %2$s', 'wprus' ),
+						// translators: %1$s is the url of the endpoint ; %2$s is the action called
+						__( 'Ready to redirect to %1$s async URL in %2$s', 'wprus' ),
 						$async_url,
 						current_filter()
 					),
 					'info',
 					'db_log'
 				);
+
+				echo $output; // @codingStandardsIgnoreLine
+				do_action( 'wprus_after_firing_async_actions', $this->endpoint, $actions );
+
+				exit();
+			} else {
+				$output = '';
+
+				do_action( 'wprus_before_firing_async_actions', $this->endpoint, $actions );
+
+				foreach ( $actions as $action_index => $data ) {
+					$url       = trailingslashit( $data['url'] );
+					$async_url = $url . 'wprus/' . trailingslashit( $this->endpoint );
+
+					unset( $data['url'] );
+
+					$args      = array(
+						'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
+						'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
+					);
+					$async_url = add_query_arg( $args, $async_url );
+					$output   .= $this->get_async_action_output( $async_url );
+
+					Wprus_Logger::log(
+						sprintf(
+							// translators: %1$s is the url of the script ; %2$s is the action called
+							__( 'Added %1$s async URL in %2$s', 'wprus' ),
+							$async_url,
+							current_filter()
+						),
+						'info',
+						'db_log'
+					);
+				}
+
+				echo $output; // @codingStandardsIgnoreLine
+				do_action( 'wprus_after_firing_async_actions', $this->endpoint, $actions );
+				delete_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions' );
+
+				$this->remote_async_actions = array();
 			}
-
-			echo $output; // @codingStandardsIgnoreLine
-			do_action( 'wprus_after_firing_async_actions', $this->endpoint, $actions );
-			delete_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions' );
-
-			$this->remote_async_actions = array();
 		}
+	}
+
+	/**
+	 * Determines wether the endpoint needs to redirect the current page
+	 *
+	 * @return bool wether the endpoint needs to redirect the current page
+	 */
+	public function needs_redirect() {
+		return false;
 	}
 
 	/**
@@ -1063,7 +1162,6 @@ class Wprus_Api_Abstract {
 	 * @return bool The sanitized data
 	 */
 	protected function sanitize( $data ) {
-
 		return $data;
 	}
 
@@ -1073,10 +1171,79 @@ class Wprus_Api_Abstract {
 	 * @return array The instance's endpoint entries
 	 */
 	protected function get_endpoints() {
-
 		return array(
 			$this->endpoint => $this->endpoint . '/?',
 		);
+	}
+
+	/**
+	 * Get the URL to redirect to when performing async actions requiring redirections
+	 *
+	 * @param string $ajax_fallback The URL to fallback to in case we're in an ajax request ; default false, which will result to home_url()
+	 * @return string the current URL
+	 */
+	protected function get_redirect_url( $ajax_fallback = false ) {
+		$parts = wp_parse_url( home_url() );
+		$url   = $parts['scheme'] . '://' . $parts['host'] . add_query_arg( null, null );
+
+		if ( false !== strpos( $url, 'admin-ajax.php' ) ) {
+			$ajax_fallback = ( $ajax_fallback ) ? $ajax_fallback : home_url();
+			$url           = apply_filters( 'wprus_get_redirect_url_ajax', $ajax_fallback, $this->endpoint );
+		}
+
+		return $url;
+	}
+
+	protected function get_async_action_output( $async_url, $redirect = false ) {
+
+		if ( ! $redirect ) {
+			return '<iframe style="display:none" src="' . $async_url . '"></iframe>'; // @codingStandardsIgnoreLine
+		}
+
+		ob_start();
+
+		$template = apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_async-processing',
+			WPRUS_PLUGIN_PATH . 'inc/templates/async-processing.php'
+		);
+
+		if ( ! file_exists( $template ) ) {
+			$template = WPRUS_PLUGIN_PATH . 'inc/templates/async-processing.php';
+		}
+
+		load_template( $template );
+
+		$output  = ob_get_clean();
+		$search  = array(
+			'/\>[^\S ]+/s',
+			'/[^\S ]+\</s',
+			'/(\s)+/s',
+			'/<!--(.|\s)*?-->/',
+		);
+		$replace = array(
+			'>',
+			'<',
+			'\\1',
+			'',
+		);
+		$output  = preg_replace( $search, $replace, $output );
+
+		ob_start();
+
+		$template = apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_async-processing-script',
+			WPRUS_PLUGIN_PATH . 'inc/templates/async-processing-script.php'
+		);
+
+		if ( ! file_exists( $template ) ) {
+			$template = WPRUS_PLUGIN_PATH . 'inc/templates/async-processing-script.php';
+		}
+
+		require_once $template;
+
+		$output = ob_get_clean();
+
+		return $output;
 	}
 
 }

@@ -16,19 +16,19 @@ If you run multiple websites and want to keep users separated, but synchronise t
 This plugin adds the following major features to WordPress:
 
 * **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, import/export users, and view activity logs.
-* **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing user actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
+* **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing User Actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
 * **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
 * **Activity Logs:** when enabled, all communications between connected sites is logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
-* **Customizable:** developers can add their own user actions using action and filter hooks, and more.
+* **Customizable:** developers can add their own User Actions using action and filter hooks, and more.
 * **Unlimited websites, unlimited features:** there are no restrictions in the number of websites to connect together, and no premium version feature restrictions shenanigans - WP Remote Users Sync is fully-featured right out of the box.
 
 ___
 
 ## Adding User Actions
 
-Developers can extend the plugin and add their own custom user actions by using a few filter and action hooks as well as a class inheriting `Wprus_Api_Abstract`.  
+Developers can extend the plugin and add their own custom User Actions by using a few filter and action hooks as well as a class inheriting `Wprus_Api_Abstract`.  
 Below is a simple example of implementation of an `Example` action calling the `example` API endpoint, firing 1 synchronous request and 1 asynchronous request whenever the `wp` action hook is called by WordPress, and logs the received data (not to be used in production environment!).  
 
 ### Implementing filter and actions hooks and including a custom User Action API class - example
@@ -652,6 +652,7 @@ Filters index:
 * [wprus_request_token_timeout](#user-content-wprus_request_token_timeout)
 * [wprus_request_token_retry_timeout](#user-content-wprus_request_token_retry_timeout)
 * [wprus_is_authorized_remote](#user-content-wprus_is_authorized_remote)
+* [wprus_debug](#user-content-wprus_debug)
 
 ___
 
@@ -851,7 +852,7 @@ ___
 apply_filters( 'wprus_template_' . $template_slug, (string) $template_path );
 ```
 **Description**  
-Filter the template path of the main page and other elements of the plugin.  
+Filter a template of the plugin.  
 This is actually a combination of filters, where the full name of the filter is determined by the `$template_slug` variable.
 Possible values for `$template_slug`:
 * `submit-settings-metabox`
@@ -865,6 +866,8 @@ Possible values for `$template_slug`:
 * `import-metabox`
 * `main-settings-page`
 * `log-row`
+* `async-processing`
+* `async-processing-script`
 
 **Parameters**  
 $template_path
@@ -1009,6 +1012,20 @@ $remote_addr
 > (string) The IP address received in the `REMOTE_ADDR` header.  
 
 $ip_whitelist
-> (mixed) And array of strings as defined in the "IP Whitelist" settings.
+> (mixed) An array of strings as defined in the "IP Whitelist" settings.
 
+___
+
+#### wprus_debug
+
+```php
+apply_filters( 'wprus_debug', bool $debug );
+```
+
+**Description**  
+Filter wether to activate debug mode (PHP error logs, JavaScript console messages, JavaScript alerts if any).  
+
+**Parameters**  
+$debug
+> (bool) Wether debug mode is activated - default `WP_DEBUG` constant value.  
 ___

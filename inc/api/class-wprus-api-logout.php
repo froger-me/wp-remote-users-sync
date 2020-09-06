@@ -15,24 +15,15 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 	}
 
 	public function has_remote_async_actions() {
-
 		return true;
 	}
 
 	public function handle_notification() {
-		$result = false;
+		global $is_safari;
 
-		if ( ! is_user_logged_in() ) {
-			Wprus_Logger::log(
-				__( 'Logout action failed - the user is already logged out.', 'wprus' ),
-				'warning',
-				'db_log'
-			);
-
-			return $result;
-		}
-
-		$data = $this->get_data_get();
+		$result  = false;
+		$proceed = true;
+		$data    = $this->get_data_get();
 
 		if ( ! $this->validate( $data ) ) {
 			Wprus_Logger::log(
@@ -41,20 +32,59 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 				'db_log'
 			);
 
-			return $result;
+			$proceed = false;
 		}
 
 		$data = $this->sanitize( $data );
 		$site = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
 
-		if ( $site ) {
+		if (
+			$proceed &&
+			! get_current_user_id() &&
+			(
+				self::$browser_support_settings['force_login_logout_strict'] ||
+				$is_safari ||
+				1 === preg_match( '/iPhone|iPad/', $_SERVER['HTTP_USER_AGENT'] )
+			) &&
+			! self::$browser_support_settings['force_disable_login_logout_strict']
+		) {
+			$user = get_user_by( 'login', $data['username'] );
+
+			if ( $user ) {
+				wp_set_current_user( $user->ID );
+			}
+		}
+
+		if ( ! get_current_user_id() ) {
+			Wprus_Logger::log(
+				__( 'Logout action failed - the user is already logged out.', 'wprus' ),
+				'warning',
+				'db_log'
+			);
+
+			$proceed = false;
+		}
+
+		if ( $site && $proceed ) {
 			$user = get_user_by( 'login', $data['username'] );
 
 			if ( $user && get_current_user_id() === $user->ID ) {
 				$result = true;
 
-				wp_destroy_current_session();
-				wprus_clear_auth_cookie();
+				if (
+					(
+						self::$browser_support_settings['force_login_logout_strict'] ||
+						$is_safari ||
+						1 === preg_match( '/iPhone|iPad/', $_SERVER['HTTP_USER_AGENT'] )
+					) &&
+					! self::$browser_support_settings['force_disable_login_logout_strict']
+				) {
+					wp_destroy_all_sessions();
+				} else {
+					wp_destroy_current_session();
+					wprus_clear_auth_cookie();
+				}
+
 				wp_set_current_user( 0 );
 				do_action( 'wp_logout' );
 				Wprus_Logger::log(
@@ -90,7 +120,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			}
-		} else {
+		} elseif ( ! $site ) {
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller
@@ -143,7 +173,9 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 	 *******************************************************************/
 
 	protected function validate( $data ) {
-		$valid = parent::validate( $data ) && username_exists( $data['username'] );
+		$valid =
+			parent::validate( $data ) &&
+			username_exists( $data['username'] );
 
 		return $valid;
 	}

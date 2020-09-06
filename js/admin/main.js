@@ -251,10 +251,9 @@ jQuery(document).ready(function($) {
 				keep_role                     : $('#wprus_export_keep_roles').val(),
 				user_roles                    : $('#wprus_roles_export_select').val(),
 				meta_keys                     : $('#wprus_metadata_export_select').val(),
+				user_list                     : $('#wprus_export_users').val(),
 				doing_import_export_operation : 1
 			};
-
-		console.log(data);
 
 		button.attr('disabled', 'disabled');
 		button.next().css('visibility', 'visible');
@@ -424,10 +423,74 @@ jQuery(document).ready(function($) {
 		}
 	});
 
+	$('#wprus_export_users').select2({
+			width: '100%',
+			cache: true,
+			closeOnSelect: false,
+			ajax: {
+				url: WPRUS.ajax_url,
+				dataType: 'json',
+				language: WPRUS.locale,
+				cache: false,
+				type: 'POST',
+				data: function(params) {
+					var data = {
+						q: params.term,
+						page: params.page || 1,
+						action: 'wprus_get_usernames',
+						nonce: $('#wprus_import_export_nonce').val()
+					};
+
+					return data;
+				},
+				processResults: function(response) {
+					var options = [];
+
+					if (response && response.success && response.data) {
+						$.each(response.data.users, function(index, user) {
+							options.push(
+								{
+									id: user.username,
+									text: user.username
+								}
+							);
+						});
+					}
+
+					return {
+						'results': options,
+						'pagination': {
+							'more': response.data.more
+						}
+					};
+				}
+			}
+		});
+
 	$('.wprus-help-title').on('click', function(e) {
 		e.preventDefault();
 		$(this).next().slideToggle(200);
 	});
+
+	$('#wprus_force_login_redirect, #wprus_disable_login_redirect').on('change', function() {
+		updateBrowserSupportUI();
+	});
+
+	function updateBrowserSupportUI() {
+
+		if ( $('#wprus_force_login_redirect').prop('checked') ) {
+			$('#wprus_disable_login_redirect').prop('checked', false);
+			$('#wprus_disable_login_redirect').attr('disabled', 'disabled');
+		} else if( $('#wprus_disable_login_redirect').prop('checked') ) {
+			$('#wprus_force_login_redirect').prop('checked', false);
+			$('#wprus_force_login_redirect').attr('disabled', 'disabled');
+		} else {
+			$('#wprus_force_login_redirect').removeAttr('disabled');
+			$('#wprus_disable_login_redirect').removeAttr('disabled');
+		}
+	}
+
+	updateBrowserSupportUI();
 
 	$('.wprus-ui-wait').show();
 });

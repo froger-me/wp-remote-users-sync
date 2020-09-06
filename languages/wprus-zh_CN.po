@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP Remote Users Sync\n"
-"POT-Creation-Date: 2020-04-23 19:49+0800\n"
-"PO-Revision-Date: 2020-04-23 20:20+0800\n"
-"Last-Translator: WordPress大学 <<support@wpdaxue.com>>\n"
-"Language-Team: WordPress大学 <<support@wpdaxue.com>>\n"
+"POT-Creation-Date: 2020-08-29 15:19+0000\n"
+"PO-Revision-Date: 2020-08-29 15:25+0000\n"
+"Last-Translator: Dan Froal\n"
+"Language-Team: Chinese (China)\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Loco https://localise.biz/\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
@@ -20,15 +20,1101 @@ msgstr ""
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"Report-Msgid-Bugs-To: \n"
+"X-Loco-Version: 2.4.3; wp-5.5"
 
-#: inc/class-wprus-import-export.php:303
+#: inc/class-wprus.php:33
+msgid "Failed to create the necessary database table(s)."
+msgstr "无法创建必要的数据库表。"
+
+#: inc/class-wprus-import-export.php:47 inc/class-wprus-import-export.php:193
+msgid "Error: WordPress File System experienced an unknown problem."
+msgstr "错误：WordPress文件系统遇到未知问题。"
+
+#: inc/class-wprus-import-export.php:81 inc/class-wprus-import-export.php:215
+msgid "Error: unauthorized access - please reload the page and try again."
+msgstr "错误：未经授权的访问-请重新加载页面，然后重试。"
+
+#: inc/class-wprus-import-export.php:93
+msgid "Error: Unable to create the export file"
+msgstr "错误：无法创建导出文件"
+
+#. %d is the number of results
+#: inc/class-wprus-import-export.php:152
+#, php-format
+msgid "Warning: export aborted prematurely (%d result)"
+msgid_plural "Warning: export aborted prematurely (%d results)"
+msgstr[0] "警告：导出过早中止（%d结果）"
+msgstr[1] "警告：导出过早中止（%d结果）"
+
+#. %d is the number of results
+#: inc/class-wprus-import-export.php:168
+#, php-format
+msgid "Success: exported %d result"
+msgid_plural "Success: exported %d results"
+msgstr[0] "成功：导出了%d个结果"
+msgstr[1] "成功：导出了%d个结果"
+
+#: inc/class-wprus-import-export.php:185
+msgid ""
+"Error: unauthorized access - please reload the previous page and try again."
+msgstr "错误：未经授权的访问-请重新加载上一页，然后重试。"
+
+#: inc/class-wprus-import-export.php:199
+msgid ""
+"Error: the file was not found on the server. Please try exporting again."
+msgstr "错误：在服务器上找不到文件。请尝试再次导出。"
+
+#: inc/class-wprus-import-export.php:232
+msgid "Something very wrong happened."
+msgstr "发生了非常错误的事情。"
+
+#: inc/class-wprus-import-export.php:237
+msgid "Make sure the uploaded file is a zip archive."
+msgstr "确保上传的文件是zip存档。"
+
+#: inc/class-wprus-import-export.php:245
+msgid "The uploaded file exceeds the upload_max_filesize directive in php.ini."
+msgstr "上传的文件超过了php.ini中的upload_max_filesize指令限制。"
+
+#: inc/class-wprus-import-export.php:249
+msgid ""
+"The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in "
+"the HTML form."
+msgstr "上载的文件超出了HTML表单中指定的MAX_FILE_SIZE指令。"
+
+#: inc/class-wprus-import-export.php:253
+msgid "The uploaded file was only partially uploaded."
+msgstr "上传的文件仅部分上传。"
+
+#: inc/class-wprus-import-export.php:257
+msgid "No file was uploaded."
+msgstr "没有上传文件。"
+
+#: inc/class-wprus-import-export.php:261
+msgid "Missing a temporary folder."
+msgstr "缺少临时文件夹。"
+
+#: inc/class-wprus-import-export.php:265
+msgid "Failed to write file to disk."
+msgstr "无法将文件写入磁盘。"
+
+#: inc/class-wprus-import-export.php:269
+msgid ""
+"A PHP extension stopped the file upload. PHP does not provide a way to "
+"ascertain which extension caused the file upload to stop; examining the list "
+"of loaded extensions with phpinfo() may help."
+msgstr ""
+"一个PHP扩展程序停止了文件上传。 PHP没有提供一种方法来确定哪个扩展导致文件上传停止。使用phpinfo()检查加载的扩展列表可能会有所帮助。"
+
+#: inc/class-wprus-import-export.php:276
+msgid "Make sure the uploaded file is not empty."
+msgstr "确保上传的文件不为空。"
+
+#. %d is the number of results
+#: inc/class-wprus-import-export.php:290
+#, php-format
+msgid "Imported %d user"
+msgid_plural "Imported %d users"
+msgstr[0] "已导入%d个用户"
+msgstr[1] "已导入%d个用户"
+
+#. %d is the number of errors
+#: inc/class-wprus-import-export.php:302
 #, php-format
 msgid " - %d error:"
 msgid_plural " - %d errors:"
 msgstr[0] " - %d 个错误："
 msgstr[1] " - %d 个错误："
 
+#: inc/class-wprus-import-export.php:364
+msgid "Failed to open the file."
+msgstr "无法打开文件。"
+
+#. %1$s is the username, %2$s is the line , %3$s is the error
+#: inc/class-wprus-import-export.php:435
+#, php-format
+msgid "Error importing user \"%1$s\" on line %2$s - %3$s"
+msgstr "在第%2$s-%3$s行中导入用户“%1$s”时出错"
+
+#: inc/class-wprus-logger.php:19
+msgid "Info"
+msgstr "信息"
+
+#: inc/class-wprus-logger.php:20
+msgid "Success"
+msgstr "成功"
+
+#: inc/class-wprus-logger.php:21
+msgid "Warning"
+msgstr "警告"
+
+#: inc/class-wprus-logger.php:22
+msgid "Alert"
+msgstr "提醒"
+
+#. %d is the current number of log entries
+#: inc/class-wprus-logger.php:123 inc/templates/admin/logs-metabox.php:27
+#, php-format
+msgid "Clear All (%d entries)"
+msgstr "全部删除（%d个条目）"
+
+#: inc/class-wprus-logger.php:174
+msgid "(No message)"
+msgstr "（无信息）"
+
+#: inc/class-wprus-settings.php:24 inc/templates/admin/help.php:22
+msgid "Login"
+msgstr "登录"
+
+#: inc/class-wprus-settings.php:25 inc/templates/admin/help.php:26
+msgid "Logout"
+msgstr "注销"
+
+#: inc/class-wprus-settings.php:26 inc/templates/admin/help.php:30
+msgid "Create"
+msgstr "创建"
+
+#: inc/class-wprus-settings.php:27 inc/templates/admin/help.php:33
+msgid "Update"
+msgstr "更新"
+
+#: inc/class-wprus-settings.php:28 inc/templates/admin/help.php:37
+msgid "Delete"
+msgstr "删除"
+
+#: inc/class-wprus-settings.php:29 inc/templates/admin/help.php:40
+msgid "Password"
+msgstr "密码"
+
+#: inc/class-wprus-settings.php:30 inc/templates/admin/help.php:44
+msgid "Roles"
+msgstr "角色"
+
+#: inc/class-wprus-settings.php:31 inc/templates/admin/help.php:49
+msgid "Metadata"
+msgstr "元数据"
+
+#: inc/class-wprus-settings.php:107
+msgid "Missing Encryption Key"
+msgstr "缺少加密密钥"
+
+#: inc/class-wprus-settings.php:108
+msgid "Missing Authentication Key"
+msgstr "缺少验证密钥"
+
+#: inc/class-wprus-settings.php:123
+msgid "Edit configuration"
+msgstr "编辑配置"
+
+#: inc/class-wprus-settings.php:125
+msgid "WP Remote Users Sync is not ready. "
+msgstr "WP远程用户同步尚未准备好。 "
+
+#. Name of the plugin
+#: inc/class-wprus-settings.php:139
+#: inc/templates/admin/main-settings-page.php:9
+msgid "WP Remote Users Sync"
+msgstr "WP远程用户同步"
+
+#: inc/class-wprus-settings.php:173
+msgid ""
+"Are you sure you want to remove this site? It will only take effect after "
+"saving the settings."
+msgstr "您确定要删除此网站吗？该设置仅在保存设置后生效。"
+
+#: inc/class-wprus-settings.php:174
+msgid ""
+"An undefined error occured - please visit the permalinks settings page and "
+"try again."
+msgstr "发生未定义的错误-请访问永久链接设置页面，然后重试。"
+
+#: inc/class-wprus-settings.php:175
+msgid ""
+"The Remote Site address must start with \"http\".\n"
+"Ideally, only secure websites (address starting with \"https\") should be "
+"connected together."
+msgstr ""
+"远程站点地址必须以“http”开头。\n"
+"理想情况下，应仅将安全网站（地址以“https”开头）连接在一起。"
+
+#: inc/class-wprus-settings.php:176
+msgid ""
+"Error: invalid file name. Please use a file exported with WP Remote Users "
+"Sync."
+msgstr "错误：无效的文件名。请使用通过WP Remote Users Sync导出的文件。"
+
+#: inc/class-wprus-settings.php:177
+msgid ""
+"Error: invalid file. Please use a non-empty file exported with WP Remote "
+"Users Sync."
+msgstr "错误：文件无效。请使用随WP Remote Users Sync导出的非空文件。"
+
+#: inc/class-wprus-settings.php:178
+msgid ""
+"Error: the server hung up unexpectedly. Please try to import users in "
+"smaller batches."
+msgstr "错误：服务器意外挂起。请尝试批量导入用户。"
+
+#: inc/class-wprus-settings.php:229
+msgid "Save Settings"
+msgstr "保存设置"
+
+#: inc/class-wprus-settings.php:236
+msgid "Add Remote Site"
+msgstr "添加远程站点"
+
+#: inc/class-wprus-settings.php:243
+msgid "Authentication & Encryption"
+msgstr "身份验证和加密"
+
+#: inc/class-wprus-settings.php:250
+msgid "IP Whitelist"
+msgstr "IP白名单"
+
+#: inc/class-wprus-settings.php:257
+msgid "Logs"
+msgstr "日志"
+
+#: inc/class-wprus-settings.php:274
+msgid "Export Users"
+msgstr "导出用户"
+
+#: inc/class-wprus-settings.php:284
+msgid "Import Users"
+msgstr "导入用户"
+
+#: inc/class-wprus-settings.php:465
+msgid "Sorry, you are not allowed to access this page."
+msgstr "抱歉，您无权访问此页面。"
+
+#: inc/api/class-wprus-api-login.php:27
+msgid "Login action failed - a user is already logged in."
+msgstr "登录操作失败-用户已经登录。"
+
+#: inc/api/class-wprus-api-login.php:39
+msgid "Login action failed - received invalid data."
+msgstr "登录操作失败-接收到无效数据。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-login.php:62
+#, php-format
+msgid "Login action - successfully logged in user \"%1$s\" from %2$s."
+msgstr "登录操作-已成功从%2$s登录用户“%1$s”。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-login.php:73
+#, php-format
+msgid "Login action aborted - user \"%1$s\" from %2$s does not exist locally."
+msgstr "登录操作被中止-%2$s中的用户“%1$s”在本地不存在。"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-login.php:85
+#, php-format
+msgid "Login action failed - incoming login action not enabled for %s"
+msgstr "登录操作失败-未为%s启用传入的登录操作"
+
+#. %s is the username
+#: inc/api/class-wprus-api-login.php:112
+#, php-format
+msgid "Login action - enqueueing asynchronous actions for username \"%s\""
+msgstr "登录操作-为用户名“%s”加入异步操作"
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-role.php:48 inc/api/class-wprus-api-role.php:78
+#, php-format
+msgid ""
+"Role action aborted - role %1$s for user \"%2$s\" from %3$s not accepted"
+msgstr "角色操作已中止-来自“%3$s”的用户“%2$s”的角色%1$s未被接受"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-role.php:96
+#, php-format
+msgid "Role action failed - incoming role action not enabled for %s"
+msgstr "角色操作失败-未为%s启用传入角色操作"
+
+#: inc/api/class-wprus-api-update.php:29 inc/api/class-wprus-api-create.php:23
+msgid "Create action failed - received invalid data."
+msgstr "创建操作失败-接收到无效数据。"
+
+#. %1$s is the username ; %2$s is the caller
+#: inc/api/class-wprus-api-update.php:59
+#, php-format
+msgid ""
+"Update action failed - \"%1$s\" from %2$s does not exist locally and the "
+"incoming Create action is not enabled."
+msgstr "更新操作失败-来自%2$s的“%1$s”在本地不存在，并且未启用传入的“创建”操作。"
+
+#. %1$s is the error ; %2$s is the username ; %3$s is the caller
+#: inc/api/class-wprus-api-update.php:78
+#, php-format
+msgid "Update action failed - \"%1$s\" for user \"%2$s\" from %3$s."
+msgstr "更新操作失败-用户“%2$s”的“%1$s”来自%3$s。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-update.php:93
+#, php-format
+msgid "Update action - successfully updated user \"%1$s\" from %2$s."
+msgstr "更新操作-已成功从%2$s更新用户“%1$s”。"
+
+#. %1$s is the username ; %2$s is the caller
+#: inc/api/class-wprus-api-update.php:109
+#, php-format
+msgid ""
+"Update action aborted - performed Create action instead: \"%1$s\" from %2$s "
+"was not found locally."
+msgstr "更新操作已中止-已执行创建操作：相反，在本地找不到%2$s中的“%1$s”。"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-update.php:129
+#, php-format
+msgid "Update action failed - incoming update action not enabled for %s"
+msgstr "更新操作失败-未为%s启用传入的更新操作"
+
+#. %s is the username
+#: inc/api/class-wprus-api-update.php:169
+#, php-format
+msgid "Update action - firing action for username \"%s\""
+msgstr "更新操作-用户名“%s”的触发操作"
+
+#: inc/api/class-wprus-api-delete.php:22
+msgid "Delete action failed - received invalid data."
+msgstr "删除操作失败-接收到无效数据。"
+
+#. %1$s is the username ; %2$s is the caller
+#: inc/api/class-wprus-api-delete.php:50
+#, php-format
+msgid "Delete action failed - user \"%1$s\" from %2$s was not found locally."
+msgstr "删除操作失败-在本地找不到%2$s中的用户“%1$s”。"
+
+#. %1$s is the username, %2$s is the caller, %3$s is the reassign username
+#: inc/api/class-wprus-api-delete.php:63
+#, php-format
+msgid ""
+"Delete action - successfully deleted user \"%1$s\" from %2$s but failed to "
+"reassign content to %3$s."
+msgstr "删除操作-已成功从%2$s中删除用户“%1$s”，但未能将内容重新分配给%3$s。"
+
+#. %1$s is the username, %2$s is the caller, %3$s is the reassign username
+#: inc/api/class-wprus-api-delete.php:75
+#, php-format
+msgid ""
+"Delete action - successfully deleted user \"%1$s\" from %2$s and reassigned "
+"content to %3$s."
+msgstr "删除操作-成功将用户“%1$s”从%2$s中删除，并将内容重新分配给了%3$s。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-delete.php:87
+#, php-format
+msgid "Delete action - successfully deleted user \"%1$s\" from %2$s."
+msgstr "删除操作-已成功从%2$s中删除用户“%1$s”。"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-delete.php:100
+#, php-format
+msgid "Delete action failed - incoming delete action not enabled for %s"
+msgstr "删除操作失败-未为%s启用传入的删除操作"
+
+#. %s is the username
+#: inc/api/class-wprus-api-delete.php:119
+#, php-format
+msgid "Delete action - firing action for username \"%s\""
+msgstr "删除操作-用户名“%s”的触发操作"
+
+#: inc/api/class-wprus-api-password.php:59
+msgid "Password action failed - received invalid data."
+msgstr "密码操作失败-接收到无效数据。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-password.php:80
+#, php-format
+msgid ""
+"Password action - password successfully reset for user \"%1$s\" from %2$s."
+msgstr "密码操作-已成功从%2$s为用户“%1$s”重置密码。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-password.php:91
+#, php-format
+msgid ""
+"Password action aborted - cannot reset, user \"%1$s\" from %2$s does not "
+"exist locally."
+msgstr "密码操作已中止-无法重置，%2$s中的用户“%1$s”在本地不存在。"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-password.php:103
+#, php-format
+msgid "Password action failed - incoming password action not enabled for %s"
+msgstr "密码操作失败-未为%s启用传入密码操作"
+
+#. %s is the username
+#: inc/api/class-wprus-api-password.php:126
+#, php-format
+msgid "Password action - firing action reset for username \"%s\""
+msgstr "密码操作-用户名“%s”的触发操作重置"
+
+#: inc/api/class-wprus-api-abstract.php:181
+msgid "Could not decrypt data: invalid bundle."
+msgstr "无法解密数据：无效的捆绑包。"
+
+#: inc/api/class-wprus-api-abstract.php:222
+msgid "Token"
+msgstr "令牌"
+
+#. %1$s is the remote site ; %2$s is the action
+#: inc/api/class-wprus-api-abstract.php:230
+#, php-format
+msgid "Token created: site %1$s - action \"%2$s\""
+msgstr "已创建令牌：网站%1$s-操作“%2$s”"
+
+#: inc/api/class-wprus-api-abstract.php:237
+msgid "Failed to create token - invalid payload"
+msgstr "无法创建令牌-有效载荷无效"
+
+#: inc/api/class-wprus-api-abstract.php:319
+msgid "Unauthorized access (invalid token)"
+msgstr "未经授权的访问（无效的令牌）"
+
+#: inc/api/class-wprus-api-abstract.php:342
+msgid "Access granted"
+msgstr "登录成功"
+
+#. %s is the remote IP address
+#: inc/api/class-wprus-api-abstract.php:345
+#, php-format
+msgid "Unauthorized access (invalid remote IP address %s)"
+msgstr "未经授权的访问（无效的远程IP地址%s）"
+
+#: inc/api/class-wprus-api-abstract.php:347
+msgid "Unauthorized access (invalid method)"
+msgstr "未经授权的访问（无效方法）"
+
+#: inc/api/class-wprus-api-abstract.php:364
+msgid "The remote website encountered the following error: "
+msgstr "远程网站遇到以下错误： "
+
+#: inc/api/class-wprus-api-abstract.php:487
+msgid ""
+"A ping was received but the initiator did not use matching encryption and "
+"signature action keys"
+msgstr "收到ping命令，但发起方未使用匹配的加密和签名操作密钥"
+
+#: inc/api/class-wprus-api-abstract.php:488
+msgid ""
+"Mismatch Encryption settings - please make sure the action keys are "
+"correctly configured on both sites."
+msgstr "不匹配的加密设置-请确保在两个站点上正确配置了操作键。"
+
+#: inc/api/class-wprus-api-abstract.php:499
+msgid "A ping was received but the initiator did not send the proper data."
+msgstr "收到ping命令，但发起方未发送正确的数据。"
+
+#: inc/api/class-wprus-api-abstract.php:500
+msgid ""
+"Malformed data - the test request was received but the data could not be "
+"extracted."
+msgstr "数据格式错误-收到测试请求，但无法提取数据。"
+
+#: inc/api/class-wprus-api-abstract.php:505
+msgid "incoming"
+msgstr "传入"
+
+#: inc/api/class-wprus-api-abstract.php:505
+msgid "outgoing"
+msgstr "传出"
+
+#. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
+#: inc/api/class-wprus-api-abstract.php:516
+#, php-format
+msgid ""
+"Ping received for activated action \"%1$s\" from %2$s with remote IP %3$s "
+"(%4$s)"
+msgstr "从远程IP为%3$s（%4$s）的%2$s收到针对激活操作“%1$s”的Ping"
+
+#. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
+#: inc/api/class-wprus-api-abstract.php:531
+#, php-format
+msgid "Ping success for action \"%1$s\" from %2$s with remote IP %3$s (%4$s)"
+msgstr "使用远程IP%3$s（%4$s）从%2$s ping操作“%1$s”成功"
+
+#. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
+#: inc/api/class-wprus-api-abstract.php:547
+#, php-format
+msgid ""
+"Ping received for deactivated action \"%1$s\" from %2$s with remote IP %3$s "
+"(%4$s)"
+msgstr "从远程IP为%3$s（%4$s）的%2$s取消操作“%1$s”收到的Ping"
+
+#. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
+#: inc/api/class-wprus-api-abstract.php:562
+#, php-format
+msgid "\"%1$s\" action is not activated on %2$s with remote IP %3$s (%4$s)."
+msgstr "在具有远程IP%3$s（%4$s）的%2$s上未激活“%1$s”操作。"
+
+#: inc/api/class-wprus-api-abstract.php:608
+#: inc/api/class-wprus-api-abstract.php:621
+msgid "Error contacting the remote site: "
+msgstr "联系远程站点时出错： "
+
+#. %s is the error code
+#: inc/api/class-wprus-api-abstract.php:631
+#, php-format
+msgid " - code: %s - "
+msgstr " - code: %s - "
+
+#: inc/api/class-wprus-api-abstract.php:632
+msgid ""
+"an undefined error occured. Please make sure the address is correct and try "
+"again."
+msgstr "发生未定义的错误。请确保地址正确，然后重试。"
+
+#: inc/api/class-wprus-api-abstract.php:634
+msgid ""
+"On the remote site, please make sure the plugin is activated and that the "
+"permalinks are up to date by visiting the permalinks settings page."
+msgstr "在远程站点上，请访问“永久链接设置”页面，以确保插件已激活并且永久链接是最新的。"
+
+#: inc/api/class-wprus-api-abstract.php:639
+msgid ""
+"On the remote site, please make sure the permalinks are not using the "
+"\"Plain\" option."
+msgstr "在远程站点上，请确保固定链接未使用“朴素”选项。"
+
+#. %1$s is the url of the script ; %2$s is the action called
+#: inc/api/class-wprus-api-abstract.php:756
+#, php-format
+msgid "Added %1$s async URL in %2$s"
+msgstr "已在%2$s中添加%1$s异步网址"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-abstract.php:881
+#, php-format
+msgid "Renewing token for %s"
+msgstr "正在续订%s的令牌"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-abstract.php:906
+#, php-format
+msgid "Failed to renew token for %s - retrying..."
+msgstr "无法为%s续订令牌-正在重试..."
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-abstract.php:921
+#, php-format
+msgid "Failed to renew token for %s"
+msgstr "无法续签%s的令牌"
+
+#: inc/api/class-wprus-api-logout.php:27
+msgid "Logout action failed - the user is already logged out."
+msgstr "注销操作失败-用户已经注销。"
+
+#: inc/api/class-wprus-api-logout.php:39
+msgid "Logout action failed - received invalid data."
+msgstr "注销操作失败-接收到无效数据。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-logout.php:63
+#, php-format
+msgid "Logout action - successfully logged out user \"%1$s\" from %2$s."
+msgstr "注销操作-已成功从%2$s注销用户“%1$s”。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-logout.php:74
+#, php-format
+msgid "Logout action aborted - user \"%1$s\" from %2$s does not exist locally."
+msgstr "注销操作已中止-%2$s中的用户“%1$s”在本地不存在。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-logout.php:85
+#, php-format
+msgid "Logout action aborted - user \"%1$s\" from %2$s was not logged in."
+msgstr "注销操作已中止-来自%2$s的用户“%1$s”未登录。"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-logout.php:97
+#, php-format
+msgid "Logout action failed - incoming logout action not enabled for %s"
+msgstr "注销操作失败-未为%s启用传入注销操作"
+
+#. %s is the username
+#: inc/api/class-wprus-api-logout.php:123
+#, php-format
+msgid "Logout action - enqueueing asynchronous actions for username \"%s\""
+msgstr "注销操作-为用户名“%s”加入异步操作"
+
+#. %1$s is the error ; %2$s is the username ; %3$s is the caller
+#: inc/api/class-wprus-api-create.php:52
+#, php-format
+msgid "Create action failed - \"%1$s\" for user \"%2$s\" from %3$s."
+msgstr "创建操作失败-来自“%3$s”的用户“%2$s”的“%1$s”。"
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-create.php:67
+#, php-format
+msgid "Create action - successfully created user \"%1$s\" from %2$s."
+msgstr "创建操作-已成功从%2$s创建用户“%1$s”。"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-create.php:87
+#, php-format
+msgid "Create action failed - incoming create action not enabled for %s"
+msgstr "创建操作失败-未为%s启用传入的创建操作"
+
+#. %s is the username
+#: inc/api/class-wprus-api-create.php:127
+#, php-format
+msgid "Create action - firing action for username \"%s\""
+msgstr "创建操作-为用户名“%s”触发操作"
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:205
+#, php-format
+msgid "Metadata action - added metadata %1$s for user \"%2$s\" from %3$s"
+msgstr "元数据操作-为%3$s中的用户“%2$s”添加了元数据%1$s"
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:212
+#, php-format
+msgid "Metadata action - updated metadata %1$s for user \"%2$s\" from %3$s"
+msgstr "元数据操作-已更新%3$s中用户“%2$s”的元数据%1$s"
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:219
+#, php-format
+msgid "Metadata action - deleted metadata %1$s for user \"%2$s\" from %3$s"
+msgstr "元数据操作-已从%3$s中删除用户“%2$s”的元数据%1$s"
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:238
+#, php-format
+msgid ""
+"Metadata action - failed to add metadata %1$s for user \"%2$s\" from %3$s"
+msgstr "元数据操作-无法为%3$s中的用户“%2$s”添加元数据%1$s"
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:245
+#, php-format
+msgid ""
+"Metadata action - failed to update metadata %1$s for user \"%2$s\" from %3$s"
+msgstr "元数据操作-无法从%3$s更新用户“%2$s”的元数据%1$s"
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:252
+#, php-format
+msgid ""
+"Metadata action - failed to delete metadata %1$s for user \"%2$s\" from %3$s"
+msgstr "元数据操作-无法从%3$s中删除用户“%2$s”的元数据%1$s"
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:270
+#, php-format
+msgid ""
+"Metadata action aborted - metadata %1$s for user \"%2$s\" from %3$s not "
+"accepted"
+msgstr "元数据操作已中止-来自“%3$s”的用户“%2$s”的元数据%1$s"
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-meta.php:288
+#, php-format
+msgid "Metadata action failed - incoming metadata action not enabled for %s"
+msgstr "元数据操作失败-未为%s启用传入的元数据操作"
+
+#. %s is the usernames
+#: inc/api/class-wprus-api-meta.php:306
+#, php-format
+msgid "Metadata action - firing action for username(s) %s"
+msgstr "元数据操作-用户名%s的触发操作"
+
+#: inc/templates/admin/encryption-metabox.php:12
+msgid "Action Token Validity Duration"
+msgstr "动作令牌有效期"
+
+#: inc/templates/admin/encryption-metabox.php:16
+msgid ""
+"Expressed in seconds, the duration after which generated action tokens "
+"expire and need to be renewed."
+msgstr "以秒为单位表示，所生成的动作令牌到期并需要更新的持续时间。"
+
+#: inc/templates/admin/encryption-metabox.php:18
+#: inc/templates/admin/encryption-metabox.php:30
+#: inc/templates/admin/encryption-metabox.php:44
+msgid ""
+"WARNING: Make sure this value is the same for all the websites to "
+"synchronise."
+msgstr "警告：确保要同步的所有网站的此值都相同。"
+
+#: inc/templates/admin/encryption-metabox.php:24
+msgid "Action Encryption Key"
+msgstr "操作加密密钥"
+
+#: inc/templates/admin/encryption-metabox.php:28
+msgid "Ideally a random string, used to encrypt remote operations data."
+msgstr "理想情况下，是一个随机字符串，用于加密远程操作数据。"
+
+#: inc/templates/admin/encryption-metabox.php:32
+#: inc/templates/admin/encryption-metabox.php:46
+msgid "IMPORTANT: For security reasons, keep this value ABSOLUTELY SECRET."
+msgstr "重要信息：出于安全原因，请绝对保留此值。"
+
+#: inc/templates/admin/encryption-metabox.php:38
+msgid "Action Signature Key"
+msgstr "操作签名密钥"
+
+#: inc/templates/admin/encryption-metabox.php:42
+msgid "Ideally a random string, used to authenticate remote operations data."
+msgstr "理想情况下，是一个随机字符串，用于认证远程操作数据。"
+
+#: inc/templates/admin/ip-whitelist-metabox.php:11
+msgid "List of IP addresses of remote sites to authorise (one per line)."
+msgstr "要授权的远程站点的IP地址列表（每行一个）。"
+
+#: inc/templates/admin/ip-whitelist-metabox.php:12
+msgid ""
+"To find the IP addresses, use the \"Test\" button on remote sites while Logs "
+"are enabled and check the local log results."
+msgstr "要查找IP地址，请在启用日志后使用远程站点上的“测试”按钮，并检查本地日志结果。"
+
+#: inc/templates/admin/ip-whitelist-metabox.php:13
+msgid "Leave blank to accept any IP address (not recommended)."
+msgstr "保留空白以接受任何IP地址（不建议）。"
+
+#: inc/templates/admin/site-metabox-template.php:11
+#: inc/templates/admin/site-metabox.php:11
+msgid "Outgoing Actions"
+msgstr "传出操作"
+
+#: inc/templates/admin/site-metabox-template.php:13
+#: inc/templates/admin/site-metabox.php:13
+msgid ""
+"Synchronise user data for actions happening on the current site, sent to the "
+"remote site."
+msgstr "为当前站点上发生的操作同步用户数据，并将其发送到远程站点。"
+
+#: inc/templates/admin/site-metabox-template.php:29
+#: inc/templates/admin/site-metabox-template.php:75
+#: inc/templates/admin/site-metabox.php:29
+#: inc/templates/admin/site-metabox.php:75
+msgid "Test"
+msgstr "测试"
+
+#: inc/templates/admin/site-metabox-template.php:36
+#: inc/templates/admin/site-metabox.php:36
+msgid "List of metadata to transfer (leave empty to transfer none):"
+msgstr "要传输的元数据列表（留空则不传输）："
+
+#: inc/templates/admin/site-metabox-template.php:46
+#: inc/templates/admin/site-metabox.php:46
+msgid "List of roles to transfer (leave empty to transfer none):"
+msgstr "要传输的角色列表（留空则不传输）："
+
+#: inc/templates/admin/site-metabox-template.php:57
+#: inc/templates/admin/site-metabox.php:57
+msgid "Incoming Actions"
+msgstr "传入操作"
+
+#: inc/templates/admin/site-metabox-template.php:59
+#: inc/templates/admin/site-metabox.php:59
+msgid ""
+"Synchronise user data for actions happening on the remote site, received by "
+"the current site."
+msgstr "为当前站点接收到的远程站点上发生的操作同步用户数据。"
+
+#: inc/templates/admin/site-metabox-template.php:82
+#: inc/templates/admin/site-metabox.php:82
+msgid "List of metadata to accept (leave empty to accept all):"
+msgstr "要接受的元数据列表（留空以接受全部）："
+
+#: inc/templates/admin/site-metabox-template.php:92
+#: inc/templates/admin/site-metabox.php:93
+msgid "List of roles to accept (leave empty to accept all):"
+msgstr "要接受的角色列表（留空以接受所有角色）："
+
+#: inc/templates/admin/site-metabox-template.php:101
+#: inc/templates/admin/site-metabox.php:102
+msgid "Merge with existing roles"
+msgstr "与现有角色合并"
+
+#: inc/templates/admin/site-metabox-template.php:106
+#: inc/templates/admin/site-metabox.php:107
+msgid "Remove site configuration"
+msgstr "删除站点配置"
+
+#: inc/templates/admin/authorization-metabox.php:12
+msgid "Proxy IP Address"
+msgstr "代理IP地址"
+
+#: inc/templates/admin/authorization-metabox.php:16
+msgid "The IP address the current site exposes to the internet."
+msgstr "当前站点公开到互联网的IP地址。"
+
+#: inc/templates/admin/authorization-metabox.php:18
+msgid ""
+"Used by the remote sites to determine the origin of incoming actions. Leave "
+"empty if the server IP address is not altered before reaching the remote "
+"sites."
+msgstr "远程站点用来确定传入操作的来源。如果在到达远程站点之前服务器IP地址没有更改，请留空。"
+
+#: inc/templates/admin/authorization-metabox.php:24
+msgid "Allow Anonymous Sync Operations"
+msgstr "允许匿名同步操作"
+
+#: inc/templates/admin/authorization-metabox.php:28
+msgid ""
+"Disable checking the origin of the actions received by the current site "
+"before synchronising."
+msgstr "同步之前，请禁用检查当前站点接收到的操作的来源。"
+
+#: inc/templates/admin/authorization-metabox.php:30
+msgid ""
+"WARNING: this option can potentially open the website and its assciated "
+"connected sites to malicious operations. This is to be used ONLY in case of "
+"advanced maintenance that would invalidate server information on the remote "
+"site, such as prior to using the WP-CLI tool to manipulate user data."
+msgstr ""
+"警告：此选项可能会打开该网站及其相关连接的站点以进行恶意操作。仅在高级维护会导致远程站点上的服务器信息无效的情况下才使用此方法，例如在使用WP-"
+"CLI工具操作用户数据之前。"
+
+#: inc/templates/admin/submit-settings-metabox.php:12
+msgid "Save"
+msgstr "保存"
+
+#: inc/templates/admin/help.php:11
+msgid "How does it work?"
+msgstr "它是如何工作的？"
+
+#: inc/templates/admin/help.php:14
+msgid ""
+"WP Remote Users Sync \"listens\" to changes related to WordPress users, and "
+"fires outgoing \"actions\" to registered remote sites. The registered remote "
+"sites with WP Remote Users Sync installed then catch incoming actions and "
+"react accordingly."
+msgstr ""
+"WP Remote Users Sync“侦听”与WordPress用户相关的更改，并将传出的“操作”触发到已注册的远程站点。安装了WP Remote "
+"Users Sync的注册远程站点然后捕获传入的操作并做出相应的反应。"
+
+#: inc/templates/admin/help.php:15
+msgid ""
+"There is no \"Master Website\": each site is working independently, firing "
+"and receiving actions depending on each site's configuration."
+msgstr "没有“主网站”：每个站点都在独立工作，并根据每个站点的配置触发和接收操作。"
+
+#: inc/templates/admin/help.php:18
+msgid "List of supported actions by default:"
+msgstr "默认情况下支持的操作列表："
+
+#: inc/templates/admin/help.php:22
+msgid ""
+" - Fired when a user logs in. The expected result is a user logged in on all "
+"registered remote sites accepting incoming Login actions."
+msgstr " -当用户登录时触发。预期结果是用户在所有接受远程登录操作的注册远程站点上登录。"
+
+#: inc/templates/admin/help.php:23
+msgid ""
+"The page needs to load without interruption and the network between the user "
+"and the remote sites be accessible for it to take effect, because this "
+"operation relies on browser cookies (the action is fired by a script "
+"asynchronously in the footer of the page after login)."
+msgstr ""
+"该页面需要不间断地加载，并且可以访问用户和远程站点之间的网络才能使其生效，因为此操作依赖于浏览器Cookie（此操作由登录后页面页脚中的脚本异步触发） 。"
+
+#: inc/templates/admin/help.php:26
+msgid ""
+" - Fired when a user logs out. The expected result is a user logged out on "
+"all registered remote sites accepting incoming Logout actions."
+msgstr " -用户注销时触发。预期结果是用户在所有注册的远程站点上注销，接受传入的注销操作。"
+
+#: inc/templates/admin/help.php:27
+msgid ""
+"The page needs to load without interruption and the network between the user "
+"and the remote sites be accessible for it to take effect, because this "
+"operation relies on browser cookies (the action is fired by a script "
+"asynchronously in the footer of the page after logout)."
+msgstr ""
+"该页面需要不间断地加载，并且可以访问用户和远程站点之间的网络才能使其生效，因为此操作依赖于浏览器cookie（注销后页面脚注中的脚本会异步触发该操作） 。"
+
+#: inc/templates/admin/help.php:30
+msgid ""
+" - Fired when a user is created. The expected result is a synchronised user "
+"created on all registered remote sites accepting incoming Create actions "
+"(see Password, Roles and Metadata below for caveats)."
+msgstr ""
+" -创建用户时触发。预期结果是在所有接受注册的远程站点上创建的同步用户上，该用户接受传入的创建操作（有关警告，请参见下面的密码、角色和元数据）。"
+
+#: inc/templates/admin/help.php:33
+msgid ""
+" - Fired when a user is updated, either by the user themselves or another "
+"user. The expected result is up to date and synchronised user information on "
+"all registered remote sites accepting incoming Update actions (see Password, "
+"Roles and Metadata below for caveats)."
+msgstr ""
+" -"
+"由用户自己或另一个用户更新用户时触发。预期结果是最新的，并且在接受传入的更新操作的所有已注册远程站点上同步了用户信息（有关警告，请参阅下面的密码、角色和元数据）。"
+
+#: inc/templates/admin/help.php:34
+msgid ""
+"If the user does not exist on the remote site and the incoming Create action "
+"is enabled, a synchronised user is created instead."
+msgstr "如果远程站点上不存在该用户，并且启用了传入的“创建”操作，则会创建一个同步的用户。"
+
+#: inc/templates/admin/help.php:37
+msgid ""
+" - Fired when a user is deleted. The expected result is the user being "
+"deleted on all registered remote sites accepting incoming Delete actions."
+msgstr " -删除用户时触发。预期结果是在接受传入的删除操作的所有注册远程站点上删除用户。"
+
+#: inc/templates/admin/help.php:40
+msgid ""
+" - Fired when a user resets their password. The expected result is the "
+"password being reset for the user on all registered remote sites accepting "
+"incoming Password actions."
+msgstr " -当用户重置密码时触发。预期结果是在所有接受传入密码操作的注册远程站点上为用户重置密码。"
+
+#: inc/templates/admin/help.php:41
+msgid ""
+"This action also determines whether the passwords are synchronised or should "
+"be ignored during Create and Update actions."
+msgstr "此操作还确定在创建和更新操作期间密码是同步的还是应忽略。"
+
+#: inc/templates/admin/help.php:44
+msgid ""
+" - Does not fire an action of its own per se ; this action determines "
+"whether roles should be synchronised or ignored during Create and Update "
+"actions, depending on specified transferred outgoing and accepted incoming "
+"roles."
+msgstr " -本身不采取行动;此操作确定在创建和更新操作期间应同步还是忽略角色，具体取决于指定的已转移传出角色和接受的传入角色。"
+
+#: inc/templates/admin/help.php:45
+msgid ""
+"Unless the \"Merge with existing roles\" option is selected, the roles of "
+"the user are replaced with incoming roles."
+msgstr "除非选择“与现有角色合并”选项，否则用户角色将替换为传入角色。"
+
+#: inc/templates/admin/help.php:46
+msgid ""
+"If the incoming roles do not exist on or are not accepted by the remote site,"
+" they are ignored."
+msgstr "如果传入角色在远程站点上不存在或未被远程站点接受，则将忽略它们。"
+
+#: inc/templates/admin/help.php:49
+msgid ""
+" - Fired when one or several user metadata are added / created / deleted, "
+"depending on specified transferred outgoing and accepted incoming metadata "
+"keys."
+msgstr " -根据指定的传输传出和接受的传入元数据密钥，添加/创建/删除一个或多个用户元数据时触发。"
+
+#: inc/templates/admin/help.php:50
+msgid ""
+"This action is particularly useful to synchronise user data added by plugins "
+"(such as address information in WooCommerce)."
+msgstr "此操作对于同步插件添加的用户数据（例如WooCommerce中的地址信息）特别有用。"
+
+#: inc/templates/admin/help.php:56
+msgid "It's not working!"
+msgstr "没用！"
+
+#: inc/templates/admin/help.php:59
+msgid ""
+"Before opening a new thread in the WordPress Support forum, please check the "
+"following:"
+msgstr ""
+
+#. %1$s is the bold englisg word "exactly" ; %2$s is 'http'; %3$s is 'https'; %4$s is 'home' option key in the database ; %5$s is 'wp_options' table name
+#: inc/templates/admin/help.php:65
+#, php-format
+msgid ""
+"The URLs used in settings of WP Remote Users Sync %1$s match the URL in your "
+"WordPress settings: the protocol (%2$s vs. %3$s) and the subdomain (www vs. "
+"non-www) must be the same across the board. It is also worth checking the "
+"%4$s option in the %5$s table of the WordPress databases, because in some "
+"cases the content of Settings > General > WordPress Address (URL) gets "
+"abusively overwritten by plugins or themes."
+msgstr ""
+
+#: inc/templates/admin/help.php:65
+msgid "exactly"
+msgstr ""
+
+#: inc/templates/admin/help.php:68
+msgid ""
+"Visit the permalinks page of each connected site (Settings > Permalinks)"
+msgstr ""
+
+#: inc/templates/admin/help.php:69
+msgid ""
+"Activate and check the logs on both local and remote sites when testing (WP "
+"Remote Users Sync > Activity Logs > Enable Logs) ; try to find any "
+"discrepancies and adjust the settings"
+msgstr ""
+
+#: inc/templates/admin/help.php:70
+msgid ""
+"Read the Resolved threads of the support forum - your issue might have "
+"already been addressed there"
+msgstr "阅读支持论坛的已解决主题-您的问题可能已在此处解决"
+
 #: inc/templates/admin/help.php:73
+msgid ""
+"Only then should you open a support thread, with as much information as "
+"possible, including logs (with critical information obfuscated if necessary)."
+msgstr "只有这样，您才应该打开一条支持线程，其中包含尽可能多的信息，包括日志（必要时将重要信息混淆）。"
+
+#: inc/templates/admin/help.php:78
+msgid "Login & Logout are not working"
+msgstr "登录和注销不起作用"
+
+#: inc/templates/admin/help.php:81
+msgid ""
+"Login and Logout User Actions need to output some code in the browser to "
+"have an effect on the remote website because of the cookies used for "
+"authentication."
+msgstr "由于用于身份验证的cookie，登录和注销用户操作需要在浏览器中输出一些代码才能对远程网站产生影响。"
+
+#: inc/templates/admin/help.php:84
+msgid ""
+"What this means in practice is that if your theme or a third party plugin "
+"allows users to login/logout without page reload, WP Remote Users Sync "
+"cannot output its code on the page, and without extra change to your website "
+"code base, the synchronisation can only happen after the page where the user "
+"logged in or logged out is actually reloaded."
+msgstr ""
+
+#: inc/templates/admin/help.php:89
+msgid "What happens to existing users after activating WP Remote Users Sync?"
+msgstr "激活WP Remote Users Sync后，现有用户会怎样？"
+
+#: inc/templates/admin/help.php:92
+msgid ""
+"Existing users remain untouched, until an enabled incoming action is "
+"received from a remote site."
+msgstr "现有用户保持不变，直到从远程站点收到已启用的传入操作。"
+
+#: inc/templates/admin/help.php:93
+msgid ""
+"Users existing on one site and not the other will not be synchronised unless "
+"the user is actually updated AND both Create and Update actions are enabled "
+"on the site where the user does not exist."
+msgstr "除非实际更新了用户并且在该用户不存在的站点上同时启用了“创建”和“更新”操作，否则不会同步存在于一个站点而非另一个站点上的用户。"
+
+#: inc/templates/admin/help.php:94
+msgid ""
+"For existing user databases in need of immediate synchronisation, WP Remote "
+"Users Sync provides its own user import/export tool."
+msgstr "对于需要立即同步的现有用户数据库，WP Remote Users Sync提供了自己的用户导入/导出工具。"
+
+#: inc/templates/admin/help.php:99
+msgid "What security measures are in place?"
+msgstr "有哪些安全措施？"
+
+#: inc/templates/admin/help.php:102
+msgid ""
+"Multiple layers of security are in place to protect the privacy, integrity "
+"and authenticity of communications between connected sites:"
+msgstr "多层安全措施可以保护连接站点之间通信的隐私，完整性和真实性："
+
+#: inc/templates/admin/help.php:106
+msgid "OpenSSL encryption"
+msgstr "OpenSSL加密"
+
+#: inc/templates/admin/help.php:106
 msgid ""
 " - All communications are encrypted using the AES-256-CBC algorithm with a "
 "randomly generated Initialisation Vector to ensure their confidentiality ; "
@@ -38,7 +1124,11 @@ msgstr ""
 " -使用随机生成的初始化矢量，使用AES-256-"
 "CBC算法对所有通信进行加密，以确保其机密性；建议使用随机生成的功能强大的操作加密密钥（在所有连接的网站上均使用相同的值）。"
 
-#: inc/templates/admin/help.php:76
+#: inc/templates/admin/help.php:109
+msgid "HMAC signature"
+msgstr "HMAC签名"
+
+#: inc/templates/admin/help.php:109
 msgid ""
 " - All communications are signed with a hash using the SHA256 algorithm to "
 "ensure their integrity ; it is recommended to use a strong, randomly "
@@ -47,7 +1137,11 @@ msgid ""
 msgstr ""
 " -所有通信均使用SHA256算法以散列进行签名，以确保其完整性；建议使用随机生成的功能强大的操作签名密钥（在所有连接的网站上均使用相同的值）。"
 
-#: inc/templates/admin/help.php:79
+#: inc/templates/admin/help.php:112
+msgid "Authentication tokens"
+msgstr "认证令牌"
+
+#: inc/templates/admin/help.php:112
 msgid ""
 " - All communications rely on an authentication token (randomly generated). "
 "Asynchronous actions (Login & Logout by default) use a single-use token "
@@ -60,65 +1154,11 @@ msgstr ""
 "所有通信都依赖于身份验证令牌（随机生成）。异步操作（默认为登录和注销）使用一次性令牌（真正的随机数），而同步操作使用仅在有限时间段内有效的令牌；建议将操作令牌有效期限保持相对较短（默认值为1800秒或30分钟，并且在所有连接的网站上的期限必须相同）。"
 " "
 
-#: inc/templates/admin/help.php:44
-msgid ""
-" - Does not fire an action of its own per se ; this action determines "
-"whether roles should be synchronised or ignored during Create and Update "
-"actions, depending on specified transferred outgoing and accepted incoming "
-"roles."
-msgstr " -本身不采取行动;此操作确定在创建和更新操作期间应同步还是忽略角色，具体取决于指定的已转移传出角色和接受的传入角色。"
+#: inc/templates/admin/help.php:115
+msgid "IP verification"
+msgstr "IP验证"
 
-#: inc/templates/admin/help.php:30
-msgid ""
-" - Fired when a user is created. The expected result is a synchronised user "
-"created on all registered remote sites accepting incoming Create actions "
-"(see Password, Roles and Metadata below for caveats)."
-msgstr ""
-" -创建用户时触发。预期结果是在所有接受注册的远程站点上创建的同步用户上，该用户接受传入的创建操作（有关警告，请参见下面的密码、角色和元数据）。"
-
-#: inc/templates/admin/help.php:37
-msgid ""
-" - Fired when a user is deleted. The expected result is the user being "
-"deleted on all registered remote sites accepting incoming Delete actions."
-msgstr " -删除用户时触发。预期结果是在接受传入的删除操作的所有注册远程站点上删除用户。"
-
-#: inc/templates/admin/help.php:33
-msgid ""
-" - Fired when a user is updated, either by the user themselves or another "
-"user. The expected result is up to date and synchronised user information on "
-"all registered remote sites accepting incoming Update actions (see Password, "
-"Roles and Metadata below for caveats)."
-msgstr ""
-" -"
-"由用户自己或另一个用户更新用户时触发。预期结果是最新的，并且在接受传入的更新操作的所有已注册远程站点上同步了用户信息（有关警告，请参阅下面的密码、角色和元数据）。"
-
-#: inc/templates/admin/help.php:22
-msgid ""
-" - Fired when a user logs in. The expected result is a user logged in on all "
-"registered remote sites accepting incoming Login actions."
-msgstr " -当用户登录时触发。预期结果是用户在所有接受远程登录操作的注册远程站点上登录。"
-
-#: inc/templates/admin/help.php:26
-msgid ""
-" - Fired when a user logs out. The expected result is a user logged out on "
-"all registered remote sites accepting incoming Logout actions."
-msgstr " -用户注销时触发。预期结果是用户在所有注册的远程站点上注销，接受传入的注销操作。"
-
-#: inc/templates/admin/help.php:40
-msgid ""
-" - Fired when a user resets their password. The expected result is the "
-"password being reset for the user on all registered remote sites accepting "
-"incoming Password actions."
-msgstr " -当用户重置密码时触发。预期结果是在所有接受传入密码操作的注册远程站点上为用户重置密码。"
-
-#: inc/templates/admin/help.php:49
-msgid ""
-" - Fired when one or several user metadata are added / created / deleted, "
-"depending on specified transferred outgoing and accepted incoming metadata "
-"keys."
-msgstr " -根据指定的传输传出和接受的传入元数据密钥，添加/创建/删除一个或多个用户元数据时触发。"
-
-#: inc/templates/admin/help.php:82
+#: inc/templates/admin/help.php:115
 msgid ""
 " - IP addresses are verified using the REMOTE_ADDR server environment "
 "variable, which cannot be faked (unless the servers or the network "
@@ -128,136 +1168,77 @@ msgstr ""
 " -"
 "使用REMOTE_ADDR服务器环境变量验证了IP地址，该环境变量不能被伪造（除非服务器或网络基础结构已经受到严重破坏，在这种情况下，您需要担心更大的问题）。"
 
-#. translators: %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:393
-#, php-format
-msgid "\"%1$s\" action is not activated on %2$s with remote IP %3$s (%4$s)."
-msgstr "在具有远程IP%3$s（%4$s）的%2$s上未激活“%1$s”操作。"
-
-#: inc/templates/admin/help.php:165
+#: inc/templates/admin/help.php:116
 msgid ""
-"\"administrator\" and \"custom_role1\" are not part of the accepted roles ; "
-"was the list of accepted roles left empty to accept all roles, "
-"\"custom_role1\" would not be a valid role on Site 2 and would not be "
-"accepted anyway"
+"For all synchronous actions, because they are fired server-side, IP "
+"verification can be enabled using the IP Whitelist setting with IP addresses "
+"to be compared against the remote IP address."
+msgstr "对于所有同步操作，由于它们是在服务器端触发的，因此可以使用IP白名单设置启用IP验证，并将IP地址与远程IP地址进行比较。"
+
+#: inc/templates/admin/help.php:120
+msgid "It is HIGHLY recommended to use the IP Whitelist setting."
+msgstr "强烈建议使用IP白名单设置。"
+
+#: inc/templates/admin/help.php:121
+msgid "It is HIGHLY recommended to only connect https-enabled websites."
+msgstr "强烈建议仅连接启用了https的网站。"
+
+#: inc/templates/admin/help.php:122
+msgid ""
+"Despite these strong security measures, administrators use this plugin at "
+"their own risk ; the author will not be held liable for any damages "
+"resulting from the use of WP Remote Users Sync."
 msgstr ""
-"“administrator”和“custom_role1”不属于公认角色；是保留为空以接受所有角色的已接受角色列表，“custom_role1”在站点2上不是有效角色，无论如何也不会被接受"
+"尽管采取了这些强大的安全措施，管理员仍需自行承担使用此插件的风险。对于因使用WP Remote Users Sync而造成的任何损失，作者概不负责。"
 
-#: inc/templates/admin/help.php:168
+#: inc/templates/admin/help.php:127
+msgid "What is the impact on performances?"
+msgstr "对性能有什么影响？"
+
+#: inc/templates/admin/help.php:130
 msgid ""
-"\"shop_manager\" is part of the accepted roles, and is a valid role on Site 2"
-msgstr "“shop_manager”是已接受角色的一部分，并且是站点2上的有效角色"
+"WP Remote Users Sync needs to communicate with the remote sites to actually "
+"synchronise users."
+msgstr "WP Remote Users Sync需要与远程站点进行通信以实际同步用户。"
 
-#: inc/class-wprus-logger.php:174
-msgid "(No message)"
-msgstr "（无信息）"
-
-#: inc/class-wprus-import-export.php:270
+#: inc/templates/admin/help.php:131
 msgid ""
-"A PHP extension stopped the file upload. PHP does not provide a way to "
-"ascertain which extension caused the file upload to stop; examining the list "
-"of loaded extensions with phpinfo() may help."
-msgstr ""
-"一个PHP扩展程序停止了文件上传。 PHP没有提供一种方法来确定哪个扩展导致文件上传停止。使用phpinfo()检查加载的扩展列表可能会有所帮助。"
+"This means the impact on performances depends on the response time between "
+"the connected websites."
+msgstr "这意味着对性能的影响取决于所连接网站之间的响应时间。"
 
-#: inc/api/class-wprus-api-abstract.php:330
-msgid "A ping was received but the initiator did not send the proper data."
-msgstr "收到ping命令，但发起方未发送正确的数据。"
-
-#: inc/api/class-wprus-api-abstract.php:318
+#: inc/templates/admin/help.php:134
 msgid ""
-"A ping was received but the initiator did not use matching encryption and "
-"signature action keys"
-msgstr "收到ping命令，但发起方未使用匹配的加密和签名操作密钥"
+"In the worst case scenario, three requests are made to EACH remote site when "
+"doing synchronisation:"
+msgstr "在最坏的情况下，同步时会向EACH远程站点发出三个请求："
 
-#: inc/templates/admin/help.php:108
+#: inc/templates/admin/help.php:138
+msgid ""
+"A token renewal request that fails (blocking: a response is needed to save "
+"the token for later user, with a 1 second timeout by default)"
+msgstr "令牌续约请求失败（阻止：需要响应以将令牌保存给以后的用户，默认情况下为1秒超时）"
+
+#: inc/templates/admin/help.php:141
 msgid ""
 "A second token renewal request to try again (blocking as well ; token "
 "renewal is tried again only once in case the first request failed, with a 5 "
 "seconds timeout by default)"
 msgstr "第二个令牌更新请求重试一次（也阻塞；在第一个请求失败的情况下，令牌更新仅重试一次，默认情况下为5秒超时）"
 
-#: inc/templates/admin/help.php:105
-msgid ""
-"A token renewal request that fails (blocking: a response is needed to save "
-"the token for later user, with a 1 second timeout by default)"
-msgstr "令牌续约请求失败（阻止：需要响应以将令牌保存给以后的用户，默认情况下为1秒超时）"
-
-#: inc/templates/admin/help.php:151
-msgid ""
-"A user john_doe56 with the role \"administrator\", \"shop_manager\" and "
-"\"custom_role1\" on Site 1, and \"author\" on Site 2"
-msgstr "用户john_doe56在站点1上的角色为“管理员”、“shop_manager”和“custom_role1”，在站点2上的角色为“作者”"
-
-#: inc/api/class-wprus-api-abstract.php:208
-msgid "Access granted"
-msgstr "登录成功"
-
-#: inc/templates/admin/encryption-metabox.php:24
-msgid "Action Encryption Key"
-msgstr "操作加密密钥"
-
-#: inc/templates/admin/encryption-metabox.php:38
-msgid "Action Signature Key"
-msgstr "操作签名密钥"
-
-#: inc/templates/admin/encryption-metabox.php:12
-msgid "Action Token Validity Duration"
-msgstr "动作令牌有效期"
-
-#: inc/templates/admin/main-settings-page.php:24
-msgid "Activity Logs"
-msgstr "活动日志"
-
-#: inc/templates/admin/add-site-metabox.php:9
-msgid "Add"
-msgstr "添加"
-
-#: inc/class-wprus-settings.php:230
-msgid "Add Remote Site"
-msgstr "添加远程站点"
-
-#. translators: %1$s is the url of the script ; %2$s is the action called
-#: inc/api/class-wprus-api-abstract.php:554
-#, php-format
-msgid "Added %1$s async URL in %2$s"
-msgstr "已在%2$s中添加%1$s异步网址"
-
-#: inc/class-wprus-logger.php:22
-msgid "Alert"
-msgstr "提醒"
-
-#. Author of the plugin/theme
-msgid "Alexandre Froger"
-msgstr "Alexandre Froger"
-
-#: inc/templates/admin/authorization-metabox.php:24
-msgid "Allow Anonymous Sync Operations"
-msgstr "允许匿名同步操作"
-
-#: inc/templates/admin/help.php:111
+#: inc/templates/admin/help.php:144
 msgid "An action request (non-blocking: a response is not needed)"
 msgstr "操作请求（不阻塞：不需要响应）"
 
-#: inc/class-wprus-settings.php:168
+#: inc/templates/admin/help.php:148
 msgid ""
-"An undefined error occured - please visit the permalinks settings page and "
-"try again."
-msgstr "发生未定义的错误-请访问永久链接设置页面，然后重试。"
+"Performance degradations are mitigated by the fact that Action Tokens "
+"(blocking request) are saved for a period of time for synchronous actions, "
+"and by the fact that actions are fired ONLY when an operation has been "
+"performed on users (not on every page load)."
+msgstr "通过为同步操作保存一段时间的操作令牌（阻止请求）以及仅在对用户执行操作时才触发操作（而不是在每次页面加载时）才触发操作，可以缓解性能下降。"
 
-#: inc/api/class-wprus-api-abstract.php:456
-msgid ""
-"an undefined error occured. Please make sure the address is correct and try "
-"again."
-msgstr "发生未定义的错误。请确保地址正确，然后重试。"
-
-#: inc/class-wprus-settings.php:167
-msgid ""
-"Are you sure you want to remove this site? It will only take effect after "
-"saving the settings."
-msgstr "您确定要删除此网站吗？该设置仅在保存设置后生效。"
-
-#: inc/templates/admin/help.php:116
+#: inc/templates/admin/help.php:149
 msgid ""
 "Asynchronous actions (Login & Logout by default) are the most costly: the "
 "operations themselves are not blocking, but their Action Tokens have to be "
@@ -266,7 +1247,7 @@ msgid ""
 msgstr ""
 "异步操作（默认情况下为“登录”和“注销”）代价最高：操作本身并未阻塞，但是每次都必须事先更新其操作令牌：出于安全原因，在浏览器触发操作时必须使用真正的随机数、一次性令牌。"
 
-#: inc/templates/admin/help.php:117
+#: inc/templates/admin/help.php:150
 msgid ""
 "Asynchronous actions are also potentially more susceptible to failure in "
 "case of network issues, such as if the page load is interrupted or the "
@@ -275,15 +1256,72 @@ msgid ""
 msgstr ""
 "如果出现网络问题，例如页面加载中断或浏览器中的排队脚本调用失败，异步操作也很可能会导致失败。这是必要的权衡，因为这些操作需要身份验证Cookie的操作。"
 
-#: inc/class-wprus-settings.php:237
-msgid "Authentication & Encryption"
-msgstr "身份验证和加密"
-
-#: inc/templates/admin/help.php:79
-msgid "Authentication tokens"
-msgstr "认证令牌"
+#: inc/templates/admin/help.php:151
+msgid "Overall, performances should be marginally impacted."
+msgstr "总体而言，性能应受到轻微影响。"
 
 #: inc/templates/admin/help.php:154
+msgid "The main takeaway is this: "
+msgstr "主要要点是： "
+
+#: inc/templates/admin/help.php:158
+msgid ""
+"The more websites are connected, the bigger the relatively negative impact "
+"on performances."
+msgstr "网站的连接越多，对性能的负面影响就越大。"
+
+#: inc/templates/admin/help.php:161
+msgid ""
+"The worse the connection between the remote sites is, the bigger the "
+"relatively negative impact on performances."
+msgstr "远程站点之间的连接越差，对性能的相对负面影响就越大。"
+
+#: inc/templates/admin/help.php:167
+msgid "How are user roles handled when a user is synchronised?"
+msgstr "同步用户时如何处理用户角色？"
+
+#: inc/templates/admin/help.php:170
+msgid ""
+"Roles can be synchronised when the Create and Update actions are fired, with "
+"the Role action enabled, and matching transferred and accepted role settings."
+msgstr ""
+
+#: inc/templates/admin/help.php:171
+msgid ""
+"When synchronising, the following role are assigned exclusively to the user "
+"and will not be merged: administrator, editor, author, contributor, "
+"subscriber. All other roles can be merged upon incoming action if the "
+"\"Merge with existing roles\" box is checked."
+msgstr ""
+"同步时，以下角色专门分配给用户，并且不会合并：管理员、编辑者、作者、贡献者、订阅者。如果选中了“与现有角色合并”框，则所有其他角色都可以在传入操作时合并。"
+
+#: inc/templates/admin/help.php:174
+msgid "Consider the following scenario:"
+msgstr "请考虑以下情形："
+
+#: inc/templates/admin/help.php:178
+msgid ""
+"Site 1 with outgoing Create, Update and Role actions enabled, with roles "
+"\"administrator\", \"shop_manager\" and \"custom_role1\" in the \"List of "
+"roles to transfer\" field"
+msgstr ""
+"启用了传出的“创建、更新和角色”操作的站点1，在“要转移的角色列表”字段中具有角色“管理员”、“shop_manager”和“custom_role1”"
+
+#: inc/templates/admin/help.php:181
+msgid ""
+"Site 2 with incoming Create, Update and Role actions enabled, with role "
+"\"shop_manager\" in the \"List of roles to accept\" field, and the \"Merge "
+"with existing roles\" box checked"
+msgstr ""
+"启用了传入的“创建、更新和角色操作”的站点2，在“要接受的角色列表”字段中选中了角色“shop_manager”，并选中了“与现有角色合并”框"
+
+#: inc/templates/admin/help.php:184
+msgid ""
+"A user john_doe56 with the role \"administrator\", \"shop_manager\" and "
+"\"custom_role1\" on Site 1, and \"author\" on Site 2"
+msgstr "用户john_doe56在站点1上的角色为“管理员”、“shop_manager”和“custom_role1”，在站点2上的角色为“作者”"
+
+#: inc/templates/admin/help.php:187
 msgid ""
 "Both Site 1 and Site 2 have WooCommerce enabled, therefore the role "
 "\"shop_manager\" exists on both sites, but \"custom_role1\" does not exist "
@@ -291,201 +1329,155 @@ msgid ""
 msgstr ""
 "站点1和站点2都启用了WooCommerce，因此两个站点上都存在角色“shop_manager”，而站点2上不存在“custom_role1”角色。"
 
-#: inc/templates/admin/help.php:207
-msgid "Can it be tested on localhost first?"
-msgstr "可以先在本地主机上对其进行测试吗？"
-
-#. translators: %d is the current number of log entries
-#: inc/class-wprus-logger.php:123 inc/templates/admin/logs-metabox.php:27
-#, php-format
-msgid "Clear All (%d entries)"
-msgstr "全部删除（%d个条目）"
-
 #: inc/templates/admin/help.php:191
+msgid ""
+"When the user john_doe56 is updated on Site 1, the following happens on Site "
+"2:"
+msgstr "在站点1上更新用户john_doe56时，在站点2上发生以下情况："
+
+#: inc/templates/admin/help.php:195
+msgid ""
+"Site 2 receives  \"administrator\", \"shop_manager\" and \"custom_role1\" "
+"along with john_doe56's data"
+msgstr "站点2接收“管理员”、“shop_manager”和“custom_role1”以及john_doe56的数据"
+
+#: inc/templates/admin/help.php:198
+msgid ""
+"\"administrator\" and \"custom_role1\" are not part of the accepted roles ; "
+"was the list of accepted roles left empty to accept all roles, "
+"\"custom_role1\" would not be a valid role on Site 2 and would not be "
+"accepted anyway"
+msgstr ""
+"“administrator”和“custom_role1”不属于公认角色；是保留为空以接受所有角色的已接受角色列表，“custom_role1”在站点2上不是有效角色，无论如何也不会被接受"
+
+#: inc/templates/admin/help.php:201
+msgid ""
+"\"shop_manager\" is part of the accepted roles, and is a valid role on Site 2"
+msgstr "“shop_manager”是已接受角色的一部分，并且是站点2上的有效角色"
+
+#: inc/templates/admin/help.php:204
+msgid ""
+"john_doe56's new synchronised roles on Site 2 are \"author\" and "
+"\"shop_manager\""
+msgstr "john_doe56在站点2上的新同步角色是“作者”和“shop_manager”"
+
+#: inc/templates/admin/help.php:210
+msgid ""
+"What about extra user information? (WooCommerce / Ultimate Member / other "
+"plugin adding user information)"
+msgstr "其他的用户信息呢？ （WooCommerce / Ultimate Member /其他插件添加用户信息）"
+
+#: inc/templates/admin/help.php:213
+msgid ""
+"Extra user information can be synchronised too out of the box as long as "
+"they are stored in the user metadata."
+msgstr "只要其他的用户信息存储在用户元数据中，它们也可以立即进行同步。"
+
+#: inc/templates/admin/help.php:214
+msgid ""
+"For example, it means all the address and profile information in WooCommerce "
+"can be synchronised, but not the orders status or subscription status."
+msgstr "例如，这意味着可以同步WooCommerce中的所有地址和个人资料信息，但不能同步订单状态或订阅状态。"
+
+#: inc/templates/admin/help.php:215
+msgid ""
+"To enable extra information synchronisation, the Metadata action is used "
+"along with specified metadata keys in the transferred and accepted metadata "
+"fields."
+msgstr "为了实现其他的信息同步，在传输和接受的元数据字段中将“元数据”操作与指定的元数据键一起使用。"
+
+#: inc/templates/admin/help.php:220
+msgid "What about user passwords?"
+msgstr "用户密码呢？"
+
+#: inc/templates/admin/help.php:223
+msgid ""
+"Passwords are automatically synchronised as long as the Password action is "
+"enabled (outgoing and incoming respectively)."
+msgstr "只要启用了密码操作（分别为传出和传入），密码就会自动同步。"
+
+#: inc/templates/admin/help.php:224
 msgid ""
 "Communications are encrypted, signed, token-validated and IP-validated to "
 "make the process as secure as possible."
 msgstr "通信经过加密、签名、令牌验证和IP验证，以使过程尽可能安全。"
 
-#: inc/templates/admin/help.php:141
-msgid "Consider the following scenario:"
-msgstr "请考虑以下情形："
+#: inc/templates/admin/help.php:225
+msgid "Passwords are NEVER communicated or stored in plain text."
+msgstr "密码永远不会以纯文本形式传达或存储。"
 
-#: inc/api/class-wprus-api-abstract.php:87
-msgid "Could not decrypt data: invalid bundle."
-msgstr "无法解密数据：无效的捆绑包。"
-
-#: inc/class-wprus-settings.php:25 inc/templates/admin/help.php:30
-msgid "Create"
-msgstr "创建"
-
-#. translators: %s is the username
-#: inc/api/class-wprus-api-create.php:127
-#, php-format
-msgid "Create action - firing action for username \"%s\""
-msgstr "创建操作-为用户名“%s”触发操作"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-create.php:67
-#, php-format
-msgid "Create action - successfully created user \"%1$s\" from %2$s."
-msgstr "创建操作-已成功从%2$s创建用户“%1$s”。"
-
-#. translators: %1$s is the error ; %2$s is the username ; %3$s is the caller
-#: inc/api/class-wprus-api-create.php:52
-#, php-format
-msgid "Create action failed - \"%1$s\" for user \"%2$s\" from %3$s."
-msgstr "创建操作失败-来自“%3$s”的用户“%2$s”的“%1$s”。"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-create.php:87
-#, php-format
-msgid "Create action failed - incoming create action not enabled for %s"
-msgstr "创建操作失败-未为%s启用传入的创建操作"
-
-#: inc/api/class-wprus-api-update.php:23 inc/api/class-wprus-api-create.php:23
-msgid "Create action failed - received invalid data."
-msgstr "创建操作失败-接收到无效数据。"
-
-#: inc/class-wprus-settings.php:27 inc/templates/admin/help.php:37
-msgid "Delete"
-msgstr "删除"
-
-#. translators: %s is the username
-#: inc/api/class-wprus-api-delete.php:119
-#, php-format
-msgid "Delete action - firing action for username \"%s\""
-msgstr "删除操作-用户名“%s”的触发操作"
-
-#. translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username
-#: inc/api/class-wprus-api-delete.php:75
-#, php-format
+#: inc/templates/admin/help.php:226
 msgid ""
-"Delete action - successfully deleted user \"%1$s\" from %2$s and reassigned "
-"content to %3$s."
-msgstr "删除操作-成功将用户“%1$s”从%2$s中删除，并将内容重新分配给了%3$s。"
+"WP Remote User Sync integrates with any plugin updating passwords provided "
+"they do so respecting WordPress standards."
+msgstr "WP Remote User Sync与任何插件更新密码集成在一起，前提是它们遵守WordPress标准。"
 
-#. translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username
-#: inc/api/class-wprus-api-delete.php:63
-#, php-format
+#: inc/templates/admin/help.php:231
+msgid "What if the user to synchronise does not exist on the remote site?"
+msgstr "如果远程站点上不存在要同步的用户怎么办？"
+
+#: inc/templates/admin/help.php:234
 msgid ""
-"Delete action - successfully deleted user \"%1$s\" from %2$s but failed to "
-"reassign content to %3$s."
-msgstr "删除操作-已成功从%2$s中删除用户“%1$s”，但未能将内容重新分配给%3$s。"
+"If the incoming Create action is enabled along with the incoming Update "
+"action, the user will be synchronised on the remote website upon user update."
+msgstr "如果启用了传入的“创建”操作以及传入的“更新”操作，则用户更新后，将在远程网站上同步用户。"
 
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-delete.php:87
-#, php-format
-msgid "Delete action - successfully deleted user \"%1$s\" from %2$s."
-msgstr "删除操作-已成功从%2$s中删除用户“%1$s”。"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-delete.php:100
-#, php-format
-msgid "Delete action failed - incoming delete action not enabled for %s"
-msgstr "删除操作失败-未为%s启用传入的删除操作"
-
-#: inc/api/class-wprus-api-delete.php:22
-msgid "Delete action failed - received invalid data."
-msgstr "删除操作失败-接收到无效数据。"
-
-#. translators: %1$s is the username ; %2$s is the caller
-#: inc/api/class-wprus-api-delete.php:50
-#, php-format
-msgid "Delete action failed - user \"%1$s\" from %2$s was not found locally."
-msgstr "删除操作失败-在本地找不到%2$s中的用户“%1$s”。"
-
-#: inc/templates/admin/help.php:89
+#: inc/templates/admin/help.php:235
 msgid ""
-"Despite these strong security measures, administrators use this plugin at "
-"their own risk ; the author will not be held liable for any damages "
-"resulting from the use of WP Remote Users Sync."
+"If other actions for this user are fired before that (Login, Logout, Delete, "
+"Password, Metadata), nothing will happen, and an action failure log entry "
+"will be recorded if the \"Enable Logs\" box is checked."
 msgstr ""
-"尽管采取了这些强大的安全措施，管理员仍需自行承担使用此插件的风险。对于因使用WP Remote Users Sync而造成的任何损失，作者概不负责。"
+"如果在此之前触发了该用户的其他操作（登录、注销、删除、密码、元数据），则不会发生任何事情，并且如果选中了“启用日志”框，则将记录操作失败日志条目。"
 
-#: inc/templates/admin/authorization-metabox.php:28
+#: inc/templates/admin/help.php:240
+msgid "Can it be tested on localhost first?"
+msgstr "可以先在本地主机上对其进行测试吗？"
+
+#: inc/templates/admin/help.php:243
 msgid ""
-"Disable checking the origin of the actions received by the current site "
-"before synchronising."
-msgstr "同步之前，请禁用检查当前站点接收到的操作的来源。"
+"Yes - as long as the websites can reach each other, WP Remote User Sync will "
+"work."
+msgstr "是的-只要两个网站可以互相访问，WP Remote User Sync就可以使用。"
 
-#: inc/templates/admin/export-metabox.php:63
-msgid "Download "
-msgstr "下载 "
-
-#: inc/class-wprus-settings.php:113
-msgid "Edit configuration"
-msgstr "编辑配置"
-
-#: inc/templates/admin/logs-metabox.php:12
-msgid "Enable Logs"
-msgstr "启用日志"
-
-#: inc/api/class-wprus-api-abstract.php:447
-msgid "Error contacting the remote site: "
-msgstr "联系远程站点时出错： "
-
-#. translators: %1$s is the username, %2$s is the line , %3$s is the error
-#: inc/class-wprus-import-export.php:436
-#, php-format
-msgid "Error importing user \"%1$s\" on line %2$s - %3$s"
-msgstr "在第%2$s-%3$s行中导入用户“%1$s”时出错"
-
-#: inc/class-wprus-settings.php:170
+#: inc/templates/admin/help.php:244
 msgid ""
-"Error: invalid file name. Please use a file exported with WP Remote Users "
-"Sync."
-msgstr "错误：无效的文件名。请使用通过WP Remote Users Sync导出的文件。"
+"This means that two websites in localhost (behind virtual hosts, for example)"
+" can communicate. However, if one of the websites is on localhost and the "
+"other is not, token exchange cannot happen and the websites will not be able "
+"to communicate."
+msgstr ""
+"这意味着localhost中的两个网站（例如，在虚拟主机后面）可以通信。但是，如果其中一个网站位于本地主机上，而另一个不在本地主机上，则无法进行令牌交换，并且这些网站将无法通信。"
 
-#: inc/class-wprus-settings.php:171
-msgid ""
-"Error: invalid file. Please use a non-empty file exported with WP Remote "
-"Users Sync."
-msgstr "错误：文件无效。请使用随WP Remote Users Sync导出的非空文件。"
+#: inc/templates/admin/help.php:249
+msgid "How to export users from this site and import them into a remote site?"
+msgstr "如何从该站点导出用户并将其导入到远程站点？"
 
-#: inc/class-wprus-import-export.php:199
-msgid ""
-"Error: the file was not found on the server. Please try exporting again."
-msgstr "错误：在服务器上找不到文件。请尝试再次导出。"
+#: inc/templates/admin/help.php:252
+msgid "WP Remote Users Sync provides its own user import/export tool."
+msgstr "WP Remote Users Sync提供了自己的用户导入/导出工具。"
 
-#: inc/class-wprus-settings.php:172
-msgid ""
-"Error: the server hung up unexpectedly. Please try to import users in "
-"smaller batches."
-msgstr "错误：服务器意外挂起。请尝试批量导入用户。"
+#: inc/templates/admin/help.php:253
+msgid "With it, administrators can:"
+msgstr "有了它，管理员可以："
 
-#: inc/class-wprus-import-export.php:95
-msgid "Error: Unable to create the export file"
-msgstr "错误：无法创建导出文件"
-
-#: inc/class-wprus-import-export.php:83 inc/class-wprus-import-export.php:215
-msgid "Error: unauthorized access - please reload the page and try again."
-msgstr "错误：未经授权的访问-请重新加载页面，然后重试。"
-
-#: inc/class-wprus-import-export.php:185
-msgid ""
-"Error: unauthorized access - please reload the previous page and try again."
-msgstr "错误：未经授权的访问-请重新加载上一页，然后重试。"
-
-#: inc/class-wprus-import-export.php:49 inc/class-wprus-import-export.php:193
-msgid "Error: WordPress File System experienced an unknown problem."
-msgstr "错误：WordPress文件系统遇到未知问题。"
-
-#: inc/templates/admin/help.php:59
-msgid ""
-"Existing users remain untouched, until an enabled incoming action is "
-"received from a remote site."
-msgstr "现有用户保持不变，直到从远程站点收到已启用的传入操作。"
-
-#: inc/templates/admin/export-metabox.php:57
-msgid "Export "
-msgstr "导出 "
-
-#: inc/templates/admin/help.php:224
+#: inc/templates/admin/help.php:257
 msgid "Export all users"
 msgstr "导出所有用户"
 
-#: inc/templates/admin/help.php:236
+#: inc/templates/admin/help.php:260
+msgid "Export users with specified roles"
+msgstr "导出具有指定角色的用户"
+
+#: inc/templates/admin/help.php:263
+msgid "Export users with or without their roles"
+msgstr "导出具有或不具有其角色的用户"
+
+#: inc/templates/admin/help.php:266
+msgid "Export users with or without specified metadata"
+msgstr "导出具有或不具有指定元数据的用户"
+
+#: inc/templates/admin/help.php:269
 msgid ""
 "Export batches of users - for example, to export 500 users at a time, Max # "
 "is set to 500 and Offset to 0, 500, 1,000, 1,500, 2,000... and the export "
@@ -494,100 +1486,44 @@ msgstr ""
 "导出一批用户-例如，一次导出500个用户，将“最大数量”设置为500，将“偏移”设置为0、500、1,000、1,500、2,000 ..."
 "，并重复导出操作，直到没有更多用户要导出为止。"
 
-#: inc/class-wprus-settings.php:268
-msgid "Export Users"
-msgstr "导出用户"
+#: inc/templates/admin/help.php:272
+msgid "Import users into the remote site using the file(s) previously exported"
+msgstr "使用先前导出的文件将用户导入远程站点"
 
-#: inc/templates/admin/help.php:233
-msgid "Export users with or without specified metadata"
-msgstr "导出具有或不具有指定元数据的用户"
+#: inc/templates/admin/help.php:276
+msgid ""
+"Once downloaded, the files are automatically deleted. In case some files "
+"were not downloaded and remained on the server, the containing directory is "
+"also cleaned daily."
+msgstr "下载后，文件将自动删除。如果某些文件没有下载并保留在服务器上，则还每天清理包含目录。"
 
-#: inc/templates/admin/help.php:230
-msgid "Export users with or without their roles"
-msgstr "导出具有或不具有其角色的用户"
-
-#: inc/templates/admin/help.php:227
-msgid "Export users with specified roles"
-msgstr "导出具有指定角色的用户"
-
-#: inc/templates/admin/export-metabox.php:43
-msgid "Export users with their roles"
-msgstr "导出用户及其角色"
-
-#: inc/templates/admin/help.php:244
+#: inc/templates/admin/help.php:277
 msgid ""
 "Exported files are not directly accessible by URL: only administrators can "
 "access them."
 msgstr "通过网址不能直接访问导出的文件：只有管理员可以访问它们。"
 
-#: inc/templates/admin/encryption-metabox.php:16
-msgid ""
-"Expressed in seconds, the duration after which generated action tokens "
-"expire and need to be renewed."
-msgstr "以秒为单位表示，所生成的动作令牌到期并需要更新的持续时间。"
+#: inc/templates/admin/help.php:278
+msgid "User passwords cannot be and are NOT exported."
+msgstr "用户密码不能也不会被导出。"
 
-#: inc/templates/admin/help.php:180
-msgid ""
-"Extra user information can be synchronised too out of the box as long as "
-"they are stored in the user metadata."
-msgstr "只要其他的用户信息存储在用户元数据中，它们也可以立即进行同步。"
+#: inc/templates/admin/help.php:283
+msgid "Where to find more help?"
+msgstr "在哪里可以找到更多帮助？"
 
-#: inc/class-wprus.php:33
-msgid "Failed to create the necessary database table(s)."
-msgstr "无法创建必要的数据库表。"
-
-#: inc/api/class-wprus-api-abstract.php:135
-msgid "Failed to create token - invalid payload"
-msgstr "无法创建令牌-有效载荷无效"
-
-#: inc/class-wprus-import-export.php:365
-msgid "Failed to open the file."
-msgstr "无法打开文件。"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:695
+#. %1$s is the WordPress support forum URL, %2$s is the Github URL
+#: inc/templates/admin/help.php:289
 #, php-format
-msgid "Failed to renew token for %s"
-msgstr "无法续签%s的令牌"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:680
-#, php-format
-msgid "Failed to renew token for %s - retrying..."
-msgstr "无法为%s续订令牌-正在重试..."
-
-#: inc/class-wprus-import-export.php:266
-msgid "Failed to write file to disk."
-msgstr "无法将文件写入磁盘。"
-
-#: inc/templates/admin/export-metabox.php:34
-msgid "Filter users by role (leave empty to export all users):"
-msgstr "按角色过滤用户（留空以导出所有用户）："
-
-#: inc/templates/admin/help.php:83
 msgid ""
-"For all synchronous actions, because they are fired server-side, IP "
-"verification can be enabled using the IP Whitelist setting with IP addresses "
-"to be compared against the remote IP address."
-msgstr "对于所有同步操作，由于它们是在服务器端触发的，因此可以使用IP白名单设置启用IP验证，并将IP地址与远程IP地址进行比较。"
+"More help can be found on %1$s for general inquiries and on %2$s for "
+"advanced troubleshooting."
+msgstr "在％1 $ s上可以找到更多帮助，在常规查询上可以在％2 $ s上找到高级疑难解答。"
 
-#: inc/templates/admin/help.php:181
-msgid ""
-"For example, it means all the address and profile information in WooCommerce "
-"can be synchronised, but not the orders status or subscription status."
-msgstr "例如，这意味着可以同步WooCommerce中的所有地址和个人资料信息，但不能同步订单状态或订阅状态。"
+#: inc/templates/admin/help.php:290
+msgid "the WordPress support forum"
+msgstr "WordPress支持论坛"
 
-#: inc/templates/admin/help.php:61
-msgid ""
-"For existing user databases in need of immediate synchronisation, WP Remote "
-"Users Sync provides its own user import/export tool."
-msgstr "对于需要立即同步的现有用户数据库，WP Remote Users Sync提供了自己的用户导入/导出工具。"
-
-#: inc/templates/admin/main-settings-page.php:27
-msgid "Help"
-msgstr "帮助"
-
-#: inc/templates/admin/help.php:262
+#: inc/templates/admin/help.php:295
 msgid ""
 "Help is provided for general enquiries and bug fixes only: feature requests, "
 "extra integration or conflict resolution with third-party themes or plugins, "
@@ -596,264 +1532,49 @@ msgid ""
 msgstr ""
 "仅针对常规查询和错误修复提供帮助：功能请求，与第三方主题或插件的额外集成或冲突解决以及特定的设置疑难解答请求将免费解决（交易方法和金额由插件作者自行决定）。"
 
-#: inc/templates/admin/help.php:76
-msgid "HMAC signature"
-msgstr "HMAC签名"
+#: inc/templates/admin/main-settings-page.php:12
+msgid "Remote Sites"
+msgstr "远程站点"
 
-#: inc/templates/admin/help.php:134
-msgid "How are user roles handled when a user is synchronised?"
-msgstr "同步用户时如何处理用户角色？"
+#: inc/templates/admin/main-settings-page.php:15
+msgid "Security"
+msgstr "安全"
 
-#: inc/templates/admin/help.php:11
-msgid "How does it work?"
-msgstr "它是如何工作的？"
+#: inc/templates/admin/main-settings-page.php:18
+msgid "Import / Export"
+msgstr "导入/导出"
 
-#: inc/templates/admin/help.php:216
-msgid "How to export users from this site and import them into a remote site?"
-msgstr "如何从该站点导出用户并将其导入到远程站点？"
+#: inc/templates/admin/main-settings-page.php:21
+msgid "Activity Logs"
+msgstr "活动日志"
 
-#. Author URI of the plugin/theme
-msgid "https://froger.me/"
-msgstr "https://froger.me/"
+#: inc/templates/admin/main-settings-page.php:24
+msgid "Help"
+msgstr "帮助"
 
-#. Plugin URI of the plugin/theme
-msgid "https://github.com/froger-me/wp-remote-users-sync"
-msgstr "https://github.com/froger-me/wp-remote-users-sync"
+#: inc/templates/admin/main-settings-page.php:41
+msgid "Start with adding a Remote Site"
+msgstr "从添加远程站点开始"
 
-#: inc/templates/admin/encryption-metabox.php:42
-msgid "Ideally a random string, used to authenticate remote operations data."
-msgstr "理想情况下，是一个随机字符串，用于认证远程操作数据。"
+#: inc/templates/admin/add-site-metabox.php:9
+msgid "Add"
+msgstr "添加"
 
-#: inc/templates/admin/encryption-metabox.php:28
-msgid "Ideally a random string, used to encrypt remote operations data."
-msgstr "理想情况下，是一个随机字符串，用于加密远程操作数据。"
+#: inc/templates/admin/import-metabox.php:12
+msgid "Users File"
+msgstr "用户文件"
 
-#: inc/templates/admin/help.php:202
-msgid ""
-"If other actions for this user are fired before that (Login, Logout, Delete, "
-"Password, Metadata), nothing will happen, and an action failure log entry "
-"will be recorded if the \"Enable Logs\" box is checked."
-msgstr ""
-"如果在此之前触发了该用户的其他操作（登录、注销、删除、密码、元数据），则不会发生任何事情，并且如果选中了“启用日志”框，则将记录操作失败日志条目。"
-
-#: inc/templates/admin/help.php:201
-msgid ""
-"If the incoming Create action is enabled along with the incoming Update "
-"action, the user will be synchronised on the remote website upon user update."
-msgstr "如果启用了传入的“创建”操作以及传入的“更新”操作，则用户更新后，将在远程网站上同步用户。"
-
-#: inc/templates/admin/help.php:46
-msgid ""
-"If the incoming roles do not exist on or are not accepted by the remote site,"
-" they are ignored."
-msgstr "如果传入角色在远程站点上不存在或未被远程站点接受，则将忽略它们。"
-
-#: inc/templates/admin/help.php:34
-msgid ""
-"If the user does not exist on the remote site and the incoming Create action "
-"is enabled, a synchronised user is created instead."
-msgstr "如果远程站点上不存在该用户，并且启用了传入的“创建”操作，则会创建一个同步的用户。"
+#: inc/templates/admin/import-metabox.php:15
+msgid "Upload File"
+msgstr "上传文件"
 
 #: inc/templates/admin/import-metabox.php:15
 msgid "Import"
 msgstr "导入设置"
 
-#: inc/templates/admin/main-settings-page.php:21
-msgid "Import / Export"
-msgstr "导入/导出"
-
-#: inc/class-wprus-settings.php:278
-msgid "Import Users"
-msgstr "导入用户"
-
-#: inc/templates/admin/help.php:239
-msgid "Import users into the remote site using the file(s) previously exported"
-msgstr "使用先前导出的文件将用户导入远程站点"
-
-#: inc/templates/admin/encryption-metabox.php:32
-#: inc/templates/admin/encryption-metabox.php:46
-msgid "IMPORTANT: For security reasons, keep this value ABSOLUTELY SECRET."
-msgstr "重要信息：出于安全原因，请绝对保留此值。"
-
-#: inc/class-wprus-import-export.php:291
-#, php-format
-msgid "Imported %d user"
-msgid_plural "Imported %d users"
-msgstr[0] "已导入%d个用户"
-msgstr[1] "已导入%d个用户"
-
-#: inc/templates/admin/help.php:101
-msgid ""
-"In the worst case scenario, three requests are made to EACH remote site when "
-"doing synchronisation:"
-msgstr "在最坏的情况下，同步时会向EACH远程站点发出三个请求："
-
-#: inc/api/class-wprus-api-abstract.php:336
-msgid "incoming"
-msgstr "传入"
-
-#: inc/templates/admin/site-metabox-template.php:57
-#: inc/templates/admin/site-metabox.php:57
-msgid "Incoming Actions"
-msgstr "传入操作"
-
-#: inc/class-wprus-logger.php:19
-msgid "Info"
-msgstr "信息"
-
-#: inc/templates/admin/help.php:82
-msgid "IP verification"
-msgstr "IP验证"
-
-#: inc/class-wprus-settings.php:244
-msgid "IP Whitelist"
-msgstr "IP白名单"
-
-#: inc/templates/admin/help.php:88
-msgid "It is HIGHLY recommended to only connect https-enabled websites."
-msgstr "强烈建议仅连接启用了https的网站。"
-
-#: inc/templates/admin/help.php:87
-msgid "It is HIGHLY recommended to use the IP Whitelist setting."
-msgstr "强烈建议使用IP白名单设置。"
-
-#: inc/templates/admin/help.php:171
-msgid ""
-"john_doe56's new synchronised roles on Site 2 are \"author\" and "
-"\"shop_manager\""
-msgstr "john_doe56在站点2上的新同步角色是“作者”和“shop_manager”"
-
-#: inc/templates/admin/ip-whitelist-metabox.php:13
-msgid "Leave blank to accept any IP address (not recommended)."
-msgstr "保留空白以接受任何IP地址（不建议）。"
-
-#: inc/templates/admin/ip-whitelist-metabox.php:11
-msgid "List of IP addresses of remote sites to authorise (one per line)."
-msgstr "要授权的远程站点的IP地址列表（每行一个）。"
-
-#: inc/templates/admin/site-metabox-template.php:82
-#: inc/templates/admin/site-metabox.php:82
-msgid "List of metadata to accept (leave empty to accept all):"
-msgstr "要接受的元数据列表（留空以接受全部）："
-
-#: inc/templates/admin/export-metabox.php:47
-msgid "List of metadata to export (leave empty to export none):"
-msgstr "要导出的元数据列表（留空则不导出）："
-
-#: inc/templates/admin/site-metabox-template.php:36
-#: inc/templates/admin/site-metabox.php:36
-msgid "List of metadata to transfer (leave empty to transfer none):"
-msgstr "要传输的元数据列表（留空则不传输）："
-
-#: inc/templates/admin/site-metabox-template.php:92
-#: inc/templates/admin/site-metabox.php:93
-msgid "List of roles to accept (leave empty to accept all):"
-msgstr "要接受的角色列表（留空以接受所有角色）："
-
-#: inc/templates/admin/site-metabox-template.php:46
-#: inc/templates/admin/site-metabox.php:46
-msgid "List of roles to transfer (leave empty to transfer none):"
-msgstr "要传输的角色列表（留空则不传输）："
-
-#: inc/templates/admin/help.php:18
-msgid "List of supported actions by default:"
-msgstr "默认情况下支持的操作列表："
-
-#: inc/class-wprus-settings.php:23 inc/templates/admin/help.php:22
-msgid "Login"
-msgstr "登录"
-
-#. translators: %s is the username
-#: inc/api/class-wprus-api-login.php:112
-#, php-format
-msgid "Login action - enqueueing asynchronous actions for username \"%s\""
-msgstr "登录操作-为用户名“%s”加入异步操作"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-login.php:62
-#, php-format
-msgid "Login action - successfully logged in user \"%1$s\" from %2$s."
-msgstr "登录操作-已成功从%2$s登录用户“%1$s”。"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-login.php:73
-#, php-format
-msgid "Login action aborted - user \"%1$s\" from %2$s does not exist locally."
-msgstr "登录操作被中止-%2$s中的用户“%1$s”在本地不存在。"
-
-#: inc/api/class-wprus-api-login.php:27
-msgid "Login action failed - a user is already logged in."
-msgstr "登录操作失败-用户已经登录。"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-login.php:85
-#, php-format
-msgid "Login action failed - incoming login action not enabled for %s"
-msgstr "登录操作失败-未为%s启用传入的登录操作"
-
-#: inc/api/class-wprus-api-login.php:39
-msgid "Login action failed - received invalid data."
-msgstr "登录操作失败-接收到无效数据。"
-
-#: inc/class-wprus-settings.php:24 inc/templates/admin/help.php:26
-msgid "Logout"
-msgstr "注销"
-
-#. translators: %s is the username
-#: inc/api/class-wprus-api-logout.php:120
-#, php-format
-msgid "Logout action - enqueueing asynchronous actions for username \"%s\""
-msgstr "注销操作-为用户名“%s”加入异步操作"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-logout.php:60
-#, php-format
-msgid "Logout action - successfully logged out user \"%1$s\" from %2$s."
-msgstr "注销操作-已成功从%2$s注销用户“%1$s”。"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-logout.php:71
-#, php-format
-msgid "Logout action aborted - user \"%1$s\" from %2$s does not exist locally."
-msgstr "注销操作已中止-%2$s中的用户“%1$s”在本地不存在。"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-logout.php:82
-#, php-format
-msgid "Logout action aborted - user \"%1$s\" from %2$s was not logged in."
-msgstr "注销操作已中止-来自%2$s的用户“%1$s”未登录。"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-logout.php:94
-#, php-format
-msgid "Logout action failed - incoming logout action not enabled for %s"
-msgstr "注销操作失败-未为%s启用传入注销操作"
-
-#: inc/api/class-wprus-api-logout.php:39
-msgid "Logout action failed - received invalid data."
-msgstr "注销操作失败-接收到无效数据。"
-
-#: inc/api/class-wprus-api-logout.php:27
-msgid "Logout action failed - the user is already logged out."
-msgstr "注销操作失败-用户已经注销。"
-
-#: inc/class-wprus-settings.php:251
-msgid "Logs"
-msgstr "日志"
-
-#: inc/class-wprus-import-export.php:238
-msgid "Make sure the uploaded file is a zip archive."
-msgstr "确保上传的文件是zip存档。"
-
-#: inc/class-wprus-import-export.php:277
-msgid "Make sure the uploaded file is not empty."
-msgstr "确保上传的文件不为空。"
-
-#: inc/api/class-wprus-api-abstract.php:331
-msgid ""
-"Malformed data - the test request was received but the data could not be "
-"extracted."
-msgstr "数据格式错误-收到测试请求，但无法提取数据。"
+#: inc/templates/admin/import-metabox.php:17
+msgid "Requires a file previously exported with WP Remote Users Sync"
+msgstr "需要先前通过WP Remote Users Sync导出的文件"
 
 #: inc/templates/admin/export-metabox.php:12
 msgid "Max. #"
@@ -863,100 +1584,55 @@ msgstr "最大 #"
 msgid "Maximum number of users to export. Leave at 0 to export all users."
 msgstr "导出的最大用户数。保留为0以导出所有用户。"
 
-#: inc/templates/admin/site-metabox-template.php:101
-#: inc/templates/admin/site-metabox.php:102
-msgid "Merge with existing roles"
-msgstr "与现有角色合并"
-
-#: inc/class-wprus-settings.php:30 inc/templates/admin/help.php:49
-msgid "Metadata"
-msgstr "元数据"
-
-#: inc/api/class-wprus-api-meta.php:205
-#, php-format
-msgid "Metadata action - added metadata %1$s for user \"%2$s\" from %3$s"
-msgstr "元数据操作-为%3$s中的用户“%2$s”添加了元数据%1$s"
-
-#: inc/api/class-wprus-api-meta.php:219
-#, php-format
-msgid "Metadata action - deleted metadata %1$s for user \"%2$s\" from %3$s"
-msgstr "元数据操作-已从%3$s中删除用户“%2$s”的元数据%1$s"
-
-#: inc/api/class-wprus-api-meta.php:238
-#, php-format
+#: inc/templates/admin/export-metabox.php:18
 msgid ""
-"Metadata action - failed to add metadata %1$s for user \"%2$s\" from %3$s"
-msgstr "元数据操作-无法为%3$s中的用户“%2$s”添加元数据%1$s"
+"Remark: on sites with a large number of users, it is recommended to export "
+"users in multiple batches with the help of the \"Offset\" option below."
+msgstr "备注：在具有大量用户的站点上，建议借助下面的“偏移”选项分批导出用户。"
 
-#: inc/api/class-wprus-api-meta.php:252
-#, php-format
+#: inc/templates/admin/export-metabox.php:24
+msgid "Offset"
+msgstr "偏移"
+
+#: inc/templates/admin/export-metabox.php:28
 msgid ""
-"Metadata action - failed to delete metadata %1$s for user \"%2$s\" from %3$s"
-msgstr "元数据操作-无法从%3$s中删除用户“%2$s”的元数据%1$s"
+"Offset results - users are ordered by username by default ; this option is "
+"useful when exporting users in batches."
+msgstr "偏移结果-默认情况下，用户按登录名排序；批量导出用户时，此选项很有用。"
 
-#: inc/api/class-wprus-api-meta.php:245
-#, php-format
+#: inc/templates/admin/export-metabox.php:34
+msgid "Specified Users Only"
+msgstr "仅指定用户"
+
+#: inc/templates/admin/export-metabox.php:39
 msgid ""
-"Metadata action - failed to update metadata %1$s for user \"%2$s\" from %3$s"
-msgstr "元数据操作-无法从%3$s更新用户“%2$s”的元数据%1$s"
+"A comma-separated list of usernames. If not empty, only the users "
+"corresponding to the specified usernames will be included at export."
+msgstr "以逗号分隔的用户名列表。 如果不为空，则在导出时将仅包括与指定用户名相对应的用户。"
 
-#. translators: %s is the usernames
-#: inc/api/class-wprus-api-meta.php:306
-#, php-format
-msgid "Metadata action - firing action for username(s) %s"
-msgstr "元数据操作-用户名%s的触发操作"
+#: inc/templates/admin/export-metabox.php:45
+msgid "Filter users by role (leave empty to export all users):"
+msgstr "按角色过滤用户（留空以导出所有用户）："
 
-#: inc/api/class-wprus-api-meta.php:212
-#, php-format
-msgid "Metadata action - updated metadata %1$s for user \"%2$s\" from %3$s"
-msgstr "元数据操作-已更新%3$s中用户“%2$s”的元数据%1$s"
+#: inc/templates/admin/export-metabox.php:54
+msgid "Export users with their roles"
+msgstr "导出用户及其角色"
 
-#: inc/api/class-wprus-api-meta.php:270
-#, php-format
-msgid ""
-"Metadata action aborted - metadata %1$s for user \"%2$s\" from %3$s not "
-"accepted"
-msgstr "元数据操作已中止-来自“%3$s”的用户“%2$s”的元数据%1$s"
+#: inc/templates/admin/export-metabox.php:58
+msgid "List of metadata to export (leave empty to export none):"
+msgstr "要导出的元数据列表（留空则不导出）："
 
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-meta.php:288
-#, php-format
-msgid "Metadata action failed - incoming metadata action not enabled for %s"
-msgstr "元数据操作失败-未为%s启用传入的元数据操作"
+#: inc/templates/admin/export-metabox.php:68
+msgid "Export "
+msgstr "导出 "
 
-#: inc/api/class-wprus-api-abstract.php:319
-msgid ""
-"Mismatch Encryption settings - please make sure the action keys are "
-"correctly configured on both sites."
-msgstr "不匹配的加密设置-请确保在两个站点上正确配置了操作键。"
+#: inc/templates/admin/export-metabox.php:74
+msgid "Download "
+msgstr "下载 "
 
-#: inc/class-wprus-import-export.php:262
-msgid "Missing a temporary folder."
-msgstr "缺少临时文件夹。"
-
-#: inc/class-wprus-settings.php:98
-msgid "Missing Authentication Key"
-msgstr "缺少验证密钥"
-
-#: inc/class-wprus-settings.php:97
-msgid "Missing Encryption Key"
-msgstr "缺少加密密钥"
-
-#. translators: %1$s is the WordPress support forum URL, %2$s is the Github URL
-#: inc/templates/admin/help.php:256
-#, php-format
-msgid "More help can be found on %1$s and on %2$s."
-msgstr "在%1$s和%2$s上可以找到更多帮助。"
-
-#: inc/templates/admin/help.php:69
-msgid ""
-"Multiple layers of security are in place to protect the privacy, integrity "
-"and authenticity of communications between connected sites:"
-msgstr "多层安全措施可以保护连接站点之间通信的隐私，完整性和真实性："
-
-#: inc/class-wprus-import-export.php:258
-msgid "No file was uploaded."
-msgstr "没有上传文件。"
+#: inc/templates/admin/logs-metabox.php:12
+msgid "Enable Logs"
+msgstr "启用日志"
 
 #: inc/templates/admin/logs-metabox.php:20
 msgid "Number of Log Entries"
@@ -972,591 +1648,22 @@ msgstr ""
 "要显示的日志条目数，以及清理期间数据库中保留的最少行数。日志每小时自动清除一次。 "
 "“全部清除”按钮中指示的数字是数据库中当前的实际行数，单击此行将删除所有这些行。"
 
-#: inc/templates/admin/export-metabox.php:24
-msgid "Offset"
-msgstr "偏移"
-
-#: inc/templates/admin/export-metabox.php:28
-msgid ""
-"Offset results - users are ordered by login name by default ; this option is "
-"useful when exporting users in batches."
-msgstr "偏移结果-默认情况下，用户按登录名排序；批量导出用户时，此选项很有用。"
-
-#: inc/api/class-wprus-api-abstract.php:463
-msgid ""
-"On the remote site, please make sure the permalinks are not using the "
-"\"Plain\" option."
-msgstr "在远程站点上，请确保固定链接未使用“朴素”选项。"
-
-#: inc/api/class-wprus-api-abstract.php:458
-msgid ""
-"On the remote site, please make sure the plugin is activated and that the "
-"permalinks are up to date by visiting the permalinks settings page."
-msgstr "在远程站点上，请访问“永久链接设置”页面，以确保插件已激活并且永久链接是最新的。"
-
-#: inc/templates/admin/help.php:243
-msgid ""
-"Once downloaded, the files are automatically deleted. In case some files "
-"were not downloaded and remained on the server, the containing directory is "
-"also cleaned daily."
-msgstr "下载后，文件将自动删除。如果某些文件没有下载并保留在服务器上，则还每天清理包含目录。"
-
-#: inc/templates/admin/help.php:73
-msgid "OpenSSL encryption"
-msgstr "OpenSSL加密"
-
-#: inc/api/class-wprus-api-abstract.php:336
-msgid "outgoing"
-msgstr "传出"
-
-#: inc/templates/admin/site-metabox-template.php:11
-#: inc/templates/admin/site-metabox.php:11
-msgid "Outgoing Actions"
-msgstr "传出操作"
-
-#: inc/templates/admin/help.php:118
-msgid "Overall, performances should be marginally impacted."
-msgstr "总体而言，性能应受到轻微影响。"
-
-#: inc/class-wprus-settings.php:28 inc/templates/admin/help.php:40
-msgid "Password"
-msgstr "密码"
-
-#. translators: %s is the username
-#: inc/api/class-wprus-api-password.php:126
-#, php-format
-msgid "Password action - firing action reset for username \"%s\""
-msgstr "密码操作-用户名“%s”的触发操作重置"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-password.php:80
-#, php-format
-msgid ""
-"Password action - password successfully reset for user \"%1$s\" from %2$s."
-msgstr "密码操作-已成功从%2$s为用户“%1$s”重置密码。"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-password.php:91
-#, php-format
-msgid ""
-"Password action aborted - cannot reset, user \"%1$s\" from %2$s does not "
-"exist locally."
-msgstr "密码操作已中止-无法重置，%2$s中的用户“%1$s”在本地不存在。"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-password.php:103
-#, php-format
-msgid "Password action failed - incoming password action not enabled for %s"
-msgstr "密码操作失败-未为%s启用传入密码操作"
-
-#: inc/api/class-wprus-api-password.php:59
-msgid "Password action failed - received invalid data."
-msgstr "密码操作失败-接收到无效数据。"
-
-#: inc/templates/admin/help.php:190
-msgid ""
-"Passwords are automatically synchronised as long as the Password action is "
-"enabled (outgoing and incoming respectively)."
-msgstr "只要启用了密码操作（分别为传出和传入），密码就会自动同步。"
-
-#: inc/templates/admin/help.php:192
-msgid "Passwords are NEVER communicated or stored in plain text."
-msgstr "密码永远不会以纯文本形式传达或存储。"
-
-#: inc/templates/admin/help.php:115
-msgid ""
-"Performance degradations are mitigated by the fact that Action Tokens "
-"(blocking request) are saved for a period of time for synchronous actions, "
-"and by the fact that actions are fired ONLY when an operation has been "
-"performed on users (not on every page load)."
-msgstr "通过为同步操作保存一段时间的操作令牌（阻止请求）以及仅在对用户执行操作时才触发操作（而不是在每次页面加载时）才触发操作，可以缓解性能下降。"
-
-#. translators: %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:347
-#, php-format
-msgid ""
-"Ping received for activated action \"%1$s\" from %2$s with remote IP %3$s "
-"(%4$s)"
-msgstr "从远程IP为%3$s（%4$s）的%2$s收到针对激活操作“%1$s”的Ping"
-
-#. translators: %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:378
-#, php-format
-msgid ""
-"Ping received for deactivated action \"%1$s\" from %2$s with remote IP %3$s "
-"(%4$s)"
-msgstr "从远程IP为%3$s（%4$s）的%2$s取消操作“%1$s”收到的Ping"
-
-#. translators: %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:362
-#, php-format
-msgid "Ping success for action \"%1$s\" from %2$s with remote IP %3$s (%4$s)"
-msgstr "使用远程IP%3$s（%4$s）从%2$s ping操作“%1$s”成功"
-
-#: inc/templates/admin/authorization-metabox.php:12
-msgid "Proxy IP Address"
-msgstr "代理IP地址"
-
 #: inc/templates/admin/logs-metabox.php:41
 msgid "Refresh"
 msgstr "刷新"
 
-#: inc/templates/admin/export-metabox.php:18
-msgid ""
-"Remark: on sites with a large number of users, it is recommended to export "
-"users in multiple batches with the help of the \"Offset\" option below."
-msgstr "备注：在具有大量用户的站点上，建议借助下面的“偏移”选项分批导出用户。"
-
-#: inc/templates/admin/main-settings-page.php:15
-msgid "Remote Sites"
-msgstr "远程站点"
-
-#: inc/templates/admin/site-metabox-template.php:106
-#: inc/templates/admin/site-metabox.php:107
-msgid "Remove site configuration"
-msgstr "删除站点配置"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:655
-#, php-format
-msgid "Renewing token for %s"
-msgstr "正在续订%s的令牌"
-
-#: inc/templates/admin/import-metabox.php:17
-msgid "Requires a file previously exported with WP Remote Users Sync"
-msgstr "需要先前通过WP Remote Users Sync导出的文件"
-
-#: inc/api/class-wprus-api-role.php:48 inc/api/class-wprus-api-role.php:78
-#, php-format
-msgid ""
-"Role action aborted - role %1$s for user \"%2$s\" from %3$s not accepted"
-msgstr "角色操作已中止-来自“%3$s”的用户“%2$s”的角色%1$s未被接受"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-role.php:96
-#, php-format
-msgid "Role action failed - incoming role action not enabled for %s"
-msgstr "角色操作失败-未为%s启用传入角色操作"
-
-#: inc/class-wprus-settings.php:29 inc/templates/admin/help.php:44
-msgid "Roles"
-msgstr "角色"
-
-#: inc/templates/admin/help.php:137
-msgid ""
-"Roles can be synchronised when the Create and Update actions are fired, with "
-"the action Role enabled, and matching transferred and accepted role settings."
-msgstr "当启用“创建角色”和“更新”操作并启用角色操作以及匹配的已传输角色和接受角色设置时，可以同步角色。"
-
-#: inc/class-wprus-settings.php:223
-msgid "Save Settings"
-msgstr "保存设置"
-
-#: inc/templates/admin/main-settings-page.php:18
-msgid "Security"
-msgstr "安全"
-
-#: inc/templates/admin/help.php:145
-msgid ""
-"Site 1 with outgoing Create, Update and Role actions enabled, with roles "
-"\"administrator\", \"shop_manager\" and \"custom_role1\" in the \"List of "
-"roles to transfer\" field"
-msgstr ""
-"启用了传出的“创建、更新和角色”操作的站点1，在“要转移的角色列表”字段中具有角色“管理员”、“shop_manager”和“custom_role1”"
-
-#: inc/templates/admin/help.php:162
-msgid ""
-"Site 2 receives  \"administrator\", \"shop_manager\" and \"custom_role1\" "
-"along with john_doe56's data"
-msgstr "站点2接收“管理员”、“shop_manager”和“custom_role1”以及john_doe56的数据"
-
-#: inc/templates/admin/help.php:148
-msgid ""
-"Site 2 with incoming Create, Update and Role actions enabled, with role "
-"\"shop_manager\" in the \"List of roles to accept\" field, and the \"Merge "
-"with existing roles\" box checked"
-msgstr ""
-"启用了传入的“创建、更新和角色操作”的站点2，在“要接受的角色列表”字段中选中了角色“shop_manager”，并选中了“与现有角色合并”框"
-
-#: inc/class-wprus-import-export.php:233
-msgid "Something very wrong happened."
-msgstr "发生了非常错误的事情。"
-
-#: inc/class-wprus-settings.php:459
-msgid "Sorry, you are not allowed to access this page."
-msgstr "抱歉，您无权访问此页面。"
-
-#: inc/templates/admin/main-settings-page.php:45
-msgid "Start with adding a Remote Site"
-msgstr "从添加远程站点开始"
-
-#: inc/class-wprus-logger.php:20
-msgid "Success"
-msgstr "成功"
-
-#: inc/class-wprus-import-export.php:168
-#, php-format
-msgid "Success: exported %d result"
-msgid_plural "Success: exported %d results"
-msgstr[0] "成功：导出了%d个结果"
-msgstr[1] "成功：导出了%d个结果"
-
-#: inc/templates/admin/site-metabox-template.php:13
-#: inc/templates/admin/site-metabox.php:13
-msgid ""
-"Synchronise user data for actions happening on the current site, sent to the "
-"remote site."
-msgstr "为当前站点上发生的操作同步用户数据，并将其发送到远程站点。"
-
-#: inc/templates/admin/site-metabox-template.php:59
-#: inc/templates/admin/site-metabox.php:59
-msgid ""
-"Synchronise user data for actions happening on the remote site, received by "
-"the current site."
-msgstr "为当前站点接收到的远程站点上发生的操作同步用户数据。"
-
-#. Description of the plugin/theme
+#. Description of the plugin
 msgid "Synchronise WordPress Users across Multiple Sites."
 msgstr "跨多个站点同步WordPress用户。由WordPress大学 https://www.wpdaxue.com 提供简体中文支持。"
 
-#: inc/templates/admin/site-metabox-template.php:29
-#: inc/templates/admin/site-metabox-template.php:75
-#: inc/templates/admin/site-metabox.php:29
-#: inc/templates/admin/site-metabox.php:75
-msgid "Test"
-msgstr "测试"
+#. URI of the plugin
+msgid "https://github.com/froger-me/wp-remote-users-sync"
+msgstr "https://github.com/froger-me/wp-remote-users-sync"
 
-#: inc/templates/admin/authorization-metabox.php:16
-msgid "The IP address the current site exposes to the internet."
-msgstr "当前站点公开到互联网的IP地址。"
+#. Author of the plugin
+msgid "Alexandre Froger"
+msgstr "Alexandre Froger"
 
-#: inc/templates/admin/help.php:121
-msgid "The main takeaway is this: "
-msgstr "主要要点是： "
-
-#: inc/templates/admin/help.php:125
-msgid ""
-"The more websites are connected, the bigger the relatively negative impact "
-"on performances."
-msgstr "网站的连接越多，对性能的负面影响就越大。"
-
-#: inc/templates/admin/help.php:23
-msgid ""
-"The page needs to load without interruption and the network between the user "
-"and the remote sites be accessible for it to take effect, because this "
-"operation relies on browser cookies (the action is fired by a script "
-"asynchronously in the footer of the page after login)."
-msgstr ""
-"该页面需要不间断地加载，并且可以访问用户和远程站点之间的网络才能使其生效，因为此操作依赖于浏览器Cookie（此操作由登录后页面页脚中的脚本异步触发） 。"
-
-#: inc/templates/admin/help.php:27
-msgid ""
-"The page needs to load without interruption and the network between the user "
-"and the remote sites be accessible for it to take effect, because this "
-"operation relies on browser cookies (the action is fired by a script "
-"asynchronously in the footer of the page after logout)."
-msgstr ""
-"该页面需要不间断地加载，并且可以访问用户和远程站点之间的网络才能使其生效，因为此操作依赖于浏览器cookie（注销后页面脚注中的脚本会异步触发该操作） 。"
-
-#: inc/class-wprus-settings.php:169
-msgid ""
-"The Remote Site address must start with \"http\".\n"
-"Ideally, only secure websites (address starting with \"https\") should be "
-"connected together."
-msgstr ""
-"远程站点地址必须以“http”开头。\n"
-"理想情况下，应仅将安全网站（地址以“https”开头）连接在一起。"
-
-#: inc/api/class-wprus-api-abstract.php:230
-msgid "The remote website encountered the following error: "
-msgstr "远程网站遇到以下错误： "
-
-#: inc/class-wprus-import-export.php:250
-msgid ""
-"The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in "
-"the HTML form."
-msgstr "上载的文件超出了HTML表单中指定的MAX_FILE_SIZE指令。"
-
-#: inc/class-wprus-import-export.php:246
-msgid "The uploaded file exceeds the upload_max_filesize directive in php.ini."
-msgstr "上传的文件超过了php.ini中的upload_max_filesize指令限制。"
-
-#: inc/class-wprus-import-export.php:254
-msgid "The uploaded file was only partially uploaded."
-msgstr "上传的文件仅部分上传。"
-
-#: inc/templates/admin/help.php:257
-msgid "the WordPress support forum"
-msgstr "WordPress支持论坛"
-
-#: inc/templates/admin/help.php:128
-msgid ""
-"The worse the connection between the remote sites is, the bigger the "
-"relatively negative impact on performances."
-msgstr "远程站点之间的连接越差，对性能的相对负面影响就越大。"
-
-#: inc/templates/admin/help.php:15
-msgid ""
-"There is no \"Master Website\": each site is working independently, firing "
-"and receiving actions depending on each site's configuration."
-msgstr "没有“主网站”：每个站点都在独立工作，并根据每个站点的配置触发和接收操作。"
-
-#: inc/templates/admin/help.php:41
-msgid ""
-"This action also determines whether the passwords are synchronised or should "
-"be ignored during Create and Update actions."
-msgstr "此操作还确定在创建和更新操作期间密码是同步的还是应忽略。"
-
-#: inc/templates/admin/help.php:50
-msgid ""
-"This action is particularly useful to synchronise user data added by plugins "
-"(such as address information in WooCommerce)."
-msgstr "此操作对于同步插件添加的用户数据（例如WooCommerce中的地址信息）特别有用。"
-
-#: inc/templates/admin/help.php:211
-msgid ""
-"This means that two websites in localhost (behind virtual hosts, for example)"
-" can communicate. However, if one of the websites is on localhost and the "
-"other is not, token exchange cannot happen and the websites will not be able "
-"to communicate."
-msgstr ""
-"这意味着localhost中的两个网站（例如，在虚拟主机后面）可以通信。但是，如果其中一个网站位于本地主机上，而另一个不在本地主机上，则无法进行令牌交换，并且这些网站将无法通信。"
-
-#: inc/templates/admin/help.php:98
-msgid ""
-"This means the impact on performances depends on the response time between "
-"the connected websites."
-msgstr "这意味着对性能的影响取决于所连接网站之间的响应时间。"
-
-#: inc/templates/admin/help.php:182
-msgid ""
-"To enable extra information synchronisation, the Metadata action is used "
-"along with specified metadata keys in the transferred and accepted metadata "
-"fields."
-msgstr "为了实现其他的信息同步，在传输和接受的元数据字段中将“元数据”操作与指定的元数据键一起使用。"
-
-#: inc/templates/admin/ip-whitelist-metabox.php:12
-msgid ""
-"To find the IP addresses, use the \"Test\" button on remote sites while Logs "
-"are enabled and check the local log results."
-msgstr "要查找IP地址，请在启用日志后使用远程站点上的“测试”按钮，并检查本地日志结果。"
-
-#: inc/api/class-wprus-api-abstract.php:120
-msgid "Token"
-msgstr "令牌"
-
-#. translators: %1$s is the remote site ; %2$s is the action
-#: inc/api/class-wprus-api-abstract.php:128
-#, php-format
-msgid "Token created: site %1$s - action \"%2$s\""
-msgstr "已创建令牌：网站%1$s-操作“%2$s”"
-
-#: inc/api/class-wprus-api-abstract.php:213
-msgid "Unauthorized access (invalid method)"
-msgstr "未经授权的访问（无效方法）"
-
-#. translators: %s is the remote IP address
-#: inc/api/class-wprus-api-abstract.php:211
-#, php-format
-msgid "Unauthorized access (invalid remote IP address %s)"
-msgstr "未经授权的访问（无效的远程IP地址%s）"
-
-#: inc/api/class-wprus-api-abstract.php:193
-msgid "Unauthorized access (invalid token)"
-msgstr "未经授权的访问（无效的令牌）"
-
-#: inc/templates/admin/help.php:45
-msgid ""
-"Unless the \"Merge with existing roles\" option is selected, the roles of "
-"the user are replaced with incoming roles."
-msgstr "除非选择“与现有角色合并”选项，否则用户角色将替换为传入角色。"
-
-#: inc/class-wprus-settings.php:26 inc/templates/admin/help.php:33
-msgid "Update"
-msgstr "更新"
-
-#. translators: %s is the username
-#: inc/api/class-wprus-api-update.php:163
-#, php-format
-msgid "Update action - firing action for username \"%s\""
-msgstr "更新操作-用户名“%s”的触发操作"
-
-#. translators: %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-update.php:87
-#, php-format
-msgid "Update action - successfully updated user \"%1$s\" from %2$s."
-msgstr "更新操作-已成功从%2$s更新用户“%1$s”。"
-
-#. translators: %1$s is the username ; %2$s is the caller
-#: inc/api/class-wprus-api-update.php:103
-#, php-format
-msgid ""
-"Update action aborted - performed Create action instead: \"%1$s\" from %2$s "
-"was not found locally."
-msgstr "更新操作已中止-已执行创建操作：相反，在本地找不到%2$s中的“%1$s”。"
-
-#. translators: %1$s is the error ; %2$s is the username ; %3$s is the caller
-#: inc/api/class-wprus-api-update.php:72
-#, php-format
-msgid "Update action failed - \"%1$s\" for user \"%2$s\" from %3$s."
-msgstr "更新操作失败-用户“%2$s”的“%1$s”来自%3$s。"
-
-#. translators: %1$s is the username ; %2$s is the caller
-#: inc/api/class-wprus-api-update.php:53
-#, php-format
-msgid ""
-"Update action failed - \"%1$s\" from %2$s does not exist locally and the "
-"incoming Create action is not enabled."
-msgstr "更新操作失败-来自%2$s的“%1$s”在本地不存在，并且未启用传入的“创建”操作。"
-
-#. translators: %s is the url of the caller
-#: inc/api/class-wprus-api-update.php:123
-#, php-format
-msgid "Update action failed - incoming update action not enabled for %s"
-msgstr "更新操作失败-未为%s启用传入的更新操作"
-
-#: inc/templates/admin/import-metabox.php:15
-msgid "Upload File"
-msgstr "上传文件"
-
-#: inc/templates/admin/authorization-metabox.php:18
-msgid ""
-"Used by the remote sites to determine the origin of incoming actions. Leave "
-"empty if the server IP address is not altered before reaching the remote "
-"sites."
-msgstr "远程站点用来确定传入操作的来源。如果在到达远程站点之前服务器IP地址没有更改，请留空。"
-
-#: inc/templates/admin/help.php:245
-msgid "User passwords cannot be and are NOT exported."
-msgstr "用户密码不能也不会被导出。"
-
-#: inc/templates/admin/help.php:60
-msgid ""
-"Users existing on one site and not the other will not be synchronised unless "
-"the user is actually updated AND both Create and Update actions are enabled "
-"on the site where the user does not exist."
-msgstr "除非实际更新了用户并且在该用户不存在的站点上同时启用了“创建”和“更新”操作，否则不会同步存在于一个站点而非另一个站点上的用户。"
-
-#: inc/templates/admin/import-metabox.php:12
-msgid "Users File"
-msgstr "用户文件"
-
-#: inc/class-wprus-logger.php:21
-msgid "Warning"
-msgstr "警告"
-
-#: inc/class-wprus-import-export.php:152
-#, php-format
-msgid "Warning: export aborted prematurely (%d result)"
-msgid_plural "Warning: export aborted prematurely (%d results)"
-msgstr[0] "警告：导出过早中止（%d结果）"
-msgstr[1] "警告：导出过早中止（%d结果）"
-
-#: inc/templates/admin/encryption-metabox.php:18
-#: inc/templates/admin/encryption-metabox.php:30
-#: inc/templates/admin/encryption-metabox.php:44
-msgid ""
-"WARNING: Make sure this value is the same for all the websites to "
-"synchronise."
-msgstr "警告：确保要同步的所有网站的此值都相同。"
-
-#: inc/templates/admin/authorization-metabox.php:30
-msgid ""
-"WARNING: this option can potentially open the website and its assciated "
-"connected sites to malicious operations. This is to be used ONLY in case of "
-"advanced maintenance that would invalidate server information on the remote "
-"site, such as prior to using the WP-CLI tool to manipulate user data."
-msgstr ""
-"警告：此选项可能会打开该网站及其相关连接的站点以进行恶意操作。仅在高级维护会导致远程站点上的服务器信息无效的情况下才使用此方法，例如在使用WP-"
-"CLI工具操作用户数据之前。"
-
-#: inc/templates/admin/help.php:177
-msgid ""
-"What about extra user information? (WooCommerce / Ultimate Member / other "
-"plugin adding user information)"
-msgstr "其他的用户信息呢？ （WooCommerce / Ultimate Member /其他插件添加用户信息）"
-
-#: inc/templates/admin/help.php:187
-msgid "What about user passwords?"
-msgstr "用户密码呢？"
-
-#: inc/templates/admin/help.php:56
-msgid "What happens to existing users after activating WP Remote Users Sync?"
-msgstr "激活WP Remote Users Sync后，现有用户会怎样？"
-
-#: inc/templates/admin/help.php:198
-msgid "What if the user to synchronise does not exist on the remote site?"
-msgstr "如果远程站点上不存在要同步的用户怎么办？"
-
-#: inc/templates/admin/help.php:94
-msgid "What is the impact on performances?"
-msgstr "对性能有什么影响？"
-
-#: inc/templates/admin/help.php:66
-msgid "What security measures are in place?"
-msgstr "有哪些安全措施？"
-
-#: inc/templates/admin/help.php:138
-msgid ""
-"When synchronising, the following role are assigned exclusively to the user "
-"and will not be merged: administrator, editor, author, contributor, "
-"subscriber. All other roles can be merged upon incoming action if the "
-"\"Merge with existing roles\" box is checked."
-msgstr ""
-"同步时，以下角色专门分配给用户，并且不会合并：管理员、编辑者、作者、贡献者、订阅者。如果选中了“与现有角色合并”框，则所有其他角色都可以在传入操作时合并。"
-
-#: inc/templates/admin/help.php:158
-msgid ""
-"When the user john_doe56 is updated on Site 1, the following happens on Site "
-"2:"
-msgstr "在站点1上更新用户john_doe56时，在站点2上发生以下情况："
-
-#: inc/templates/admin/help.php:250
-msgid "Where to find more help?"
-msgstr "在哪里可以找到更多帮助？"
-
-#: inc/templates/admin/help.php:220
-msgid "With it, administrators can:"
-msgstr "有了它，管理员可以："
-
-#: inc/templates/admin/help.php:193
-msgid ""
-"WP Remote User Sync integrates with any plugin updating passwords provided "
-"they do so respecting WordPress standards."
-msgstr "WP Remote User Sync与任何插件更新密码集成在一起，前提是它们遵守WordPress标准。"
-
-#. Plugin Name of the plugin/theme
-#: inc/class-wprus-settings.php:121 inc/class-wprus-settings.php:136
-#: inc/templates/admin/main-settings-page.php:9
-msgid "WP Remote Users Sync"
-msgstr "WP远程用户同步"
-
-#: inc/templates/admin/help.php:14
-msgid ""
-"WP Remote Users Sync \"listens\" to changes related to WordPress users, and "
-"fires outgoing \"actions\" to registered remote sites. The registered remote "
-"sites with WP Remote Users Sync installed then catch incoming actions and "
-"react accordingly."
-msgstr ""
-"WP Remote Users Sync“侦听”与WordPress用户相关的更改，并将传出的“操作”触发到已注册的远程站点。安装了WP Remote "
-"Users Sync的注册远程站点然后捕获传入的操作并做出相应的反应。"
-
-#: inc/class-wprus-settings.php:115
-msgid "WP Remote Users Sync is not ready. "
-msgstr "WP远程用户同步尚未准备好。 "
-
-#: inc/templates/admin/help.php:97
-msgid ""
-"WP Remote Users Sync needs to communicate with the remote sites to actually "
-"synchronise users."
-msgstr "WP Remote Users Sync需要与远程站点进行通信以实际同步用户。"
-
-#: inc/templates/admin/help.php:219
-msgid "WP Remote Users Sync provides its own user import/export tool."
-msgstr "WP Remote Users Sync提供了自己的用户导入/导出工具。"
-
-#: inc/templates/admin/help.php:210
-msgid ""
-"Yes - as long as the websites can reach each other, WP Remote User Sync will "
-"work."
-msgstr "是的-只要两个网站可以互相访问，WP Remote User Sync就可以使用。"
+#. Author URI of the plugin
+msgid "https://froger.me/"
+msgstr "https://froger.me/"

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Remote Users Sync\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 12:58+0000\n"
+"POT-Creation-Date: 2020-08-29 15:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -15,263 +15,133 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.3.3; wp-5.4"
 
-#. %d is the number of errors
-#: inc/class-wprus-import-export.php:303
+#: inc/class-wprus.php:33
+msgid "Failed to create the necessary database table(s)."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:47 inc/class-wprus-import-export.php:193
+msgid "Error: WordPress File System experienced an unknown problem."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:81 inc/class-wprus-import-export.php:215
+msgid "Error: unauthorized access - please reload the page and try again."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:93
+msgid "Error: Unable to create the export file"
+msgstr ""
+
+#. %d is the number of results
+#: inc/class-wprus-import-export.php:152
 #, php-format
-msgid " - %d error:"
-msgid_plural " - %d errors:"
+msgid "Warning: export aborted prematurely (%d result)"
+msgid_plural "Warning: export aborted prematurely (%d results)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/templates/admin/help.php:73
-msgid ""
-" - All communications are encrypted using the AES-256-CBC algorithm with a "
-"randomly generated Initialisation Vector to ensure their confidentiality ; "
-"it is recommended to use a strong, randomly generated Action Encryption Key "
-"(the same value on all the connected websites)."
-msgstr ""
-
-#: inc/templates/admin/help.php:76
-msgid ""
-" - All communications are signed with a hash using the SHA256 algorithm to "
-"ensure their integrity ; it is recommended to use a strong, randomly "
-"generated Action Signature Key (the same value on all the connected websites)"
-"."
-msgstr ""
-
-#: inc/templates/admin/help.php:79
-msgid ""
-" - All communications rely on an authentication token (randomly generated). "
-"Asynchronous actions (Login & Logout by default) use a single-use token "
-"(true nonce), and synchronous actions use a token valid only for a limited "
-"period of time  ; it is recommended to keep the Action Token Validity "
-"Duration relatively short (default is 1,800 seconds or 30 minutes, and must "
-"be the same duration on all the connected websites). "
-msgstr ""
-
-#: inc/templates/admin/help.php:44
-msgid ""
-" - Does not fire an action of its own per se ; this action determines "
-"whether roles should be synchronised or ignored during Create and Update "
-"actions, depending on specified transferred outgoing and accepted incoming "
-"roles."
-msgstr ""
-
-#: inc/templates/admin/help.php:30
-msgid ""
-" - Fired when a user is created. The expected result is a synchronised user "
-"created on all registered remote sites accepting incoming Create actions "
-"(see Password, Roles and Metadata below for caveats)."
-msgstr ""
-
-#: inc/templates/admin/help.php:37
-msgid ""
-" - Fired when a user is deleted. The expected result is the user being "
-"deleted on all registered remote sites accepting incoming Delete actions."
-msgstr ""
-
-#: inc/templates/admin/help.php:33
-msgid ""
-" - Fired when a user is updated, either by the user themselves or another "
-"user. The expected result is up to date and synchronised user information on "
-"all registered remote sites accepting incoming Update actions (see Password, "
-"Roles and Metadata below for caveats)."
-msgstr ""
-
-#: inc/templates/admin/help.php:22
-msgid ""
-" - Fired when a user logs in. The expected result is a user logged in on all "
-"registered remote sites accepting incoming Login actions."
-msgstr ""
-
-#: inc/templates/admin/help.php:26
-msgid ""
-" - Fired when a user logs out. The expected result is a user logged out on "
-"all registered remote sites accepting incoming Logout actions."
-msgstr ""
-
-#: inc/templates/admin/help.php:40
-msgid ""
-" - Fired when a user resets their password. The expected result is the "
-"password being reset for the user on all registered remote sites accepting "
-"incoming Password actions."
-msgstr ""
-
-#: inc/templates/admin/help.php:49
-msgid ""
-" - Fired when one or several user metadata are added / created / deleted, "
-"depending on specified transferred outgoing and accepted incoming metadata "
-"keys."
-msgstr ""
-
-#: inc/templates/admin/help.php:82
-msgid ""
-" - IP addresses are verified using the REMOTE_ADDR server environment "
-"variable, which cannot be faked (unless the servers or the network "
-"infrastructure are already highly compromised, in which case there are "
-"bigger issues to worry about)."
-msgstr ""
-
-#. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:393
+#. %d is the number of results
+#: inc/class-wprus-import-export.php:168
 #, php-format
-msgid "\"%1$s\" action is not activated on %2$s with remote IP %3$s (%4$s)."
-msgstr ""
+msgid "Success: exported %d result"
+msgid_plural "Success: exported %d results"
+msgstr[0] ""
+msgstr[1] ""
 
-#: inc/templates/admin/help.php:165
+#: inc/class-wprus-import-export.php:185
 msgid ""
-"\"administrator\" and \"custom_role1\" are not part of the accepted roles ; "
-"was the list of accepted roles left empty to accept all roles, "
-"\"custom_role1\" would not be a valid role on Site 2 and would not be "
-"accepted anyway"
+"Error: unauthorized access - please reload the previous page and try again."
 msgstr ""
 
-#: inc/templates/admin/help.php:168
+#: inc/class-wprus-import-export.php:199
 msgid ""
-"\"shop_manager\" is part of the accepted roles, and is a valid role on Site 2"
+"Error: the file was not found on the server. Please try exporting again."
 msgstr ""
 
-#: inc/class-wprus-logger.php:174
-msgid "(No message)"
+#: inc/class-wprus-import-export.php:232
+msgid "Something very wrong happened."
 msgstr ""
 
-#: inc/class-wprus-import-export.php:270
+#: inc/class-wprus-import-export.php:237
+msgid "Make sure the uploaded file is a zip archive."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:245
+msgid "The uploaded file exceeds the upload_max_filesize directive in php.ini."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:249
+msgid ""
+"The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in "
+"the HTML form."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:253
+msgid "The uploaded file was only partially uploaded."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:257
+msgid "No file was uploaded."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:261
+msgid "Missing a temporary folder."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:265
+msgid "Failed to write file to disk."
+msgstr ""
+
+#: inc/class-wprus-import-export.php:269
 msgid ""
 "A PHP extension stopped the file upload. PHP does not provide a way to "
 "ascertain which extension caused the file upload to stop; examining the list "
 "of loaded extensions with phpinfo() may help."
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:330
-msgid "A ping was received but the initiator did not send the proper data."
+#: inc/class-wprus-import-export.php:276
+msgid "Make sure the uploaded file is not empty."
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:318
-msgid ""
-"A ping was received but the initiator did not use matching encryption and "
-"signature action keys"
-msgstr ""
-
-#: inc/templates/admin/help.php:108
-msgid ""
-"A second token renewal request to try again (blocking as well ; token "
-"renewal is tried again only once in case the first request failed, with a 5 "
-"seconds timeout by default)"
-msgstr ""
-
-#: inc/templates/admin/help.php:105
-msgid ""
-"A token renewal request that fails (blocking: a response is needed to save "
-"the token for later user, with a 1 second timeout by default)"
-msgstr ""
-
-#: inc/templates/admin/help.php:151
-msgid ""
-"A user john_doe56 with the role \"administrator\", \"shop_manager\" and "
-"\"custom_role1\" on Site 1, and \"author\" on Site 2"
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:208
-msgid "Access granted"
-msgstr ""
-
-#: inc/templates/admin/encryption-metabox.php:24
-msgid "Action Encryption Key"
-msgstr ""
-
-#: inc/templates/admin/encryption-metabox.php:38
-msgid "Action Signature Key"
-msgstr ""
-
-#: inc/templates/admin/encryption-metabox.php:12
-msgid "Action Token Validity Duration"
-msgstr ""
-
-#: inc/templates/admin/main-settings-page.php:24
-msgid "Activity Logs"
-msgstr ""
-
-#: inc/templates/admin/add-site-metabox.php:9
-msgid "Add"
-msgstr ""
-
-#: inc/class-wprus-settings.php:230
-msgid "Add Remote Site"
-msgstr ""
-
-#. %1$s is the url of the script ; %2$s is the action called
-#: inc/api/class-wprus-api-abstract.php:554
+#. %d is the number of results
+#: inc/class-wprus-import-export.php:290
 #, php-format
-msgid "Added %1$s async URL in %2$s"
+msgid "Imported %d user"
+msgid_plural "Imported %d users"
+msgstr[0] ""
+msgstr[1] ""
+
+#. %d is the number of errors
+#: inc/class-wprus-import-export.php:302
+#, php-format
+msgid " - %d error:"
+msgid_plural " - %d errors:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/class-wprus-import-export.php:364
+msgid "Failed to open the file."
+msgstr ""
+
+#. %1$s is the username, %2$s is the line , %3$s is the error
+#: inc/class-wprus-import-export.php:435
+#, php-format
+msgid "Error importing user \"%1$s\" on line %2$s - %3$s"
+msgstr ""
+
+#: inc/class-wprus-logger.php:19
+msgid "Info"
+msgstr ""
+
+#: inc/class-wprus-logger.php:20
+msgid "Success"
+msgstr ""
+
+#: inc/class-wprus-logger.php:21
+msgid "Warning"
 msgstr ""
 
 #: inc/class-wprus-logger.php:22
 msgid "Alert"
-msgstr ""
-
-#. Author of the plugin
-msgid "Alexandre Froger"
-msgstr ""
-
-#: inc/templates/admin/authorization-metabox.php:24
-msgid "Allow Anonymous Sync Operations"
-msgstr ""
-
-#: inc/templates/admin/help.php:111
-msgid "An action request (non-blocking: a response is not needed)"
-msgstr ""
-
-#: inc/class-wprus-settings.php:168
-msgid ""
-"An undefined error occured - please visit the permalinks settings page and "
-"try again."
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:456
-msgid ""
-"an undefined error occured. Please make sure the address is correct and try "
-"again."
-msgstr ""
-
-#: inc/class-wprus-settings.php:167
-msgid ""
-"Are you sure you want to remove this site? It will only take effect after "
-"saving the settings."
-msgstr ""
-
-#: inc/templates/admin/help.php:116
-msgid ""
-"Asynchronous actions (Login & Logout by default) are the most costly: the "
-"operations themselves are not blocking, but their Action Tokens have to be "
-"renewed beforehand each time: true nonces, single-use tokens, are necessary "
-"for security reasons when firing actions from the browser."
-msgstr ""
-
-#: inc/templates/admin/help.php:117
-msgid ""
-"Asynchronous actions are also potentially more susceptible to failure in "
-"case of network issues, such as if the page load is interrupted or the "
-"enqueued script call failed in the browser ; this is a necessary trade-off "
-"as these actions require authentication cookie manipulations."
-msgstr ""
-
-#: inc/class-wprus-settings.php:237
-msgid "Authentication & Encryption"
-msgstr ""
-
-#: inc/templates/admin/help.php:79
-msgid "Authentication tokens"
-msgstr ""
-
-#: inc/templates/admin/help.php:154
-msgid ""
-"Both Site 1 and Site 2 have WooCommerce enabled, therefore the role "
-"\"shop_manager\" exists on both sites, but \"custom_role1\" does not exist "
-"on Site 2."
-msgstr ""
-
-#: inc/templates/admin/help.php:207
-msgid "Can it be tested on localhost first?"
 msgstr ""
 
 #. %d is the current number of log entries
@@ -280,468 +150,139 @@ msgstr ""
 msgid "Clear All (%d entries)"
 msgstr ""
 
-#: inc/templates/admin/help.php:191
-msgid ""
-"Communications are encrypted, signed, token-validated and IP-validated to "
-"make the process as secure as possible."
+#: inc/class-wprus-logger.php:174
+msgid "(No message)"
 msgstr ""
 
-#: inc/templates/admin/help.php:141
-msgid "Consider the following scenario:"
+#: inc/class-wprus-settings.php:24 inc/templates/admin/help.php:22
+msgid "Login"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:87
-msgid "Could not decrypt data: invalid bundle."
+#: inc/class-wprus-settings.php:25 inc/templates/admin/help.php:26
+msgid "Logout"
 msgstr ""
 
-#: inc/class-wprus-settings.php:25 inc/templates/admin/help.php:30
+#: inc/class-wprus-settings.php:26 inc/templates/admin/help.php:30
 msgid "Create"
 msgstr ""
 
-#. %s is the username
-#: inc/api/class-wprus-api-create.php:127
-#, php-format
-msgid "Create action - firing action for username \"%s\""
+#: inc/class-wprus-settings.php:27 inc/templates/admin/help.php:33
+msgid "Update"
 msgstr ""
 
-#. %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-create.php:67
-#, php-format
-msgid "Create action - successfully created user \"%1$s\" from %2$s."
-msgstr ""
-
-#. %1$s is the error ; %2$s is the username ; %3$s is the caller
-#: inc/api/class-wprus-api-create.php:52
-#, php-format
-msgid "Create action failed - \"%1$s\" for user \"%2$s\" from %3$s."
-msgstr ""
-
-#. %s is the url of the caller
-#: inc/api/class-wprus-api-create.php:87
-#, php-format
-msgid "Create action failed - incoming create action not enabled for %s"
-msgstr ""
-
-#: inc/api/class-wprus-api-update.php:23 inc/api/class-wprus-api-create.php:23
-msgid "Create action failed - received invalid data."
-msgstr ""
-
-#: inc/class-wprus-settings.php:27 inc/templates/admin/help.php:37
+#: inc/class-wprus-settings.php:28 inc/templates/admin/help.php:37
 msgid "Delete"
 msgstr ""
 
-#. %s is the username
-#: inc/api/class-wprus-api-delete.php:119
-#, php-format
-msgid "Delete action - firing action for username \"%s\""
+#: inc/class-wprus-settings.php:29 inc/templates/admin/help.php:40
+msgid "Password"
 msgstr ""
 
-#. %1$s is the username, %2$s is the caller, %3$s is the reassign username
-#: inc/api/class-wprus-api-delete.php:75
-#, php-format
-msgid ""
-"Delete action - successfully deleted user \"%1$s\" from %2$s and reassigned "
-"content to %3$s."
+#: inc/class-wprus-settings.php:30 inc/templates/admin/help.php:44
+msgid "Roles"
 msgstr ""
 
-#. %1$s is the username, %2$s is the caller, %3$s is the reassign username
-#: inc/api/class-wprus-api-delete.php:63
-#, php-format
-msgid ""
-"Delete action - successfully deleted user \"%1$s\" from %2$s but failed to "
-"reassign content to %3$s."
+#: inc/class-wprus-settings.php:31 inc/templates/admin/help.php:49
+msgid "Metadata"
 msgstr ""
 
-#. %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-delete.php:87
-#, php-format
-msgid "Delete action - successfully deleted user \"%1$s\" from %2$s."
+#: inc/class-wprus-settings.php:107
+msgid "Missing Encryption Key"
 msgstr ""
 
-#. %s is the url of the caller
-#: inc/api/class-wprus-api-delete.php:100
-#, php-format
-msgid "Delete action failed - incoming delete action not enabled for %s"
+#: inc/class-wprus-settings.php:108
+msgid "Missing Authentication Key"
 msgstr ""
 
-#: inc/api/class-wprus-api-delete.php:22
-msgid "Delete action failed - received invalid data."
-msgstr ""
-
-#. %1$s is the username ; %2$s is the caller
-#: inc/api/class-wprus-api-delete.php:50
-#, php-format
-msgid "Delete action failed - user \"%1$s\" from %2$s was not found locally."
-msgstr ""
-
-#: inc/templates/admin/help.php:89
-msgid ""
-"Despite these strong security measures, administrators use this plugin at "
-"their own risk ; the author will not be held liable for any damages "
-"resulting from the use of WP Remote Users Sync."
-msgstr ""
-
-#: inc/templates/admin/authorization-metabox.php:28
-msgid ""
-"Disable checking the origin of the actions received by the current site "
-"before synchronising."
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:63
-msgid "Download "
-msgstr ""
-
-#: inc/class-wprus-settings.php:113
+#: inc/class-wprus-settings.php:123
 msgid "Edit configuration"
 msgstr ""
 
-#: inc/templates/admin/logs-metabox.php:12
-msgid "Enable Logs"
+#: inc/class-wprus-settings.php:125
+msgid "WP Remote Users Sync is not ready. "
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:447
-msgid "Error contacting the remote site: "
+#. Name of the plugin
+#: inc/class-wprus-settings.php:139
+#: inc/templates/admin/main-settings-page.php:9
+msgid "WP Remote Users Sync"
 msgstr ""
 
-#. %1$s is the username, %2$s is the line , %3$s is the error
-#: inc/class-wprus-import-export.php:436
-#, php-format
-msgid "Error importing user \"%1$s\" on line %2$s - %3$s"
+#: inc/class-wprus-settings.php:173
+msgid ""
+"Are you sure you want to remove this site? It will only take effect after "
+"saving the settings."
 msgstr ""
 
-#: inc/class-wprus-settings.php:170
+#: inc/class-wprus-settings.php:174
+msgid ""
+"An undefined error occured - please visit the permalinks settings page and "
+"try again."
+msgstr ""
+
+#: inc/class-wprus-settings.php:175
+msgid ""
+"The Remote Site address must start with \"http\".\n"
+"Ideally, only secure websites (address starting with \"https\") should be "
+"connected together."
+msgstr ""
+
+#: inc/class-wprus-settings.php:176
 msgid ""
 "Error: invalid file name. Please use a file exported with WP Remote Users "
 "Sync."
 msgstr ""
 
-#: inc/class-wprus-settings.php:171
+#: inc/class-wprus-settings.php:177
 msgid ""
 "Error: invalid file. Please use a non-empty file exported with WP Remote "
 "Users Sync."
 msgstr ""
 
-#: inc/class-wprus-import-export.php:199
-msgid ""
-"Error: the file was not found on the server. Please try exporting again."
-msgstr ""
-
-#: inc/class-wprus-settings.php:172
+#: inc/class-wprus-settings.php:178
 msgid ""
 "Error: the server hung up unexpectedly. Please try to import users in "
 "smaller batches."
 msgstr ""
 
-#: inc/class-wprus-import-export.php:95
-msgid "Error: Unable to create the export file"
+#: inc/class-wprus-settings.php:229
+msgid "Save Settings"
 msgstr ""
 
-#: inc/class-wprus-import-export.php:83 inc/class-wprus-import-export.php:215
-msgid "Error: unauthorized access - please reload the page and try again."
+#: inc/class-wprus-settings.php:236
+msgid "Add Remote Site"
 msgstr ""
 
-#: inc/class-wprus-import-export.php:185
-msgid ""
-"Error: unauthorized access - please reload the previous page and try again."
+#: inc/class-wprus-settings.php:243
+msgid "Authentication & Encryption"
 msgstr ""
 
-#: inc/class-wprus-import-export.php:49 inc/class-wprus-import-export.php:193
-msgid "Error: WordPress File System experienced an unknown problem."
-msgstr ""
-
-#: inc/templates/admin/help.php:59
-msgid ""
-"Existing users remain untouched, until an enabled incoming action is "
-"received from a remote site."
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:57
-msgid "Export "
-msgstr ""
-
-#: inc/templates/admin/help.php:224
-msgid "Export all users"
-msgstr ""
-
-#: inc/templates/admin/help.php:236
-msgid ""
-"Export batches of users - for example, to export 500 users at a time, Max # "
-"is set to 500 and Offset to 0, 500, 1,000, 1,500, 2,000... and the export "
-"operation is repeated until there are no more users to export."
-msgstr ""
-
-#: inc/class-wprus-settings.php:268
-msgid "Export Users"
-msgstr ""
-
-#: inc/templates/admin/help.php:233
-msgid "Export users with or without specified metadata"
-msgstr ""
-
-#: inc/templates/admin/help.php:230
-msgid "Export users with or without their roles"
-msgstr ""
-
-#: inc/templates/admin/help.php:227
-msgid "Export users with specified roles"
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:43
-msgid "Export users with their roles"
-msgstr ""
-
-#: inc/templates/admin/help.php:244
-msgid ""
-"Exported files are not directly accessible by URL: only administrators can "
-"access them."
-msgstr ""
-
-#: inc/templates/admin/encryption-metabox.php:16
-msgid ""
-"Expressed in seconds, the duration after which generated action tokens "
-"expire and need to be renewed."
-msgstr ""
-
-#: inc/templates/admin/help.php:180
-msgid ""
-"Extra user information can be synchronised too out of the box as long as "
-"they are stored in the user metadata."
-msgstr ""
-
-#: inc/class-wprus.php:33
-msgid "Failed to create the necessary database table(s)."
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:135
-msgid "Failed to create token - invalid payload"
-msgstr ""
-
-#: inc/class-wprus-import-export.php:365
-msgid "Failed to open the file."
-msgstr ""
-
-#. %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:695
-#, php-format
-msgid "Failed to renew token for %s"
-msgstr ""
-
-#. %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:680
-#, php-format
-msgid "Failed to renew token for %s - retrying..."
-msgstr ""
-
-#: inc/class-wprus-import-export.php:266
-msgid "Failed to write file to disk."
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:34
-msgid "Filter users by role (leave empty to export all users):"
-msgstr ""
-
-#: inc/templates/admin/help.php:83
-msgid ""
-"For all synchronous actions, because they are fired server-side, IP "
-"verification can be enabled using the IP Whitelist setting with IP addresses "
-"to be compared against the remote IP address."
-msgstr ""
-
-#: inc/templates/admin/help.php:181
-msgid ""
-"For example, it means all the address and profile information in WooCommerce "
-"can be synchronised, but not the orders status or subscription status."
-msgstr ""
-
-#: inc/templates/admin/help.php:61
-msgid ""
-"For existing user databases in need of immediate synchronisation, WP Remote "
-"Users Sync provides its own user import/export tool."
-msgstr ""
-
-#: inc/templates/admin/main-settings-page.php:27
-msgid "Help"
-msgstr ""
-
-#: inc/templates/admin/help.php:262
-msgid ""
-"Help is provided for general enquiries and bug fixes only: feature requests, "
-"extra integration or conflict resolution with third-party themes or plugins, "
-"and specific setup troubleshooting requests will not be addressed without a "
-"fee (transfer method and amount at the discretion of the plugin author)."
-msgstr ""
-
-#: inc/templates/admin/help.php:76
-msgid "HMAC signature"
-msgstr ""
-
-#: inc/templates/admin/help.php:134
-msgid "How are user roles handled when a user is synchronised?"
-msgstr ""
-
-#: inc/templates/admin/help.php:11
-msgid "How does it work?"
-msgstr ""
-
-#: inc/templates/admin/help.php:216
-msgid "How to export users from this site and import them into a remote site?"
-msgstr ""
-
-#. Author URI of the plugin
-msgid "https://froger.me/"
-msgstr ""
-
-#. URI of the plugin
-msgid "https://github.com/froger-me/wp-remote-users-sync"
-msgstr ""
-
-#: inc/templates/admin/encryption-metabox.php:42
-msgid "Ideally a random string, used to authenticate remote operations data."
-msgstr ""
-
-#: inc/templates/admin/encryption-metabox.php:28
-msgid "Ideally a random string, used to encrypt remote operations data."
-msgstr ""
-
-#: inc/templates/admin/help.php:202
-msgid ""
-"If other actions for this user are fired before that (Login, Logout, Delete, "
-"Password, Metadata), nothing will happen, and an action failure log entry "
-"will be recorded if the \"Enable Logs\" box is checked."
-msgstr ""
-
-#: inc/templates/admin/help.php:201
-msgid ""
-"If the incoming Create action is enabled along with the incoming Update "
-"action, the user will be synchronised on the remote website upon user update."
-msgstr ""
-
-#: inc/templates/admin/help.php:46
-msgid ""
-"If the incoming roles do not exist on or are not accepted by the remote site,"
-" they are ignored."
-msgstr ""
-
-#: inc/templates/admin/help.php:34
-msgid ""
-"If the user does not exist on the remote site and the incoming Create action "
-"is enabled, a synchronised user is created instead."
-msgstr ""
-
-#: inc/templates/admin/import-metabox.php:15
-msgid "Import"
-msgstr ""
-
-#: inc/templates/admin/main-settings-page.php:21
-msgid "Import / Export"
-msgstr ""
-
-#: inc/class-wprus-settings.php:278
-msgid "Import Users"
-msgstr ""
-
-#: inc/templates/admin/help.php:239
-msgid "Import users into the remote site using the file(s) previously exported"
-msgstr ""
-
-#: inc/templates/admin/encryption-metabox.php:32
-#: inc/templates/admin/encryption-metabox.php:46
-msgid "IMPORTANT: For security reasons, keep this value ABSOLUTELY SECRET."
-msgstr ""
-
-#. %d is the number of results
-#: inc/class-wprus-import-export.php:291
-#, php-format
-msgid "Imported %d user"
-msgid_plural "Imported %d users"
-msgstr[0] ""
-msgstr[1] ""
-
-#: inc/templates/admin/help.php:101
-msgid ""
-"In the worst case scenario, three requests are made to EACH remote site when "
-"doing synchronisation:"
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:336
-msgid "incoming"
-msgstr ""
-
-#: inc/templates/admin/site-metabox-template.php:57
-#: inc/templates/admin/site-metabox.php:57
-msgid "Incoming Actions"
-msgstr ""
-
-#: inc/class-wprus-logger.php:19
-msgid "Info"
-msgstr ""
-
-#: inc/templates/admin/help.php:82
-msgid "IP verification"
-msgstr ""
-
-#: inc/class-wprus-settings.php:244
+#: inc/class-wprus-settings.php:250
 msgid "IP Whitelist"
 msgstr ""
 
-#: inc/templates/admin/help.php:88
-msgid "It is HIGHLY recommended to only connect https-enabled websites."
+#: inc/class-wprus-settings.php:257
+msgid "Logs"
 msgstr ""
 
-#: inc/templates/admin/help.php:87
-msgid "It is HIGHLY recommended to use the IP Whitelist setting."
+#: inc/class-wprus-settings.php:274
+msgid "Export Users"
 msgstr ""
 
-#: inc/templates/admin/help.php:171
-msgid ""
-"john_doe56's new synchronised roles on Site 2 are \"author\" and "
-"\"shop_manager\""
+#: inc/class-wprus-settings.php:284
+msgid "Import Users"
 msgstr ""
 
-#: inc/templates/admin/ip-whitelist-metabox.php:13
-msgid "Leave blank to accept any IP address (not recommended)."
+#: inc/class-wprus-settings.php:465
+msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: inc/templates/admin/ip-whitelist-metabox.php:11
-msgid "List of IP addresses of remote sites to authorise (one per line)."
+#: inc/api/class-wprus-api-login.php:27
+msgid "Login action failed - a user is already logged in."
 msgstr ""
 
-#: inc/templates/admin/site-metabox-template.php:82
-#: inc/templates/admin/site-metabox.php:82
-msgid "List of metadata to accept (leave empty to accept all):"
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:47
-msgid "List of metadata to export (leave empty to export none):"
-msgstr ""
-
-#: inc/templates/admin/site-metabox-template.php:36
-#: inc/templates/admin/site-metabox.php:36
-msgid "List of metadata to transfer (leave empty to transfer none):"
-msgstr ""
-
-#: inc/templates/admin/site-metabox-template.php:92
-#: inc/templates/admin/site-metabox.php:93
-msgid "List of roles to accept (leave empty to accept all):"
-msgstr ""
-
-#: inc/templates/admin/site-metabox-template.php:46
-#: inc/templates/admin/site-metabox.php:46
-msgid "List of roles to transfer (leave empty to transfer none):"
-msgstr ""
-
-#: inc/templates/admin/help.php:18
-msgid "List of supported actions by default:"
-msgstr ""
-
-#: inc/class-wprus-settings.php:23 inc/templates/admin/help.php:22
-msgid "Login"
-msgstr ""
-
-#. %s is the username
-#: inc/api/class-wprus-api-login.php:112
-#, php-format
-msgid "Login action - enqueueing asynchronous actions for username \"%s\""
+#: inc/api/class-wprus-api-login.php:39
+msgid "Login action failed - received invalid data."
 msgstr ""
 
 #. %1$s is the username, %2$s is the caller
@@ -756,256 +297,121 @@ msgstr ""
 msgid "Login action aborted - user \"%1$s\" from %2$s does not exist locally."
 msgstr ""
 
-#: inc/api/class-wprus-api-login.php:27
-msgid "Login action failed - a user is already logged in."
-msgstr ""
-
 #. %s is the url of the caller
 #: inc/api/class-wprus-api-login.php:85
 #, php-format
 msgid "Login action failed - incoming login action not enabled for %s"
 msgstr ""
 
-#: inc/api/class-wprus-api-login.php:39
-msgid "Login action failed - received invalid data."
-msgstr ""
-
-#: inc/class-wprus-settings.php:24 inc/templates/admin/help.php:26
-msgid "Logout"
-msgstr ""
-
 #. %s is the username
-#: inc/api/class-wprus-api-logout.php:120
+#: inc/api/class-wprus-api-login.php:112
 #, php-format
-msgid "Logout action - enqueueing asynchronous actions for username \"%s\""
+msgid "Login action - enqueueing asynchronous actions for username \"%s\""
 msgstr ""
 
-#. %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-logout.php:60
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-role.php:48 inc/api/class-wprus-api-role.php:78
 #, php-format
-msgid "Logout action - successfully logged out user \"%1$s\" from %2$s."
-msgstr ""
-
-#. %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-logout.php:71
-#, php-format
-msgid "Logout action aborted - user \"%1$s\" from %2$s does not exist locally."
-msgstr ""
-
-#. %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-logout.php:82
-#, php-format
-msgid "Logout action aborted - user \"%1$s\" from %2$s was not logged in."
+msgid ""
+"Role action aborted - role %1$s for user \"%2$s\" from %3$s not accepted"
 msgstr ""
 
 #. %s is the url of the caller
-#: inc/api/class-wprus-api-logout.php:94
+#: inc/api/class-wprus-api-role.php:96
 #, php-format
-msgid "Logout action failed - incoming logout action not enabled for %s"
+msgid "Role action failed - incoming role action not enabled for %s"
 msgstr ""
 
-#: inc/api/class-wprus-api-logout.php:39
-msgid "Logout action failed - received invalid data."
+#: inc/api/class-wprus-api-update.php:29 inc/api/class-wprus-api-create.php:23
+msgid "Create action failed - received invalid data."
 msgstr ""
 
-#: inc/api/class-wprus-api-logout.php:27
-msgid "Logout action failed - the user is already logged out."
-msgstr ""
-
-#: inc/class-wprus-settings.php:251
-msgid "Logs"
-msgstr ""
-
-#: inc/class-wprus-import-export.php:238
-msgid "Make sure the uploaded file is a zip archive."
-msgstr ""
-
-#: inc/class-wprus-import-export.php:277
-msgid "Make sure the uploaded file is not empty."
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:331
-msgid ""
-"Malformed data - the test request was received but the data could not be "
-"extracted."
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:12
-msgid "Max. #"
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:16
-msgid "Maximum number of users to export. Leave at 0 to export all users."
-msgstr ""
-
-#: inc/templates/admin/site-metabox-template.php:101
-#: inc/templates/admin/site-metabox.php:102
-msgid "Merge with existing roles"
-msgstr ""
-
-#: inc/class-wprus-settings.php:30 inc/templates/admin/help.php:49
-msgid "Metadata"
-msgstr ""
-
-#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
-#: inc/api/class-wprus-api-meta.php:205
-#, php-format
-msgid "Metadata action - added metadata %1$s for user \"%2$s\" from %3$s"
-msgstr ""
-
-#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
-#: inc/api/class-wprus-api-meta.php:219
-#, php-format
-msgid "Metadata action - deleted metadata %1$s for user \"%2$s\" from %3$s"
-msgstr ""
-
-#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
-#: inc/api/class-wprus-api-meta.php:238
+#. %1$s is the username ; %2$s is the caller
+#: inc/api/class-wprus-api-update.php:59
 #, php-format
 msgid ""
-"Metadata action - failed to add metadata %1$s for user \"%2$s\" from %3$s"
+"Update action failed - \"%1$s\" from %2$s does not exist locally and the "
+"incoming Create action is not enabled."
 msgstr ""
 
-#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
-#: inc/api/class-wprus-api-meta.php:252
+#. %1$s is the error ; %2$s is the username ; %3$s is the caller
+#: inc/api/class-wprus-api-update.php:78
+#, php-format
+msgid "Update action failed - \"%1$s\" for user \"%2$s\" from %3$s."
+msgstr ""
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-update.php:93
+#, php-format
+msgid "Update action - successfully updated user \"%1$s\" from %2$s."
+msgstr ""
+
+#. %1$s is the username ; %2$s is the caller
+#: inc/api/class-wprus-api-update.php:109
 #, php-format
 msgid ""
-"Metadata action - failed to delete metadata %1$s for user \"%2$s\" from %3$s"
-msgstr ""
-
-#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
-#: inc/api/class-wprus-api-meta.php:245
-#, php-format
-msgid ""
-"Metadata action - failed to update metadata %1$s for user \"%2$s\" from %3$s"
-msgstr ""
-
-#. %s is the usernames
-#: inc/api/class-wprus-api-meta.php:306
-#, php-format
-msgid "Metadata action - firing action for username(s) %s"
-msgstr ""
-
-#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
-#: inc/api/class-wprus-api-meta.php:212
-#, php-format
-msgid "Metadata action - updated metadata %1$s for user \"%2$s\" from %3$s"
-msgstr ""
-
-#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
-#: inc/api/class-wprus-api-meta.php:270
-#, php-format
-msgid ""
-"Metadata action aborted - metadata %1$s for user \"%2$s\" from %3$s not "
-"accepted"
+"Update action aborted - performed Create action instead: \"%1$s\" from %2$s "
+"was not found locally."
 msgstr ""
 
 #. %s is the url of the caller
-#: inc/api/class-wprus-api-meta.php:288
+#: inc/api/class-wprus-api-update.php:129
 #, php-format
-msgid "Metadata action failed - incoming metadata action not enabled for %s"
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:319
-msgid ""
-"Mismatch Encryption settings - please make sure the action keys are "
-"correctly configured on both sites."
-msgstr ""
-
-#: inc/class-wprus-import-export.php:262
-msgid "Missing a temporary folder."
-msgstr ""
-
-#: inc/class-wprus-settings.php:98
-msgid "Missing Authentication Key"
-msgstr ""
-
-#: inc/class-wprus-settings.php:97
-msgid "Missing Encryption Key"
-msgstr ""
-
-#. %1$s is the WordPress support forum URL, %2$s is the Github URL
-#: inc/templates/admin/help.php:256
-#, php-format
-msgid "More help can be found on %1$s and on %2$s."
-msgstr ""
-
-#: inc/templates/admin/help.php:69
-msgid ""
-"Multiple layers of security are in place to protect the privacy, integrity "
-"and authenticity of communications between connected sites:"
-msgstr ""
-
-#: inc/class-wprus-import-export.php:258
-msgid "No file was uploaded."
-msgstr ""
-
-#: inc/templates/admin/logs-metabox.php:20
-msgid "Number of Log Entries"
-msgstr ""
-
-#: inc/templates/admin/logs-metabox.php:32
-msgid ""
-"Number of log entries to display, and the minimum number of rows to keep in "
-"the database during cleanup. Logs are cleaned up automatically every hour. "
-"The number indicated in the \"Clear All\" button is the real current number "
-"of rows in the database, and clicking it deletes all of them."
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:24
-msgid "Offset"
-msgstr ""
-
-#: inc/templates/admin/export-metabox.php:28
-msgid ""
-"Offset results - users are ordered by login name by default ; this option is "
-"useful when exporting users in batches."
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:463
-msgid ""
-"On the remote site, please make sure the permalinks are not using the "
-"\"Plain\" option."
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:458
-msgid ""
-"On the remote site, please make sure the plugin is activated and that the "
-"permalinks are up to date by visiting the permalinks settings page."
-msgstr ""
-
-#: inc/templates/admin/help.php:243
-msgid ""
-"Once downloaded, the files are automatically deleted. In case some files "
-"were not downloaded and remained on the server, the containing directory is "
-"also cleaned daily."
-msgstr ""
-
-#: inc/templates/admin/help.php:73
-msgid "OpenSSL encryption"
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:336
-msgid "outgoing"
-msgstr ""
-
-#: inc/templates/admin/site-metabox-template.php:11
-#: inc/templates/admin/site-metabox.php:11
-msgid "Outgoing Actions"
-msgstr ""
-
-#: inc/templates/admin/help.php:118
-msgid "Overall, performances should be marginally impacted."
-msgstr ""
-
-#: inc/class-wprus-settings.php:28 inc/templates/admin/help.php:40
-msgid "Password"
+msgid "Update action failed - incoming update action not enabled for %s"
 msgstr ""
 
 #. %s is the username
-#: inc/api/class-wprus-api-password.php:126
+#: inc/api/class-wprus-api-update.php:169
 #, php-format
-msgid "Password action - firing action reset for username \"%s\""
+msgid "Update action - firing action for username \"%s\""
+msgstr ""
+
+#: inc/api/class-wprus-api-delete.php:22
+msgid "Delete action failed - received invalid data."
+msgstr ""
+
+#. %1$s is the username ; %2$s is the caller
+#: inc/api/class-wprus-api-delete.php:50
+#, php-format
+msgid "Delete action failed - user \"%1$s\" from %2$s was not found locally."
+msgstr ""
+
+#. %1$s is the username, %2$s is the caller, %3$s is the reassign username
+#: inc/api/class-wprus-api-delete.php:63
+#, php-format
+msgid ""
+"Delete action - successfully deleted user \"%1$s\" from %2$s but failed to "
+"reassign content to %3$s."
+msgstr ""
+
+#. %1$s is the username, %2$s is the caller, %3$s is the reassign username
+#: inc/api/class-wprus-api-delete.php:75
+#, php-format
+msgid ""
+"Delete action - successfully deleted user \"%1$s\" from %2$s and reassigned "
+"content to %3$s."
+msgstr ""
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-delete.php:87
+#, php-format
+msgid "Delete action - successfully deleted user \"%1$s\" from %2$s."
+msgstr ""
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-delete.php:100
+#, php-format
+msgid "Delete action failed - incoming delete action not enabled for %s"
+msgstr ""
+
+#. %s is the username
+#: inc/api/class-wprus-api-delete.php:119
+#, php-format
+msgid "Delete action - firing action for username \"%s\""
+msgstr ""
+
+#: inc/api/class-wprus-api-password.php:59
+msgid "Password action failed - received invalid data."
 msgstr ""
 
 #. %1$s is the username, %2$s is the caller
@@ -1029,38 +435,98 @@ msgstr ""
 msgid "Password action failed - incoming password action not enabled for %s"
 msgstr ""
 
-#: inc/api/class-wprus-api-password.php:59
-msgid "Password action failed - received invalid data."
+#. %s is the username
+#: inc/api/class-wprus-api-password.php:126
+#, php-format
+msgid "Password action - firing action reset for username \"%s\""
 msgstr ""
 
-#: inc/templates/admin/help.php:190
+#: inc/api/class-wprus-api-abstract.php:181
+msgid "Could not decrypt data: invalid bundle."
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:222
+msgid "Token"
+msgstr ""
+
+#. %1$s is the remote site ; %2$s is the action
+#: inc/api/class-wprus-api-abstract.php:230
+#, php-format
+msgid "Token created: site %1$s - action \"%2$s\""
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:237
+msgid "Failed to create token - invalid payload"
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:319
+msgid "Unauthorized access (invalid token)"
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:342
+msgid "Access granted"
+msgstr ""
+
+#. %s is the remote IP address
+#: inc/api/class-wprus-api-abstract.php:345
+#, php-format
+msgid "Unauthorized access (invalid remote IP address %s)"
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:347
+msgid "Unauthorized access (invalid method)"
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:364
+msgid "The remote website encountered the following error: "
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:487
 msgid ""
-"Passwords are automatically synchronised as long as the Password action is "
-"enabled (outgoing and incoming respectively)."
+"A ping was received but the initiator did not use matching encryption and "
+"signature action keys"
 msgstr ""
 
-#: inc/templates/admin/help.php:192
-msgid "Passwords are NEVER communicated or stored in plain text."
-msgstr ""
-
-#: inc/templates/admin/help.php:115
+#: inc/api/class-wprus-api-abstract.php:488
 msgid ""
-"Performance degradations are mitigated by the fact that Action Tokens "
-"(blocking request) are saved for a period of time for synchronous actions, "
-"and by the fact that actions are fired ONLY when an operation has been "
-"performed on users (not on every page load)."
+"Mismatch Encryption settings - please make sure the action keys are "
+"correctly configured on both sites."
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:499
+msgid "A ping was received but the initiator did not send the proper data."
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:500
+msgid ""
+"Malformed data - the test request was received but the data could not be "
+"extracted."
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:505
+msgid "incoming"
+msgstr ""
+
+#: inc/api/class-wprus-api-abstract.php:505
+msgid "outgoing"
 msgstr ""
 
 #. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:347
+#: inc/api/class-wprus-api-abstract.php:516
 #, php-format
 msgid ""
 "Ping received for activated action \"%1$s\" from %2$s with remote IP %3$s "
 "(%4$s)"
 msgstr ""
 
+#. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
+#: inc/api/class-wprus-api-abstract.php:531
+#, php-format
+msgid "Ping success for action \"%1$s\" from %2$s with remote IP %3$s (%4$s)"
+msgstr ""
+
 #. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:378
+#: inc/api/class-wprus-api-abstract.php:547
 #, php-format
 msgid ""
 "Ping received for deactivated action \"%1$s\" from %2$s with remote IP %3$s "
@@ -1068,135 +534,248 @@ msgid ""
 msgstr ""
 
 #. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:362
+#: inc/api/class-wprus-api-abstract.php:562
 #, php-format
-msgid "Ping success for action \"%1$s\" from %2$s with remote IP %3$s (%4$s)"
+msgid "\"%1$s\" action is not activated on %2$s with remote IP %3$s (%4$s)."
 msgstr ""
 
-#: inc/templates/admin/authorization-metabox.php:12
-msgid "Proxy IP Address"
+#: inc/api/class-wprus-api-abstract.php:608
+#: inc/api/class-wprus-api-abstract.php:621
+msgid "Error contacting the remote site: "
 msgstr ""
 
-#: inc/templates/admin/logs-metabox.php:41
-msgid "Refresh"
+#. %s is the error code
+#: inc/api/class-wprus-api-abstract.php:631
+#, php-format
+msgid " - code: %s - "
 msgstr ""
 
-#: inc/templates/admin/export-metabox.php:18
+#: inc/api/class-wprus-api-abstract.php:632
 msgid ""
-"Remark: on sites with a large number of users, it is recommended to export "
-"users in multiple batches with the help of the \"Offset\" option below."
+"an undefined error occured. Please make sure the address is correct and try "
+"again."
 msgstr ""
 
-#: inc/templates/admin/main-settings-page.php:15
-msgid "Remote Sites"
+#: inc/api/class-wprus-api-abstract.php:634
+msgid ""
+"On the remote site, please make sure the plugin is activated and that the "
+"permalinks are up to date by visiting the permalinks settings page."
 msgstr ""
 
-#: inc/templates/admin/site-metabox-template.php:106
-#: inc/templates/admin/site-metabox.php:107
-msgid "Remove site configuration"
+#: inc/api/class-wprus-api-abstract.php:639
+msgid ""
+"On the remote site, please make sure the permalinks are not using the "
+"\"Plain\" option."
+msgstr ""
+
+#. %1$s is the url of the script ; %2$s is the action called
+#: inc/api/class-wprus-api-abstract.php:756
+#, php-format
+msgid "Added %1$s async URL in %2$s"
 msgstr ""
 
 #. %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:655
+#: inc/api/class-wprus-api-abstract.php:881
 #, php-format
 msgid "Renewing token for %s"
 msgstr ""
 
-#: inc/templates/admin/import-metabox.php:17
-msgid "Requires a file previously exported with WP Remote Users Sync"
-msgstr ""
-
-#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
-#: inc/api/class-wprus-api-role.php:48 inc/api/class-wprus-api-role.php:78
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-abstract.php:906
 #, php-format
-msgid ""
-"Role action aborted - role %1$s for user \"%2$s\" from %3$s not accepted"
+msgid "Failed to renew token for %s - retrying..."
 msgstr ""
 
 #. %s is the url of the caller
-#: inc/api/class-wprus-api-role.php:96
+#: inc/api/class-wprus-api-abstract.php:921
 #, php-format
-msgid "Role action failed - incoming role action not enabled for %s"
+msgid "Failed to renew token for %s"
 msgstr ""
 
-#: inc/class-wprus-settings.php:29 inc/templates/admin/help.php:44
-msgid "Roles"
+#: inc/api/class-wprus-api-logout.php:27
+msgid "Logout action failed - the user is already logged out."
 msgstr ""
 
-#: inc/templates/admin/help.php:137
-msgid ""
-"Roles can be synchronised when the Create and Update actions are fired, with "
-"the action Role enabled, and matching transferred and accepted role settings."
+#: inc/api/class-wprus-api-logout.php:39
+msgid "Logout action failed - received invalid data."
 msgstr ""
 
-#: inc/class-wprus-settings.php:223
-msgid "Save Settings"
-msgstr ""
-
-#: inc/templates/admin/main-settings-page.php:18
-msgid "Security"
-msgstr ""
-
-#: inc/templates/admin/help.php:145
-msgid ""
-"Site 1 with outgoing Create, Update and Role actions enabled, with roles "
-"\"administrator\", \"shop_manager\" and \"custom_role1\" in the \"List of "
-"roles to transfer\" field"
-msgstr ""
-
-#: inc/templates/admin/help.php:162
-msgid ""
-"Site 2 receives  \"administrator\", \"shop_manager\" and \"custom_role1\" "
-"along with john_doe56's data"
-msgstr ""
-
-#: inc/templates/admin/help.php:148
-msgid ""
-"Site 2 with incoming Create, Update and Role actions enabled, with role "
-"\"shop_manager\" in the \"List of roles to accept\" field, and the \"Merge "
-"with existing roles\" box checked"
-msgstr ""
-
-#: inc/class-wprus-import-export.php:233
-msgid "Something very wrong happened."
-msgstr ""
-
-#: inc/class-wprus-settings.php:459
-msgid "Sorry, you are not allowed to access this page."
-msgstr ""
-
-#: inc/templates/admin/main-settings-page.php:45
-msgid "Start with adding a Remote Site"
-msgstr ""
-
-#: inc/class-wprus-logger.php:20
-msgid "Success"
-msgstr ""
-
-#. %d is the number of results
-#: inc/class-wprus-import-export.php:168
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-logout.php:63
 #, php-format
-msgid "Success: exported %d result"
-msgid_plural "Success: exported %d results"
-msgstr[0] ""
-msgstr[1] ""
+msgid "Logout action - successfully logged out user \"%1$s\" from %2$s."
+msgstr ""
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-logout.php:74
+#, php-format
+msgid "Logout action aborted - user \"%1$s\" from %2$s does not exist locally."
+msgstr ""
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-logout.php:85
+#, php-format
+msgid "Logout action aborted - user \"%1$s\" from %2$s was not logged in."
+msgstr ""
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-logout.php:97
+#, php-format
+msgid "Logout action failed - incoming logout action not enabled for %s"
+msgstr ""
+
+#. %s is the username
+#: inc/api/class-wprus-api-logout.php:123
+#, php-format
+msgid "Logout action - enqueueing asynchronous actions for username \"%s\""
+msgstr ""
+
+#. %1$s is the error ; %2$s is the username ; %3$s is the caller
+#: inc/api/class-wprus-api-create.php:52
+#, php-format
+msgid "Create action failed - \"%1$s\" for user \"%2$s\" from %3$s."
+msgstr ""
+
+#. %1$s is the username, %2$s is the caller
+#: inc/api/class-wprus-api-create.php:67
+#, php-format
+msgid "Create action - successfully created user \"%1$s\" from %2$s."
+msgstr ""
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-create.php:87
+#, php-format
+msgid "Create action failed - incoming create action not enabled for %s"
+msgstr ""
+
+#. %s is the username
+#: inc/api/class-wprus-api-create.php:127
+#, php-format
+msgid "Create action - firing action for username \"%s\""
+msgstr ""
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:205
+#, php-format
+msgid "Metadata action - added metadata %1$s for user \"%2$s\" from %3$s"
+msgstr ""
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:212
+#, php-format
+msgid "Metadata action - updated metadata %1$s for user \"%2$s\" from %3$s"
+msgstr ""
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:219
+#, php-format
+msgid "Metadata action - deleted metadata %1$s for user \"%2$s\" from %3$s"
+msgstr ""
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:238
+#, php-format
+msgid ""
+"Metadata action - failed to add metadata %1$s for user \"%2$s\" from %3$s"
+msgstr ""
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:245
+#, php-format
+msgid ""
+"Metadata action - failed to update metadata %1$s for user \"%2$s\" from %3$s"
+msgstr ""
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:252
+#, php-format
+msgid ""
+"Metadata action - failed to delete metadata %1$s for user \"%2$s\" from %3$s"
+msgstr ""
+
+#. %1$s is the meta_key, %2$s is the username, %3$s is the caller
+#: inc/api/class-wprus-api-meta.php:270
+#, php-format
+msgid ""
+"Metadata action aborted - metadata %1$s for user \"%2$s\" from %3$s not "
+"accepted"
+msgstr ""
+
+#. %s is the url of the caller
+#: inc/api/class-wprus-api-meta.php:288
+#, php-format
+msgid "Metadata action failed - incoming metadata action not enabled for %s"
+msgstr ""
+
+#. %s is the usernames
+#: inc/api/class-wprus-api-meta.php:306
+#, php-format
+msgid "Metadata action - firing action for username(s) %s"
+msgstr ""
+
+#: inc/templates/admin/encryption-metabox.php:12
+msgid "Action Token Validity Duration"
+msgstr ""
+
+#: inc/templates/admin/encryption-metabox.php:16
+msgid ""
+"Expressed in seconds, the duration after which generated action tokens "
+"expire and need to be renewed."
+msgstr ""
+
+#: inc/templates/admin/encryption-metabox.php:18
+#: inc/templates/admin/encryption-metabox.php:30
+#: inc/templates/admin/encryption-metabox.php:44
+msgid ""
+"WARNING: Make sure this value is the same for all the websites to "
+"synchronise."
+msgstr ""
+
+#: inc/templates/admin/encryption-metabox.php:24
+msgid "Action Encryption Key"
+msgstr ""
+
+#: inc/templates/admin/encryption-metabox.php:28
+msgid "Ideally a random string, used to encrypt remote operations data."
+msgstr ""
+
+#: inc/templates/admin/encryption-metabox.php:32
+#: inc/templates/admin/encryption-metabox.php:46
+msgid "IMPORTANT: For security reasons, keep this value ABSOLUTELY SECRET."
+msgstr ""
+
+#: inc/templates/admin/encryption-metabox.php:38
+msgid "Action Signature Key"
+msgstr ""
+
+#: inc/templates/admin/encryption-metabox.php:42
+msgid "Ideally a random string, used to authenticate remote operations data."
+msgstr ""
+
+#: inc/templates/admin/ip-whitelist-metabox.php:11
+msgid "List of IP addresses of remote sites to authorise (one per line)."
+msgstr ""
+
+#: inc/templates/admin/ip-whitelist-metabox.php:12
+msgid ""
+"To find the IP addresses, use the \"Test\" button on remote sites while Logs "
+"are enabled and check the local log results."
+msgstr ""
+
+#: inc/templates/admin/ip-whitelist-metabox.php:13
+msgid "Leave blank to accept any IP address (not recommended)."
+msgstr ""
+
+#: inc/templates/admin/site-metabox-template.php:11
+#: inc/templates/admin/site-metabox.php:11
+msgid "Outgoing Actions"
+msgstr ""
 
 #: inc/templates/admin/site-metabox-template.php:13
 #: inc/templates/admin/site-metabox.php:13
 msgid ""
 "Synchronise user data for actions happening on the current site, sent to the "
 "remote site."
-msgstr ""
-
-#: inc/templates/admin/site-metabox-template.php:59
-#: inc/templates/admin/site-metabox.php:59
-msgid ""
-"Synchronise user data for actions happening on the remote site, received by "
-"the current site."
-msgstr ""
-
-#. Description of the plugin
-msgid "Synchronise WordPress Users across Multiple Sites."
 msgstr ""
 
 #: inc/templates/admin/site-metabox-template.php:29
@@ -1206,192 +785,54 @@ msgstr ""
 msgid "Test"
 msgstr ""
 
+#: inc/templates/admin/site-metabox-template.php:36
+#: inc/templates/admin/site-metabox.php:36
+msgid "List of metadata to transfer (leave empty to transfer none):"
+msgstr ""
+
+#: inc/templates/admin/site-metabox-template.php:46
+#: inc/templates/admin/site-metabox.php:46
+msgid "List of roles to transfer (leave empty to transfer none):"
+msgstr ""
+
+#: inc/templates/admin/site-metabox-template.php:57
+#: inc/templates/admin/site-metabox.php:57
+msgid "Incoming Actions"
+msgstr ""
+
+#: inc/templates/admin/site-metabox-template.php:59
+#: inc/templates/admin/site-metabox.php:59
+msgid ""
+"Synchronise user data for actions happening on the remote site, received by "
+"the current site."
+msgstr ""
+
+#: inc/templates/admin/site-metabox-template.php:82
+#: inc/templates/admin/site-metabox.php:82
+msgid "List of metadata to accept (leave empty to accept all):"
+msgstr ""
+
+#: inc/templates/admin/site-metabox-template.php:92
+#: inc/templates/admin/site-metabox.php:93
+msgid "List of roles to accept (leave empty to accept all):"
+msgstr ""
+
+#: inc/templates/admin/site-metabox-template.php:101
+#: inc/templates/admin/site-metabox.php:102
+msgid "Merge with existing roles"
+msgstr ""
+
+#: inc/templates/admin/site-metabox-template.php:106
+#: inc/templates/admin/site-metabox.php:107
+msgid "Remove site configuration"
+msgstr ""
+
+#: inc/templates/admin/authorization-metabox.php:12
+msgid "Proxy IP Address"
+msgstr ""
+
 #: inc/templates/admin/authorization-metabox.php:16
 msgid "The IP address the current site exposes to the internet."
-msgstr ""
-
-#: inc/templates/admin/help.php:121
-msgid "The main takeaway is this: "
-msgstr ""
-
-#: inc/templates/admin/help.php:125
-msgid ""
-"The more websites are connected, the bigger the relatively negative impact "
-"on performances."
-msgstr ""
-
-#: inc/templates/admin/help.php:23
-msgid ""
-"The page needs to load without interruption and the network between the user "
-"and the remote sites be accessible for it to take effect, because this "
-"operation relies on browser cookies (the action is fired by a script "
-"asynchronously in the footer of the page after login)."
-msgstr ""
-
-#: inc/templates/admin/help.php:27
-msgid ""
-"The page needs to load without interruption and the network between the user "
-"and the remote sites be accessible for it to take effect, because this "
-"operation relies on browser cookies (the action is fired by a script "
-"asynchronously in the footer of the page after logout)."
-msgstr ""
-
-#: inc/class-wprus-settings.php:169
-msgid ""
-"The Remote Site address must start with \"http\".\n"
-"Ideally, only secure websites (address starting with \"https\") should be "
-"connected together."
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:230
-msgid "The remote website encountered the following error: "
-msgstr ""
-
-#: inc/class-wprus-import-export.php:250
-msgid ""
-"The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in "
-"the HTML form."
-msgstr ""
-
-#: inc/class-wprus-import-export.php:246
-msgid "The uploaded file exceeds the upload_max_filesize directive in php.ini."
-msgstr ""
-
-#: inc/class-wprus-import-export.php:254
-msgid "The uploaded file was only partially uploaded."
-msgstr ""
-
-#: inc/templates/admin/help.php:257
-msgid "the WordPress support forum"
-msgstr ""
-
-#: inc/templates/admin/help.php:128
-msgid ""
-"The worse the connection between the remote sites is, the bigger the "
-"relatively negative impact on performances."
-msgstr ""
-
-#: inc/templates/admin/help.php:15
-msgid ""
-"There is no \"Master Website\": each site is working independently, firing "
-"and receiving actions depending on each site's configuration."
-msgstr ""
-
-#: inc/templates/admin/help.php:41
-msgid ""
-"This action also determines whether the passwords are synchronised or should "
-"be ignored during Create and Update actions."
-msgstr ""
-
-#: inc/templates/admin/help.php:50
-msgid ""
-"This action is particularly useful to synchronise user data added by plugins "
-"(such as address information in WooCommerce)."
-msgstr ""
-
-#: inc/templates/admin/help.php:211
-msgid ""
-"This means that two websites in localhost (behind virtual hosts, for example)"
-" can communicate. However, if one of the websites is on localhost and the "
-"other is not, token exchange cannot happen and the websites will not be able "
-"to communicate."
-msgstr ""
-
-#: inc/templates/admin/help.php:98
-msgid ""
-"This means the impact on performances depends on the response time between "
-"the connected websites."
-msgstr ""
-
-#: inc/templates/admin/help.php:182
-msgid ""
-"To enable extra information synchronisation, the Metadata action is used "
-"along with specified metadata keys in the transferred and accepted metadata "
-"fields."
-msgstr ""
-
-#: inc/templates/admin/ip-whitelist-metabox.php:12
-msgid ""
-"To find the IP addresses, use the \"Test\" button on remote sites while Logs "
-"are enabled and check the local log results."
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:120
-msgid "Token"
-msgstr ""
-
-#. %1$s is the remote site ; %2$s is the action
-#: inc/api/class-wprus-api-abstract.php:128
-#, php-format
-msgid "Token created: site %1$s - action \"%2$s\""
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:213
-msgid "Unauthorized access (invalid method)"
-msgstr ""
-
-#. %s is the remote IP address
-#: inc/api/class-wprus-api-abstract.php:211
-#, php-format
-msgid "Unauthorized access (invalid remote IP address %s)"
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:193
-msgid "Unauthorized access (invalid token)"
-msgstr ""
-
-#: inc/templates/admin/help.php:45
-msgid ""
-"Unless the \"Merge with existing roles\" option is selected, the roles of "
-"the user are replaced with incoming roles."
-msgstr ""
-
-#: inc/class-wprus-settings.php:26 inc/templates/admin/help.php:33
-msgid "Update"
-msgstr ""
-
-#. %s is the username
-#: inc/api/class-wprus-api-update.php:163
-#, php-format
-msgid "Update action - firing action for username \"%s\""
-msgstr ""
-
-#. %1$s is the username, %2$s is the caller
-#: inc/api/class-wprus-api-update.php:87
-#, php-format
-msgid "Update action - successfully updated user \"%1$s\" from %2$s."
-msgstr ""
-
-#. %1$s is the username ; %2$s is the caller
-#: inc/api/class-wprus-api-update.php:103
-#, php-format
-msgid ""
-"Update action aborted - performed Create action instead: \"%1$s\" from %2$s "
-"was not found locally."
-msgstr ""
-
-#. %1$s is the error ; %2$s is the username ; %3$s is the caller
-#: inc/api/class-wprus-api-update.php:72
-#, php-format
-msgid "Update action failed - \"%1$s\" for user \"%2$s\" from %3$s."
-msgstr ""
-
-#. %1$s is the username ; %2$s is the caller
-#: inc/api/class-wprus-api-update.php:53
-#, php-format
-msgid ""
-"Update action failed - \"%1$s\" from %2$s does not exist locally and the "
-"incoming Create action is not enabled."
-msgstr ""
-
-#. %s is the url of the caller
-#: inc/api/class-wprus-api-update.php:123
-#, php-format
-msgid "Update action failed - incoming update action not enabled for %s"
-msgstr ""
-
-#: inc/templates/admin/import-metabox.php:15
-msgid "Upload File"
 msgstr ""
 
 #: inc/templates/admin/authorization-metabox.php:18
@@ -1401,39 +842,14 @@ msgid ""
 "sites."
 msgstr ""
 
-#: inc/templates/admin/help.php:245
-msgid "User passwords cannot be and are NOT exported."
+#: inc/templates/admin/authorization-metabox.php:24
+msgid "Allow Anonymous Sync Operations"
 msgstr ""
 
-#: inc/templates/admin/help.php:60
+#: inc/templates/admin/authorization-metabox.php:28
 msgid ""
-"Users existing on one site and not the other will not be synchronised unless "
-"the user is actually updated AND both Create and Update actions are enabled "
-"on the site where the user does not exist."
-msgstr ""
-
-#: inc/templates/admin/import-metabox.php:12
-msgid "Users File"
-msgstr ""
-
-#: inc/class-wprus-logger.php:21
-msgid "Warning"
-msgstr ""
-
-#. %d is the number of results
-#: inc/class-wprus-import-export.php:152
-#, php-format
-msgid "Warning: export aborted prematurely (%d result)"
-msgid_plural "Warning: export aborted prematurely (%d results)"
-msgstr[0] ""
-msgstr[1] ""
-
-#: inc/templates/admin/encryption-metabox.php:18
-#: inc/templates/admin/encryption-metabox.php:30
-#: inc/templates/admin/encryption-metabox.php:44
-msgid ""
-"WARNING: Make sure this value is the same for all the websites to "
-"synchronise."
+"Disable checking the origin of the actions received by the current site "
+"before synchronising."
 msgstr ""
 
 #: inc/templates/admin/authorization-metabox.php:30
@@ -1444,64 +860,12 @@ msgid ""
 "site, such as prior to using the WP-CLI tool to manipulate user data."
 msgstr ""
 
-#: inc/templates/admin/help.php:177
-msgid ""
-"What about extra user information? (WooCommerce / Ultimate Member / other "
-"plugin adding user information)"
+#: inc/templates/admin/submit-settings-metabox.php:12
+msgid "Save"
 msgstr ""
 
-#: inc/templates/admin/help.php:187
-msgid "What about user passwords?"
-msgstr ""
-
-#: inc/templates/admin/help.php:56
-msgid "What happens to existing users after activating WP Remote Users Sync?"
-msgstr ""
-
-#: inc/templates/admin/help.php:198
-msgid "What if the user to synchronise does not exist on the remote site?"
-msgstr ""
-
-#: inc/templates/admin/help.php:94
-msgid "What is the impact on performances?"
-msgstr ""
-
-#: inc/templates/admin/help.php:66
-msgid "What security measures are in place?"
-msgstr ""
-
-#: inc/templates/admin/help.php:138
-msgid ""
-"When synchronising, the following role are assigned exclusively to the user "
-"and will not be merged: administrator, editor, author, contributor, "
-"subscriber. All other roles can be merged upon incoming action if the "
-"\"Merge with existing roles\" box is checked."
-msgstr ""
-
-#: inc/templates/admin/help.php:158
-msgid ""
-"When the user john_doe56 is updated on Site 1, the following happens on Site "
-"2:"
-msgstr ""
-
-#: inc/templates/admin/help.php:250
-msgid "Where to find more help?"
-msgstr ""
-
-#: inc/templates/admin/help.php:220
-msgid "With it, administrators can:"
-msgstr ""
-
-#: inc/templates/admin/help.php:193
-msgid ""
-"WP Remote User Sync integrates with any plugin updating passwords provided "
-"they do so respecting WordPress standards."
-msgstr ""
-
-#. Name of the plugin
-#: inc/class-wprus-settings.php:121 inc/class-wprus-settings.php:136
-#: inc/templates/admin/main-settings-page.php:9
-msgid "WP Remote Users Sync"
+#: inc/templates/admin/help.php:11
+msgid "How does it work?"
 msgstr ""
 
 #: inc/templates/admin/help.php:14
@@ -1512,22 +876,751 @@ msgid ""
 "react accordingly."
 msgstr ""
 
-#: inc/class-wprus-settings.php:115
-msgid "WP Remote Users Sync is not ready. "
+#: inc/templates/admin/help.php:15
+msgid ""
+"There is no \"Master Website\": each site is working independently, firing "
+"and receiving actions depending on each site's configuration."
 msgstr ""
 
-#: inc/templates/admin/help.php:97
+#: inc/templates/admin/help.php:18
+msgid "List of supported actions by default:"
+msgstr ""
+
+#: inc/templates/admin/help.php:22
+msgid ""
+" - Fired when a user logs in. The expected result is a user logged in on all "
+"registered remote sites accepting incoming Login actions."
+msgstr ""
+
+#: inc/templates/admin/help.php:23
+msgid ""
+"The page needs to load without interruption and the network between the user "
+"and the remote sites be accessible for it to take effect, because this "
+"operation relies on browser cookies (the action is fired by a script "
+"asynchronously in the footer of the page after login)."
+msgstr ""
+
+#: inc/templates/admin/help.php:26
+msgid ""
+" - Fired when a user logs out. The expected result is a user logged out on "
+"all registered remote sites accepting incoming Logout actions."
+msgstr ""
+
+#: inc/templates/admin/help.php:27
+msgid ""
+"The page needs to load without interruption and the network between the user "
+"and the remote sites be accessible for it to take effect, because this "
+"operation relies on browser cookies (the action is fired by a script "
+"asynchronously in the footer of the page after logout)."
+msgstr ""
+
+#: inc/templates/admin/help.php:30
+msgid ""
+" - Fired when a user is created. The expected result is a synchronised user "
+"created on all registered remote sites accepting incoming Create actions "
+"(see Password, Roles and Metadata below for caveats)."
+msgstr ""
+
+#: inc/templates/admin/help.php:33
+msgid ""
+" - Fired when a user is updated, either by the user themselves or another "
+"user. The expected result is up to date and synchronised user information on "
+"all registered remote sites accepting incoming Update actions (see Password, "
+"Roles and Metadata below for caveats)."
+msgstr ""
+
+#: inc/templates/admin/help.php:34
+msgid ""
+"If the user does not exist on the remote site and the incoming Create action "
+"is enabled, a synchronised user is created instead."
+msgstr ""
+
+#: inc/templates/admin/help.php:37
+msgid ""
+" - Fired when a user is deleted. The expected result is the user being "
+"deleted on all registered remote sites accepting incoming Delete actions."
+msgstr ""
+
+#: inc/templates/admin/help.php:40
+msgid ""
+" - Fired when a user resets their password. The expected result is the "
+"password being reset for the user on all registered remote sites accepting "
+"incoming Password actions."
+msgstr ""
+
+#: inc/templates/admin/help.php:41
+msgid ""
+"This action also determines whether the passwords are synchronised or should "
+"be ignored during Create and Update actions."
+msgstr ""
+
+#: inc/templates/admin/help.php:44
+msgid ""
+" - Does not fire an action of its own per se ; this action determines "
+"whether roles should be synchronised or ignored during Create and Update "
+"actions, depending on specified transferred outgoing and accepted incoming "
+"roles."
+msgstr ""
+
+#: inc/templates/admin/help.php:45
+msgid ""
+"Unless the \"Merge with existing roles\" option is selected, the roles of "
+"the user are replaced with incoming roles."
+msgstr ""
+
+#: inc/templates/admin/help.php:46
+msgid ""
+"If the incoming roles do not exist on or are not accepted by the remote site,"
+" they are ignored."
+msgstr ""
+
+#: inc/templates/admin/help.php:49
+msgid ""
+" - Fired when one or several user metadata are added / created / deleted, "
+"depending on specified transferred outgoing and accepted incoming metadata "
+"keys."
+msgstr ""
+
+#: inc/templates/admin/help.php:50
+msgid ""
+"This action is particularly useful to synchronise user data added by plugins "
+"(such as address information in WooCommerce)."
+msgstr ""
+
+#: inc/templates/admin/help.php:56
+msgid "It's not working!"
+msgstr ""
+
+#: inc/templates/admin/help.php:59
+msgid ""
+"Before opening a new thread in the WordPress Support forum, please check the "
+"following:"
+msgstr ""
+
+#. %1$s is the bold englisg word "exactly" ; %2$s is 'http'; %3$s is 'https'; %4$s is 'home' option key in the database ; %5$s is 'wp_options' table name
+#: inc/templates/admin/help.php:65
+#, php-format
+msgid ""
+"The URLs used in settings of WP Remote Users Sync %1$s match the URL in your "
+"WordPress settings: the protocol (%2$s vs. %3$s) and the subdomain (www vs. "
+"non-www) must be the same across the board. It is also worth checking the "
+"%4$s option in the %5$s table of the WordPress databases, because in some "
+"cases the content of Settings > General > WordPress Address (URL) gets "
+"abusively overwritten by plugins or themes."
+msgstr ""
+
+#: inc/templates/admin/help.php:65
+msgid "exactly"
+msgstr ""
+
+#: inc/templates/admin/help.php:68
+msgid ""
+"Visit the permalinks page of each connected site (Settings > Permalinks)"
+msgstr ""
+
+#: inc/templates/admin/help.php:69
+msgid ""
+"Activate and check the logs on both local and remote sites when testing (WP "
+"Remote Users Sync > Activity Logs > Enable Logs) ; try to find any "
+"discrepancies and adjust the settings"
+msgstr ""
+
+#: inc/templates/admin/help.php:70
+msgid ""
+"Read the Resolved threads of the support forum - your issue might have "
+"already been addressed there"
+msgstr ""
+
+#: inc/templates/admin/help.php:73
+msgid ""
+"Only then should you open a support thread, with as much information as "
+"possible, including logs (with critical information obfuscated if necessary)."
+msgstr ""
+
+#: inc/templates/admin/help.php:78
+msgid "Login & Logout are not working"
+msgstr ""
+
+#: inc/templates/admin/help.php:81
+msgid ""
+"Login and Logout User Actions need to output some code in the browser to "
+"have an effect on the remote website because of the cookies used for "
+"authentication."
+msgstr ""
+
+#: inc/templates/admin/help.php:84
+msgid ""
+"What this means in practice is that if your theme or a third party plugin "
+"allows users to login/logout without page reload, WP Remote Users Sync "
+"cannot output its code on the page, and without extra change to your website "
+"code base, the synchronisation can only happen after the page where the user "
+"logged in or logged out is actually reloaded."
+msgstr ""
+
+#: inc/templates/admin/help.php:89
+msgid "What happens to existing users after activating WP Remote Users Sync?"
+msgstr ""
+
+#: inc/templates/admin/help.php:92
+msgid ""
+"Existing users remain untouched, until an enabled incoming action is "
+"received from a remote site."
+msgstr ""
+
+#: inc/templates/admin/help.php:93
+msgid ""
+"Users existing on one site and not the other will not be synchronised unless "
+"the user is actually updated AND both Create and Update actions are enabled "
+"on the site where the user does not exist."
+msgstr ""
+
+#: inc/templates/admin/help.php:94
+msgid ""
+"For existing user databases in need of immediate synchronisation, WP Remote "
+"Users Sync provides its own user import/export tool."
+msgstr ""
+
+#: inc/templates/admin/help.php:99
+msgid "What security measures are in place?"
+msgstr ""
+
+#: inc/templates/admin/help.php:102
+msgid ""
+"Multiple layers of security are in place to protect the privacy, integrity "
+"and authenticity of communications between connected sites:"
+msgstr ""
+
+#: inc/templates/admin/help.php:106
+msgid "OpenSSL encryption"
+msgstr ""
+
+#: inc/templates/admin/help.php:106
+msgid ""
+" - All communications are encrypted using the AES-256-CBC algorithm with a "
+"randomly generated Initialisation Vector to ensure their confidentiality ; "
+"it is recommended to use a strong, randomly generated Action Encryption Key "
+"(the same value on all the connected websites)."
+msgstr ""
+
+#: inc/templates/admin/help.php:109
+msgid "HMAC signature"
+msgstr ""
+
+#: inc/templates/admin/help.php:109
+msgid ""
+" - All communications are signed with a hash using the SHA256 algorithm to "
+"ensure their integrity ; it is recommended to use a strong, randomly "
+"generated Action Signature Key (the same value on all the connected websites)"
+"."
+msgstr ""
+
+#: inc/templates/admin/help.php:112
+msgid "Authentication tokens"
+msgstr ""
+
+#: inc/templates/admin/help.php:112
+msgid ""
+" - All communications rely on an authentication token (randomly generated). "
+"Asynchronous actions (Login & Logout by default) use a single-use token "
+"(true nonce), and synchronous actions use a token valid only for a limited "
+"period of time  ; it is recommended to keep the Action Token Validity "
+"Duration relatively short (default is 1,800 seconds or 30 minutes, and must "
+"be the same duration on all the connected websites). "
+msgstr ""
+
+#: inc/templates/admin/help.php:115
+msgid "IP verification"
+msgstr ""
+
+#: inc/templates/admin/help.php:115
+msgid ""
+" - IP addresses are verified using the REMOTE_ADDR server environment "
+"variable, which cannot be faked (unless the servers or the network "
+"infrastructure are already highly compromised, in which case there are "
+"bigger issues to worry about)."
+msgstr ""
+
+#: inc/templates/admin/help.php:116
+msgid ""
+"For all synchronous actions, because they are fired server-side, IP "
+"verification can be enabled using the IP Whitelist setting with IP addresses "
+"to be compared against the remote IP address."
+msgstr ""
+
+#: inc/templates/admin/help.php:120
+msgid "It is HIGHLY recommended to use the IP Whitelist setting."
+msgstr ""
+
+#: inc/templates/admin/help.php:121
+msgid "It is HIGHLY recommended to only connect https-enabled websites."
+msgstr ""
+
+#: inc/templates/admin/help.php:122
+msgid ""
+"Despite these strong security measures, administrators use this plugin at "
+"their own risk ; the author will not be held liable for any damages "
+"resulting from the use of WP Remote Users Sync."
+msgstr ""
+
+#: inc/templates/admin/help.php:127
+msgid "What is the impact on performances?"
+msgstr ""
+
+#: inc/templates/admin/help.php:130
 msgid ""
 "WP Remote Users Sync needs to communicate with the remote sites to actually "
 "synchronise users."
 msgstr ""
 
-#: inc/templates/admin/help.php:219
-msgid "WP Remote Users Sync provides its own user import/export tool."
+#: inc/templates/admin/help.php:131
+msgid ""
+"This means the impact on performances depends on the response time between "
+"the connected websites."
+msgstr ""
+
+#: inc/templates/admin/help.php:134
+msgid ""
+"In the worst case scenario, three requests are made to EACH remote site when "
+"doing synchronisation:"
+msgstr ""
+
+#: inc/templates/admin/help.php:138
+msgid ""
+"A token renewal request that fails (blocking: a response is needed to save "
+"the token for later user, with a 1 second timeout by default)"
+msgstr ""
+
+#: inc/templates/admin/help.php:141
+msgid ""
+"A second token renewal request to try again (blocking as well ; token "
+"renewal is tried again only once in case the first request failed, with a 5 "
+"seconds timeout by default)"
+msgstr ""
+
+#: inc/templates/admin/help.php:144
+msgid "An action request (non-blocking: a response is not needed)"
+msgstr ""
+
+#: inc/templates/admin/help.php:148
+msgid ""
+"Performance degradations are mitigated by the fact that Action Tokens "
+"(blocking request) are saved for a period of time for synchronous actions, "
+"and by the fact that actions are fired ONLY when an operation has been "
+"performed on users (not on every page load)."
+msgstr ""
+
+#: inc/templates/admin/help.php:149
+msgid ""
+"Asynchronous actions (Login & Logout by default) are the most costly: the "
+"operations themselves are not blocking, but their Action Tokens have to be "
+"renewed beforehand each time: true nonces, single-use tokens, are necessary "
+"for security reasons when firing actions from the browser."
+msgstr ""
+
+#: inc/templates/admin/help.php:150
+msgid ""
+"Asynchronous actions are also potentially more susceptible to failure in "
+"case of network issues, such as if the page load is interrupted or the "
+"enqueued script call failed in the browser ; this is a necessary trade-off "
+"as these actions require authentication cookie manipulations."
+msgstr ""
+
+#: inc/templates/admin/help.php:151
+msgid "Overall, performances should be marginally impacted."
+msgstr ""
+
+#: inc/templates/admin/help.php:154
+msgid "The main takeaway is this: "
+msgstr ""
+
+#: inc/templates/admin/help.php:158
+msgid ""
+"The more websites are connected, the bigger the relatively negative impact "
+"on performances."
+msgstr ""
+
+#: inc/templates/admin/help.php:161
+msgid ""
+"The worse the connection between the remote sites is, the bigger the "
+"relatively negative impact on performances."
+msgstr ""
+
+#: inc/templates/admin/help.php:167
+msgid "How are user roles handled when a user is synchronised?"
+msgstr ""
+
+#: inc/templates/admin/help.php:170
+msgid ""
+"Roles can be synchronised when the Create and Update actions are fired, with "
+"the Role action enabled, and matching transferred and accepted role settings."
+msgstr ""
+
+#: inc/templates/admin/help.php:171
+msgid ""
+"When synchronising, the following role are assigned exclusively to the user "
+"and will not be merged: administrator, editor, author, contributor, "
+"subscriber. All other roles can be merged upon incoming action if the "
+"\"Merge with existing roles\" box is checked."
+msgstr ""
+
+#: inc/templates/admin/help.php:174
+msgid "Consider the following scenario:"
+msgstr ""
+
+#: inc/templates/admin/help.php:178
+msgid ""
+"Site 1 with outgoing Create, Update and Role actions enabled, with roles "
+"\"administrator\", \"shop_manager\" and \"custom_role1\" in the \"List of "
+"roles to transfer\" field"
+msgstr ""
+
+#: inc/templates/admin/help.php:181
+msgid ""
+"Site 2 with incoming Create, Update and Role actions enabled, with role "
+"\"shop_manager\" in the \"List of roles to accept\" field, and the \"Merge "
+"with existing roles\" box checked"
+msgstr ""
+
+#: inc/templates/admin/help.php:184
+msgid ""
+"A user john_doe56 with the role \"administrator\", \"shop_manager\" and "
+"\"custom_role1\" on Site 1, and \"author\" on Site 2"
+msgstr ""
+
+#: inc/templates/admin/help.php:187
+msgid ""
+"Both Site 1 and Site 2 have WooCommerce enabled, therefore the role "
+"\"shop_manager\" exists on both sites, but \"custom_role1\" does not exist "
+"on Site 2."
+msgstr ""
+
+#: inc/templates/admin/help.php:191
+msgid ""
+"When the user john_doe56 is updated on Site 1, the following happens on Site "
+"2:"
+msgstr ""
+
+#: inc/templates/admin/help.php:195
+msgid ""
+"Site 2 receives  \"administrator\", \"shop_manager\" and \"custom_role1\" "
+"along with john_doe56's data"
+msgstr ""
+
+#: inc/templates/admin/help.php:198
+msgid ""
+"\"administrator\" and \"custom_role1\" are not part of the accepted roles ; "
+"was the list of accepted roles left empty to accept all roles, "
+"\"custom_role1\" would not be a valid role on Site 2 and would not be "
+"accepted anyway"
+msgstr ""
+
+#: inc/templates/admin/help.php:201
+msgid ""
+"\"shop_manager\" is part of the accepted roles, and is a valid role on Site 2"
+msgstr ""
+
+#: inc/templates/admin/help.php:204
+msgid ""
+"john_doe56's new synchronised roles on Site 2 are \"author\" and "
+"\"shop_manager\""
 msgstr ""
 
 #: inc/templates/admin/help.php:210
 msgid ""
+"What about extra user information? (WooCommerce / Ultimate Member / other "
+"plugin adding user information)"
+msgstr ""
+
+#: inc/templates/admin/help.php:213
+msgid ""
+"Extra user information can be synchronised too out of the box as long as "
+"they are stored in the user metadata."
+msgstr ""
+
+#: inc/templates/admin/help.php:214
+msgid ""
+"For example, it means all the address and profile information in WooCommerce "
+"can be synchronised, but not the orders status or subscription status."
+msgstr ""
+
+#: inc/templates/admin/help.php:215
+msgid ""
+"To enable extra information synchronisation, the Metadata action is used "
+"along with specified metadata keys in the transferred and accepted metadata "
+"fields."
+msgstr ""
+
+#: inc/templates/admin/help.php:220
+msgid "What about user passwords?"
+msgstr ""
+
+#: inc/templates/admin/help.php:223
+msgid ""
+"Passwords are automatically synchronised as long as the Password action is "
+"enabled (outgoing and incoming respectively)."
+msgstr ""
+
+#: inc/templates/admin/help.php:224
+msgid ""
+"Communications are encrypted, signed, token-validated and IP-validated to "
+"make the process as secure as possible."
+msgstr ""
+
+#: inc/templates/admin/help.php:225
+msgid "Passwords are NEVER communicated or stored in plain text."
+msgstr ""
+
+#: inc/templates/admin/help.php:226
+msgid ""
+"WP Remote User Sync integrates with any plugin updating passwords provided "
+"they do so respecting WordPress standards."
+msgstr ""
+
+#: inc/templates/admin/help.php:231
+msgid "What if the user to synchronise does not exist on the remote site?"
+msgstr ""
+
+#: inc/templates/admin/help.php:234
+msgid ""
+"If the incoming Create action is enabled along with the incoming Update "
+"action, the user will be synchronised on the remote website upon user update."
+msgstr ""
+
+#: inc/templates/admin/help.php:235
+msgid ""
+"If other actions for this user are fired before that (Login, Logout, Delete, "
+"Password, Metadata), nothing will happen, and an action failure log entry "
+"will be recorded if the \"Enable Logs\" box is checked."
+msgstr ""
+
+#: inc/templates/admin/help.php:240
+msgid "Can it be tested on localhost first?"
+msgstr ""
+
+#: inc/templates/admin/help.php:243
+msgid ""
 "Yes - as long as the websites can reach each other, WP Remote User Sync will "
 "work."
+msgstr ""
+
+#: inc/templates/admin/help.php:244
+msgid ""
+"This means that two websites in localhost (behind virtual hosts, for example)"
+" can communicate. However, if one of the websites is on localhost and the "
+"other is not, token exchange cannot happen and the websites will not be able "
+"to communicate."
+msgstr ""
+
+#: inc/templates/admin/help.php:249
+msgid "How to export users from this site and import them into a remote site?"
+msgstr ""
+
+#: inc/templates/admin/help.php:252
+msgid "WP Remote Users Sync provides its own user import/export tool."
+msgstr ""
+
+#: inc/templates/admin/help.php:253
+msgid "With it, administrators can:"
+msgstr ""
+
+#: inc/templates/admin/help.php:257
+msgid "Export all users"
+msgstr ""
+
+#: inc/templates/admin/help.php:260
+msgid "Export users with specified roles"
+msgstr ""
+
+#: inc/templates/admin/help.php:263
+msgid "Export users with or without their roles"
+msgstr ""
+
+#: inc/templates/admin/help.php:266
+msgid "Export users with or without specified metadata"
+msgstr ""
+
+#: inc/templates/admin/help.php:269
+msgid ""
+"Export batches of users - for example, to export 500 users at a time, Max # "
+"is set to 500 and Offset to 0, 500, 1,000, 1,500, 2,000... and the export "
+"operation is repeated until there are no more users to export."
+msgstr ""
+
+#: inc/templates/admin/help.php:272
+msgid "Import users into the remote site using the file(s) previously exported"
+msgstr ""
+
+#: inc/templates/admin/help.php:276
+msgid ""
+"Once downloaded, the files are automatically deleted. In case some files "
+"were not downloaded and remained on the server, the containing directory is "
+"also cleaned daily."
+msgstr ""
+
+#: inc/templates/admin/help.php:277
+msgid ""
+"Exported files are not directly accessible by URL: only administrators can "
+"access them."
+msgstr ""
+
+#: inc/templates/admin/help.php:278
+msgid "User passwords cannot be and are NOT exported."
+msgstr ""
+
+#: inc/templates/admin/help.php:283
+msgid "Where to find more help?"
+msgstr ""
+
+#. %1$s is the WordPress support forum URL, %2$s is the Github URL
+#: inc/templates/admin/help.php:289
+#, php-format
+msgid ""
+"More help can be found on %1$s for general inquiries and on %2$s for "
+"advanced troubleshooting."
+msgstr ""
+
+#: inc/templates/admin/help.php:290
+msgid "the WordPress support forum"
+msgstr ""
+
+#: inc/templates/admin/help.php:295
+msgid ""
+"Help is provided for general enquiries and bug fixes only: feature requests, "
+"extra integration or conflict resolution with third-party themes or plugins, "
+"and specific setup troubleshooting requests will not be addressed without a "
+"fee (transfer method and amount at the discretion of the plugin author)."
+msgstr ""
+
+#: inc/templates/admin/main-settings-page.php:12
+msgid "Remote Sites"
+msgstr ""
+
+#: inc/templates/admin/main-settings-page.php:15
+msgid "Security"
+msgstr ""
+
+#: inc/templates/admin/main-settings-page.php:18
+msgid "Import / Export"
+msgstr ""
+
+#: inc/templates/admin/main-settings-page.php:21
+msgid "Activity Logs"
+msgstr ""
+
+#: inc/templates/admin/main-settings-page.php:24
+msgid "Help"
+msgstr ""
+
+#: inc/templates/admin/main-settings-page.php:41
+msgid "Start with adding a Remote Site"
+msgstr ""
+
+#: inc/templates/admin/add-site-metabox.php:9
+msgid "Add"
+msgstr ""
+
+#: inc/templates/admin/import-metabox.php:12
+msgid "Users File"
+msgstr ""
+
+#: inc/templates/admin/import-metabox.php:15
+msgid "Upload File"
+msgstr ""
+
+#: inc/templates/admin/import-metabox.php:15
+msgid "Import"
+msgstr ""
+
+#: inc/templates/admin/import-metabox.php:17
+msgid "Requires a file previously exported with WP Remote Users Sync"
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:12
+msgid "Max. #"
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:16
+msgid "Maximum number of users to export. Leave at 0 to export all users."
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:18
+msgid ""
+"Remark: on sites with a large number of users, it is recommended to export "
+"users in multiple batches with the help of the \"Offset\" option below."
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:24
+msgid "Offset"
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:28
+msgid ""
+"Offset results - users are ordered by username by default ; this option is "
+"useful when exporting users in batches."
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:34
+msgid "Specified Users Only"
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:39
+msgid ""
+"A comma-separated list of usernames. If not empty, only the users "
+"corresponding to the specified usernames will be included at export."
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:45
+msgid "Filter users by role (leave empty to export all users):"
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:54
+msgid "Export users with their roles"
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:58
+msgid "List of metadata to export (leave empty to export none):"
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:68
+msgid "Export "
+msgstr ""
+
+#: inc/templates/admin/export-metabox.php:74
+msgid "Download "
+msgstr ""
+
+#: inc/templates/admin/logs-metabox.php:12
+msgid "Enable Logs"
+msgstr ""
+
+#: inc/templates/admin/logs-metabox.php:20
+msgid "Number of Log Entries"
+msgstr ""
+
+#: inc/templates/admin/logs-metabox.php:32
+msgid ""
+"Number of log entries to display, and the minimum number of rows to keep in "
+"the database during cleanup. Logs are cleaned up automatically every hour. "
+"The number indicated in the \"Clear All\" button is the real current number "
+"of rows in the database, and clicking it deletes all of them."
+msgstr ""
+
+#: inc/templates/admin/logs-metabox.php:41
+msgid "Refresh"
+msgstr ""
+
+#. Description of the plugin
+msgid "Synchronise WordPress Users across Multiple Sites."
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/froger-me/wp-remote-users-sync"
+msgstr ""
+
+#. Author of the plugin
+msgid "Alexandre Froger"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://froger.me/"
 msgstr ""

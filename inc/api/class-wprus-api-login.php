@@ -19,8 +19,40 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 		return true;
 	}
 
+	public function needs_redirect() {
+		global $is_safari;
+
+		return (
+			(
+				self::$browser_support_settings['force_login_logout_strict'] ||
+				$is_safari ||
+				1 === preg_match( '/iPhone|iPad/', $_SERVER['HTTP_USER_AGENT'] )
+			) &&
+			! self::$browser_support_settings['force_disable_login_logout_strict']
+		);
+	}
+
 	public function handle_notification() {
-		$result = false;
+		$result  = false;
+		$data    = $this->get_data_get();
+		$proceed = true;
+
+		if ( ! $this->validate( $data ) ) {
+			Wprus_Logger::log(
+				array(
+					'message' => __( 'Login action failed - received invalid data.', 'wprus' ),
+					'data'    => $data,
+				),
+				'alert',
+				'db_log'
+			);
+
+			$proceed = false;
+		}
+
+		$data               = $this->sanitize( $data );
+		$site               = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
+		$this->callback_url = isset( $data['callback_url'] ) ? $data['callback_url'] : home_url();
 
 		if ( is_user_logged_in() ) {
 			Wprus_Logger::log(
@@ -29,25 +61,10 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 				'db_log'
 			);
 
-			return $result;
+			$proceed = false;
 		}
 
-		$data = $this->get_data_get();
-
-		if ( ! $this->validate( $data ) ) {
-			Wprus_Logger::log(
-				__( 'Login action failed - received invalid data.', 'wprus' ),
-				'alert',
-				'db_log'
-			);
-
-			return $result;
-		}
-
-		$data = $this->sanitize( $data );
-		$site = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
-
-		if ( $site ) {
+		if ( $site && $proceed ) {
 			$user = get_user_by( 'login', $data['username'] );
 
 			if ( $user ) {
@@ -78,7 +95,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			}
-		} else {
+		} elseif ( ! $site ) {
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller
@@ -141,6 +158,10 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 				0 === absint( $data['remember'] ) ||
 				1 === absint( $data['remember'] )
 			);
+
+		if ( $this->needs_redirect() ) {
+			$valid = $valid && isset( $data['callback_url'] ) && filter_var( $data['callback_url'], FILTER_VALIDATE_URL );
+		}
 
 		return $valid;
 	}

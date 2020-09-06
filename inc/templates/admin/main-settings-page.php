@@ -20,6 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<a href="#" data-toggle="wprus-logs" class="nav-tab">
 			<span class='dashicons dashicons-visibility'></span> <?php esc_html_e( 'Activity Logs', 'wprus' ); ?>
 		</a>
+		<a href="#" data-toggle="wprus-misc" class="nav-tab">
+			<span class='dashicons dashicons-screenoptions'></span> <?php esc_html_e( 'Miscellaneous', 'wprus' ); ?>
+		</a>
 		<a href="#" data-toggle="wprus-help" class="nav-tab">
 			<span class='dashicons dashicons-editor-help'></span> <?php esc_html_e( 'Help', 'wprus' ); ?>
 		</a>

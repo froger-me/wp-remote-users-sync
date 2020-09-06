@@ -75,13 +75,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="wprus-help">
+			<h2 class="wprus-help-title"><?php esc_html_e( 'In Safari and iOS browsers, why do I see a "Processing..." message on Login, and why are users logged out everywhere on Logout?', 'wprus' ); ?></h2>
+			<div class="wprus-help-inner">
+				<p>
+					<?php esc_html_e( 'Because these browsers prevent cross-domain third-party cookie manipulation by default, explicit redirections to log in users and destroying all the user sessions when logging out are necessary. With this method, only first-party cookies are manipulated. This is akin to logging in Youtube with a Google account.', 'wprus' ); ?>
+				</p>
+				<p>
+					<?php esc_html_e( 'Please note that the Login User Action takes a significantly longer time to process when using explicit redirections, particularly if many remote sites are connected.', 'wprus' ); ?>
+				</p>
+			</div>
+		</div>
+		<div class="wprus-help">
 			<h2 class="wprus-help-title"><?php esc_html_e( 'Login & Logout are not working', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
-					<?php esc_html_e( 'Login and Logout user actions need to output some code in the browser to have an effect on the remote website because of the cookies used for authentication.', 'wprus' ); ?>
+					<?php esc_html_e( 'Login and Logout User Actions need to output some code in the browser to have an effect on the remote website because of the cookies used for authentication.', 'wprus' ); ?>
 				</p>
 				<p>
 					<?php esc_html_e( 'What this means in practice is that if your theme or a third party plugin allows users to login/logout without page reload, WP Remote Users Sync cannot output its code on the page, and without extra change to your website code base, the synchronisation can only happen after the page where the user logged in or logged out is actually reloaded.', 'wprus' ); ?>
+				</p>
+				<p>
+					<?php esc_html_e( 'Please also note that unless "Force Login Redirects & Logout Everywhere" is active, or if "Force Disable Login Redirects & Logout Everywhere" options is active in the "Browser Support" section of the "Miscellaneous" tab, Login and Logout User Actions will not work in browsers preventing cross-domain third party cookie manipulation when the connected websites are on different domains.', 'wprus' ); ?>
 				</p>
 			</div>
 		</div>

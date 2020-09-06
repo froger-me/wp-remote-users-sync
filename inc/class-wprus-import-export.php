@@ -7,8 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Wprus_Import_Export {
 	const RESULTS_PER_QUERY = 10000;
 
-	protected $spl;
-
 	public function __construct( $init_hooks = false ) {
 
 		if ( $init_hooks ) {
@@ -17,6 +15,7 @@ class Wprus_Import_Export {
 			add_action( 'wprus_logs_cleanup', array( get_class(), 'clear_files' ) );
 			add_action( 'wp_ajax_wprus_import_users', array( $this, 'import' ), 10, 0 );
 			add_action( 'wp_ajax_wprus_export_users', array( $this, 'export' ), 10, 0 );
+			add_action( 'wp_ajax_wprus_get_usernames', array( $this, 'get_usernames_json' ), 10, 0 );
 
 			add_filter( 'wprus_init_notification_hooks', array( $this, 'init_notification_hooks' ), 10, 1 );
 		}
@@ -99,21 +98,23 @@ class Wprus_Import_Export {
 			);
 		}
 
-		$offset     = absint( filter_input( INPUT_POST, 'offset', FILTER_VALIDATE_INT ) );
-		$max        = absint( filter_input( INPUT_POST, 'max', FILTER_VALIDATE_INT ) );
-		$keep_role  = absint( filter_input( INPUT_POST, 'keep_role', FILTER_VALIDATE_INT ) );
-		$user_roles = filter_input( INPUT_POST, 'user_roles', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
-		$meta_keys  = filter_input( INPUT_POST, 'meta_keys', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
-		$pages      = null;
-		$limit      = self::RESULTS_PER_QUERY;
-		$aborted    = false;
+		$offset      = absint( filter_input( INPUT_POST, 'offset', FILTER_VALIDATE_INT ) );
+		$max         = absint( filter_input( INPUT_POST, 'max', FILTER_VALIDATE_INT ) );
+		$keep_role   = absint( filter_input( INPUT_POST, 'keep_role', FILTER_VALIDATE_INT ) );
+		$user_roles  = filter_input( INPUT_POST, 'user_roles', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$meta_keys   = filter_input( INPUT_POST, 'meta_keys', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$user_logins = filter_input( INPUT_POST, 'user_list', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$pages       = null;
+		$limit       = self::RESULTS_PER_QUERY;
+		$aborted     = false;
 
 		if ( 0 < $max ) {
 			$pages = ceil( $max / self::RESULTS_PER_QUERY ) - 1;
 			$limit = ( self::RESULTS_PER_QUERY < $max ) ? self::RESULTS_PER_QUERY : $max;
 		}
 
-		$users_data  = $this->get_users_data( $offset, $limit, $keep_role, $user_roles, $meta_keys );
+		$user_logins = is_array( $user_logins ) ? array_map( 'trim', $user_logins ) : array();
+		$users_data  = $this->get_users_data( $offset, $limit, $keep_role, $user_roles, $meta_keys, $user_logins );
 		$result      = $this->write_to_export_file( $file_info['path'], $users_data );
 		$num_results = ( $result ) ? 0 : count( $users_data );
 
@@ -140,7 +141,7 @@ class Wprus_Import_Export {
 
 			$pages      = ( null === $pages ) ? null : $pages - 1;
 			$offset    += self::RESULTS_PER_QUERY;
-			$users_data = $this->get_users_data( $offset, $limit, $keep_role, $user_roles, $meta_keys );
+			$users_data = $this->get_users_data( $offset, $limit, $keep_role, $user_roles, $meta_keys, $user_logins );
 			$result     = $this->write_to_export_file( $file_info['path'], $users_data );
 		}
 
@@ -317,6 +318,46 @@ class Wprus_Import_Export {
 		);
 	}
 
+	public function get_usernames_json() {
+		$nonce     = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING );
+		$term      = filter_input( INPUT_POST, 'q', FILTER_SANITIZE_STRING );
+		$page      = filter_input( INPUT_POST, 'page', FILTER_VALIDATE_INT );
+		$user_info = array();
+		$return    = array( 'users' => array() );
+
+		if ( ! wp_verify_nonce( $nonce, 'wprus_import_export_nonce' ) ) {
+			$error = new WP_Error( __METHOD__, __( 'Invalid parameters ', 'wprus' ) . $nonce );
+
+			wp_send_json_error( $error );
+		}
+
+		$user_query = new WP_User_Query(
+			array(
+				'search'         => '*' . $term . '*',
+				'search_columns' => array(
+					'user_login',
+					'user_email',
+					'user_nicename',
+					'display_name',
+				),
+				'number'         => 100,
+				'paged'          => $page,
+				'offset'         => 100 * ( $page - 1 ),
+			)
+		);
+
+		foreach ( $user_query->get_results() as $user ) {
+
+			$return['users'][] = array(
+				'username' => $user->user_login,
+			);
+		}
+
+		$return['more'] = ( $page < ceil( $user_query->get_total() / 100 ) );
+
+		wp_send_json_success( $return );
+	}
+
 	/*******************************************************************
 	 * Protected methods
 	 *******************************************************************/
@@ -478,7 +519,14 @@ class Wprus_Import_Export {
 		return true;
 	}
 
-	protected function get_users_data( $offset = 0, $limit = -1, $keep_role = true, $user_roles = array(), $meta_keys = array() ) {
+	protected function get_users_data(
+		$offset = 0,
+		$limit = -1,
+		$keep_role = true,
+		$user_roles = array(),
+		$meta_keys = array(),
+		$user_logins = array()
+	) {
 		$users_data = array();
 		$args       = array(
 			'fields' => 'all_with_meta',
@@ -488,6 +536,10 @@ class Wprus_Import_Export {
 
 		if ( is_array( $user_roles ) && ! empty( $user_roles ) ) {
 			$args['role__in'] = $user_roles;
+		}
+
+		if ( is_array( $user_logins ) && ! empty( $user_logins ) ) {
+			$args['login__in'] = $user_logins;
 		}
 
 		$users = get_users( $args );

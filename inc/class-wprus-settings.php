@@ -40,7 +40,7 @@ class Wprus_Settings {
 			add_action( 'admin_menu', array( $this, 'plugin_options_menu_main' ), 10, 0 );
 			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 0 );
 
-			add_filter( 'pre_update_option_wprus_settings', array( $this, 'require_rewrite_flush' ), 10, 2 );
+			add_filter( 'pre_update_option_wprus', array( $this, 'require_flush' ), 10, 2 );
 			add_filter( 'plugin_action_links_wp-remote-users-sync/wprus.php', array( $this, 'plugin_action_links' ), 10, 1 );
 		}
 	}
@@ -86,9 +86,11 @@ class Wprus_Settings {
 		return $links;
 	}
 
-	public function require_rewrite_flush() {
+	public function require_flush( $settings, $old_settings ) {
 		set_transient( 'wprus_flush', 1, 60 );
 		wp_cache_flush();
+
+		return $settings;
 	}
 
 	public function set_cache_policy() {
@@ -155,6 +157,24 @@ class Wprus_Settings {
 		$page_hook_id = self::settings_page_id();
 
 		if ( $hook_suffix === $page_hook_id ) {
+			$locale            = get_locale();
+			$long_locales_list = array(
+				'pt-BR',
+				'sr-Cyrl',
+				'zh-CN',
+				'zh-TW',
+			);
+
+			if ( function_exists( 'pll_current_language' ) ) {
+				$locale = pll_current_language();
+			} elseif ( has_filter( 'wpml_current_language' ) ) {
+				$locale = apply_filters( 'wpml_current_language', null );
+			}
+
+			if ( ! in_array( $locale, $long_locales_list, true ) && 2 < strlen( $locale ) ) {
+				$locale = substr( $locale, 0, 1 );
+			}
+
 			$debug         = apply_filters( 'wprus_debug', WP_DEBUG );
 			$user          = wp_get_current_user();
 			$styles        = array(
@@ -163,6 +183,7 @@ class Wprus_Settings {
 			);
 			$scripts       = array(
 				'lib/select2/select2.min',
+				'lib/select2/i18n/' . $locale,
 				'admin/main',
 			);
 			$script_params = apply_filters(
@@ -178,6 +199,7 @@ class Wprus_Settings {
 					'undefined_import_error' => __( 'Error: the server hung up unexpectedly. Please try to import users in smaller batches.', 'wprus' ),
 					'username'               => $user->user_login,
 					'debug'                  => $debug,
+					'locale'                 => $locale,
 				)
 			);
 
@@ -194,6 +216,12 @@ class Wprus_Settings {
 				$key     = 'wprus-' . $script . '-script';
 				$is_lib  = ( false !== strpos( $script, 'lib/' ) );
 				$js_ext  = ( $debug || $is_lib ) ? '.js' : '.min.js';
+
+				if ( ! file_exists( WPRUS_PLUGIN_PATH . 'js/' . $script . $js_ext ) ) {
+
+					continue;
+				}
+
 				$version = filemtime( WPRUS_PLUGIN_PATH . 'js/' . $script . $js_ext );
 
 				wp_enqueue_script( $key, WPRUS_PLUGIN_URL . 'js/' . $script . $js_ext, array( 'jquery' ), $version, true );
@@ -225,42 +253,49 @@ class Wprus_Settings {
 		$meta_keys    = $this->get_user_meta_keys();
 		$roles        = $this->get_roles();
 		$metaboxes    = array(
-			'submitdiv'     => array(
+			'submitdiv'       => array(
 				'title'    => __( 'Save Settings', 'wprus' ),
 				'callback' => 'get_submit_metabox',
 				'position' => 'side',
 				'priority' => 'high',
 				'data'     => null,
 			),
-			'site_add'      => array(
+			'site_add'        => array(
 				'title'    => __( 'Add Remote Site', 'wprus' ),
 				'callback' => 'get_add_site_metabox',
 				'position' => 'side',
 				'priority' => 'default',
 				'data'     => null,
 			),
-			'encryption'    => array(
+			'encryption'      => array(
 				'title'    => __( 'Authentication & Encryption', 'wprus' ),
 				'callback' => 'get_encryption_metabox',
 				'position' => 'normal',
 				'priority' => 'high',
 				'data'     => null,
 			),
-			'ip_whitelist'  => array(
+			'browser_support' => array(
+				'title'    => __( 'Browser Support', 'wprus' ),
+				'callback' => 'get_browser_support_metabox',
+				'position' => 'normal',
+				'priority' => 'high',
+				'data'     => null,
+			),
+			'ip_whitelist'    => array(
 				'title'    => __( 'IP Whitelist', 'wprus' ),
 				'callback' => 'get_ip_whitelist_metabox',
 				'position' => 'side',
 				'priority' => 'default',
 				'data'     => null,
 			),
-			'logs'          => array(
+			'logs'            => array(
 				'title'    => __( 'Logs', 'wprus' ),
 				'callback' => 'get_logs_metabox',
 				'position' => 'normal',
 				'priority' => 'high',
 				'data'     => null,
 			),
-			'site_template' => array(
+			'site_template'   => array(
 				'title'    => '----',
 				'callback' => 'get_site_metabox_template',
 				'position' => 'normal',
@@ -270,7 +305,7 @@ class Wprus_Settings {
 					'roles'     => $roles,
 				),
 			),
-			'export'        => array(
+			'export'          => array(
 				'title'    => __( 'Export Users', 'wprus' ),
 				'callback' => 'get_export_metabox_template',
 				'position' => 'normal',
@@ -280,7 +315,7 @@ class Wprus_Settings {
 					'roles'     => $roles,
 				),
 			),
-			'import'        => array(
+			'import'          => array(
 				'title'    => __( 'Import Users', 'wprus' ),
 				'callback' => 'get_import_metabox_template',
 				'position' => 'normal',
@@ -360,6 +395,19 @@ class Wprus_Settings {
 		include apply_filters( // @codingStandardsIgnoreLine
 			'wprus_template_encryption-metabox',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/encryption-metabox.php'
+		);
+
+		echo ob_get_clean(); // @codingStandardsIgnoreLine
+	}
+
+	public function get_browser_support_metabox() {
+		$browser_support_settings = self::get_option( 'browser_support' );
+
+		ob_start();
+
+		include apply_filters( // @codingStandardsIgnoreLine
+			'wprus_template_browser-support-metabox',
+			WPRUS_PLUGIN_PATH . 'inc/templates/admin/browser-support-metabox.php'
 		);
 
 		echo ob_get_clean(); // @codingStandardsIgnoreLine
@@ -485,6 +533,7 @@ class Wprus_Settings {
 		$settings = $this->sanitize_encryption_settings( $settings );
 		$settings = $this->sanitize_logs_settings( $settings );
 		$settings = $this->sanitize_sites_settings( $settings );
+		$settings = $this->sanitize_browser_support_settings( $settings );
 
 		return apply_filters( 'wprus_sanitize_settings', $settings );
 	}
@@ -561,6 +610,15 @@ class Wprus_Settings {
 
 	protected static function get_default_sites_option() {
 		$default = array();
+
+		return $default;
+	}
+
+	protected static function get_default_browser_support_option() {
+		$default = array(
+			'force_login_logout_strict'         => false,
+			'force_disable_login_logout_strict' => false,
+		);
 
 		return $default;
 	}
@@ -678,6 +736,29 @@ class Wprus_Settings {
 			$settings['logs'] = array(
 				'enable'  => false,
 				'min_num' => self::DEFAULT_MIN_LOG,
+			);
+		}
+
+		return $settings;
+	}
+
+	protected function sanitize_browser_support_settings( $settings ) {
+
+		if ( isset( $settings['browser_support'] ) ) {
+
+			if ( empty( $settings['browser_support']['force_login_logout_strict'] ) ) {
+				$settings['browser_support']['force_login_logout_strict'] = false;
+			}
+
+			if ( empty( $settings['browser_support']['force_disable_login_logout_strict'] ) ) {
+				$settings['browser_support']['force_disable_login_logout_strict'] = false;
+			}
+		}
+
+		if ( ! isset( $settings['browser_support'] ) ) {
+			$settings['browser_support'] = array(
+				'force_login_logout_strict'         => false,
+				'force_disable_login_logout_strict' => false,
 			);
 		}
 

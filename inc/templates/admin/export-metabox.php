@@ -25,7 +25,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</th>
 			<td>
 				<input class="small-text" type="number" min="0" steps="1" value="0" id="wprus_export_offset">
-				<p class="description"><?php esc_html_e( 'Offset results - users are ordered by login name by default ; this option is useful when exporting users in batches.', 'wprus' ); ?>
+				<p class="description"><?php esc_html_e( 'Offset results - users are ordered by username by default ; this option is useful when exporting users in batches.', 'wprus' ); ?>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<th>
+				<label for="wprus_export_users"><?php esc_html_e( 'Specified Users Only', 'wprus' ); ?></label>
+			</th>
+			<td>
+				<select id="wprus_export_users" multiple="multiple"></select>
+				<p class="description">
+					<?php esc_html_e( 'If not empty, only the users corresponding to the specified usernames will be included at export.', 'wprus' ); ?>
 				</p>
 			</td>
 		</tr>

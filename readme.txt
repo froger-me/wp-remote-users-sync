@@ -2,7 +2,7 @@
 Contributors: frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
-Tested up to: 5.5
+Tested up to: 5.5.1
 Stable tag: trunk
 Requires PHP: 7.0
 License: GPLv3
@@ -19,12 +19,12 @@ If you run multiple websites and want to keep users separated, but synchronise t
 This plugin adds the following major features to WordPress:
 
 * **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, import/export users, and view activity logs.
-* **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing user actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
+* **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing User Actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
 * **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
 * **Activity Logs:** when enabled, all communications between connected sites are logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
-* **Customizable:** developers can add their own user actions using action and filter hooks, and more - see the [developers documentation](https://github.com/froger-me/wp-remote-users-sync).
+* **Customizable:** developers can add their own User Actions using action and filter hooks, and more - see the [developers documentation](https://github.com/froger-me/wp-remote-users-sync).
 * **Unlimited websites, unlimited features:** there are no restrictions in the number of websites to connect together, and no premium version feature restrictions shenanigans - WP Remote Users Sync is fully-featured right out of the box.
 
 == Troubleshooting ==
@@ -93,10 +93,18 @@ Before opening a new issue on <a href="https://github.com/froger-me/wp-remote-us
 Only then should you open a support thread, with as much information as possible, including logs (with critical information obfuscated if necessary).  
 Also please note this plugin is provided for free to the community and being maintained during the author's free time: unless there is a prior arrangement with deadlines and financial compensation, the author will work on it at their own discretion. Insisting to contact the author multiple times via multiple channels in a short amount of time will simply result in the response being delayed further or even completely ignored.
 
-= Login & Logout are not working =
-Login and Logout user actions need to output some code in the browser to have an effect on the remote website because of the cookies used for authentication.
+= In Safari and iOS browsers, why do I see a "Processing..." message on Login, and why are users logged out everywhere on Logout? =
 
-What this means in practice is that if your theme or a third party plugin allows users to login/logout without page reload, WP Remote Users Sync cannot output its code on the page, and without extra change to your website code base, the synchronisation can only happen after the page where the user logged in or logged out is actually reloaded.
+Because these browsers prevent cross-domain third-party cookie manipulation by default, explicit redirections to log in users and destroying all the user sessions when logging out are necessary. With this method, only first-party cookies are manipulated. This is akin to logging in Youtube with a Google account.
+
+Please note that the Login User Action takes a significantly longer time to process when using explicit redirections, particularly if many remote sites are connected.
+
+= Login & Logout are not working =
+Login and Logout User Actions need to output some code in the browser to have an effect on the remote website because of the cookies used for authentication.
+
+What this means in practice is that if your theme or a third party plugin allows users to login/logout without page reload, WP Remote Users Sync cannot output its code on the page, and without extra change to your website code base, the synchronisation can only happen after the page where the user logged in or logged out is actually reloaded.  
+
+Please also note that unless "Force Login Redirects & Logout Everywhere" is active, or if "Force Disable Login Redirects & Logout Everywhere" options is active in the "Browser Support" section of the "Miscellaneous" tab, Login and Logout User Actions will not work in browsers preventing cross-domain third party cookie manipulation when the connected websites are on different domains.
 
 = What happens to existing users after activating WP Remote Users Sync? =
 Existing users remain untouched, until an enabled incoming action is received from a remote site.  
@@ -170,6 +178,24 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.2.6 =
+
+* Fix Object Cache compatibility
+* Optimize compatibility with Safari and iOS devices: use 303 redirects when reaching the login endpoint
+* Optimize compatibility with Safari and iOS devices: better logout
+* Refactor asynchroneous User Actions firing
+* Remove outdated Query Monitor integration
+* Remove `wait.css`, `wait.min.css`, `wait.js`, `wait.min.js`, `wprus-wait.php`
+* Add `wprus-async-processing.php` and `wprus-async-processing-script.php`
+* Update documentation
+
+= 1.2.5 =
+* Add compatibility with Safari and iOS devices: do not rely on cross-domain third party cookies manipulation, but use explicit redirections for Login, and destroy all sessions for Logout
+* Add template for explicit redirection processing screen
+* Add Miscellaneous settings with a section for Browser Support
+* Query Monitor integration
+* Update documentation
+
 = 1.2.4 =
 * Fix "SameSite" cookie attribute when doing cross-site login
 * Fix settings cache issues
@@ -209,11 +235,11 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 * Fix Delete action log message
 * Fix `Wprus_Crypto` class inclusion (no direct access)
 * Add integration logic ; future additions to integrations made upon donation 
-* Add integration - WooCommerce ; login on remote sites as well when creating an account at checkout time (depending on user actions settings). Many thanks to the generous patron who decided to remain anonymous.
+* Add integration - WooCommerce ; login on remote sites as well when creating an account at checkout time (depending on User Actions settings). Many thanks to the generous patron who decided to remain anonymous.
 * Add `wprus_integration` filter
 * Data is encoded with `JSON_UNESCAPED_UNICODE` flag to support a wider range of characters (Chinese, Greek, etc)
 * Better error message handling in case of syntax error in payload
-* Full documentation of the `Wprus_Api_Abstract` class for developers of custom user actions
+* Full documentation of the `Wprus_Api_Abstract` class for developers of custom User Actions
 * Update documentation
 
 = 1.1.12 =
