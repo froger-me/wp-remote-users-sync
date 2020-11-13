@@ -121,6 +121,8 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 				'locale'               => $user->locale,
 			);
 
+			$data = apply_filters( 'wprus_api_create_data', $data, $user_id );
+
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the username

@@ -885,6 +885,8 @@ class Wprus_Api_Abstract {
 
 		do_action( 'wprus_before_firing_action', $endpoint, $url, $data );
 
+		$data = apply_filters( 'wprus_api_abstract_data', $data, $url );
+
 		$body     = array(
 			'wprusdata' => $this->encrypt_data( $data ),
 			'token'     => $this->get_token( $url, $data['username'], 'post' ),

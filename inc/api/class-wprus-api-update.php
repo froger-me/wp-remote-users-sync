@@ -163,6 +163,8 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 				'locale'               => $user->locale,
 			);
 
+			$data = apply_filters( 'wprus_api_update_data', $data, $user_id );
+
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the username

@@ -316,6 +316,10 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 					$data             = $meta_changes;
 					$data['username'] = $username;
 
+					$user = get_user_by( 'login', $username );
+
+					$data = apply_filters( 'wprus_api_meta_data', $data, $user->ID );
+
 					$this->fire_action( $site_url, $data );
 				}
 			}
