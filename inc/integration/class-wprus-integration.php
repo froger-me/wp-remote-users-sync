@@ -6,12 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Wprus_Integration {
 
-	public static $integrations = array(
-		'woocommerce' => array(
-			'plugin'     => 'woocommerce/woocommerce.php',
-			'class_name' => 'Wprus_Woocommerce_Integration',
-		),
-	);
+	public static $integrations = array();
 
 	protected $wprus;
 	protected $api;
@@ -30,6 +25,11 @@ class Wprus_Integration {
 	 *******************************************************************/
 	public static function init() {
 		$integrations = apply_filters( 'wprus_registered_integration', self::$integrations );
+
+		if ( empty( $integrations ) ) {
+
+			return;
+		}
 
 		foreach ( $integrations as $slug => $info ) {
 

@@ -37,5 +37,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</p>
 			</td>
 		</tr>
+		<tr>
+			<th>
+				<label for="wprus_silent_login_logout_strict"><?php esc_html_e( 'Use Silent Redirection', 'wprus' ); ?></label>
+			</th>
+			<td>
+				<input type="checkbox" id="wprus_silent_login_logout_strict" name="wprus[browser_support][silent_login_logout_strict]" <?php checked( (bool) $browser_support_settings['silent_login_logout_strict'], true ); ?>>
+				<p class="howto">
+					<p class="howto">
+					<?php esc_html_e( 'If checked, strict redirects will be done silently without message displayed to the end user.', 'wprus' ); ?><br/>
+					<?php esc_html_e( 'Displaying a message makes the redirection take a longer time, but it provides information to the end user for a better user experience. Recommended to check this option if only few Remote Sites are contacted during login.', 'wprus' ); ?><br/>
+					<?php esc_html_e( 'Silent redirection is faster, but if many Remote Sites need to be contacted at login, the end user does not get any information as to why the current operation is taking time.', 'wprus' ); ?>
+				</p>
+				</p>
+			</td>
+		</tr>
 	</table>
 </div>

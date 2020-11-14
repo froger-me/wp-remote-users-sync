@@ -126,13 +126,13 @@ class Wprus {
 		}
 
 		$this->authorised_endpoints = array(
-			'token' => 'token/?',
+			'token' => 'token',
 		);
 		$this->authorised_endpoints = apply_filters( 'wprus_wp_endpoints', $this->authorised_endpoints );
 
 		foreach ( $this->authorised_endpoints as $action => $url_suffix ) {
 			add_rewrite_rule(
-				'^wprus/' . $url_suffix,
+				'^wprus/' . $url_suffix . '/?$',
 				'index.php?__wprus_api=1&action=' . $action,
 				'top'
 			);

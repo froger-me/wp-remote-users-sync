@@ -11,12 +11,32 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 	 *******************************************************************/
 
 	public function init_notification_hooks() {
-		add_action( 'wp_login', array( $this, 'notify_remote' ), PHP_INT_MIN, 2 );
+		add_action( 'set_logged_in_cookie', array( $this, 'notify_remote' ), PHP_INT_MIN + 10, 6 );
 	}
 
-	public function has_remote_async_actions() {
+	public function has_async_actions() {
 
 		return true;
+	}
+
+	public function init_silent_async_redirect_hooks() {
+
+		if ( ! has_action( 'set_logged_in_cookie', array( $this, 'fire_async_actions' ) ) ) {
+			add_action( 'set_logged_in_cookie', array( $this, 'notify_remote' ), PHP_INT_MIN + 10, 6 );
+		}
+
+		$this->fire_redirect_async_actions();
+	}
+
+	public function fire_redirect_async_actions(
+		$logged_in_cookie = null,
+		$expire = null,
+		$expiration = null,
+		$user_id = null,
+		$scheme = null,
+		$token = null
+	) {
+		$this->fire_async_actions();
 	}
 
 	public function needs_redirect() {
@@ -30,6 +50,10 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 			) &&
 			! self::$browser_support_settings['force_disable_login_logout_strict']
 		);
+	}
+
+	public function is_silent_async_action_redirect() {
+		return self::$browser_support_settings['silent_login_logout_strict'];
 	}
 
 	public function handle_notification() {
@@ -50,19 +74,8 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 			$proceed = false;
 		}
 
-		$data               = $this->sanitize( $data );
-		$site               = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
-		$this->callback_url = isset( $data['callback_url'] ) ? $data['callback_url'] : home_url();
-
-		if ( is_user_logged_in() ) {
-			Wprus_Logger::log(
-				__( 'Login action failed - a user is already logged in.', 'wprus' ),
-				'warning',
-				'db_log'
-			);
-
-			$proceed = false;
-		}
+		$data = $this->sanitize( $data );
+		$site = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
 
 		if ( $site && $proceed ) {
 			$user = get_user_by( 'login', $data['username'] );
@@ -110,13 +123,8 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 		return $result;
 	}
 
-	public function notify_remote( $user_login, $user ) {
-
-		if ( is_user_logged_in() ) {
-
-			return;
-		}
-
+	public function notify_remote( $logged_in_cookie, $expire, $expiration, $user_id, $scheme, $token ) {
+		$user                = get_user_by( 'ID', $user_id );
 		$this->async_user_id = $user->ID;
 		$sites               = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 
@@ -127,17 +135,17 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 				sprintf(
 					// translators: %s is the username
 					__( 'Login action - enqueueing asynchronous actions for username "%s"', 'wprus' ),
-					$user_login
+					$user->user_login
 				),
 				'info',
 				'db_log'
 			);
 
 			foreach ( $sites as $index => $site ) {
-				$this->add_remote_async_action(
+				$this->add_async_action(
 					$site['url'],
 					array(
-						'username' => $user_login,
+						'username' => $user->user_login,
 						'remember' => ( $remember ) ? 1 : 0,
 					)
 				);
@@ -172,4 +180,31 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 		return $data;
 	}
 
+	protected function get_redirect_url( $ajax_fallback = false ) {
+		$parts = wp_parse_url( home_url() );
+		$url   = $parts['scheme'] . '://' . $parts['host'] . add_query_arg( null, null );
+
+		if ( false !== strpos( $url, 'admin-ajax.php' ) ) {
+			$ajax_fallback = ( $ajax_fallback ) ? $ajax_fallback : home_url();
+			$url           = apply_filters( 'wprus_get_redirect_url_ajax', $ajax_fallback, $this->endpoint );
+		}
+
+		if ( false !== strpos( $url, 'wp-login.php' ) ) {
+
+			if ( isset( $_REQUEST['redirect_to'] ) ) { // @codingStandardsIgnoreLine
+				$redirect_to = $_REQUEST['redirect_to']; // @codingStandardsIgnoreLine
+
+				if ( $secure_cookie && false !== strpos( $redirect_to, 'wp-admin' ) ) {
+					$redirect_to = preg_replace( '|^http://|', 'https://', $redirect_to );
+				}
+			} else {
+				$redirect_to = admin_url();
+			}
+
+			$requested_redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';  // @codingStandardsIgnoreLine
+			$url                   = apply_filters( 'login_redirect', $redirect_to, $requested_redirect_to, wp_get_current_user() );
+		}
+
+		return $url;
+	}
 }

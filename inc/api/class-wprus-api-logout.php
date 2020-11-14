@@ -14,7 +14,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 		add_action( 'clear_auth_cookie', array( $this, 'notify_remote' ), PHP_INT_MAX, 0 );
 	}
 
-	public function has_remote_async_actions() {
+	public function has_async_actions() {
 		return true;
 	}
 
@@ -86,7 +86,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 				}
 
 				wp_set_current_user( 0 );
-				do_action( 'wp_logout' );
+				do_action( 'wp_logout', $user->ID );
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller
@@ -158,7 +158,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 			);
 
 			foreach ( $sites as $index => $site ) {
-				$this->add_remote_async_action(
+				$this->add_async_action(
 					$site['url'],
 					array(
 						'username' => $user->user_login,

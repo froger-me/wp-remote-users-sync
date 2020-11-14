@@ -11,6 +11,7 @@ class Wprus_Settings {
 	public static $actions;
 
 	protected static $settings;
+	protected static $settings_page_id = 'settings_page_wprus';
 
 	protected $aes_key;
 	protected $hmac_key;
@@ -32,8 +33,6 @@ class Wprus_Settings {
 			)
 		);
 
-		self::$settings = $this->sanitize_settings( self::get_options() );
-
 		if ( $init_hooks ) {
 			add_action( 'init', array( $this, 'load_textdomain' ), PHP_INT_MIN - 10, 0 );
 			add_action( 'init', array( $this, 'set_cache_policy' ), PHP_INT_MIN - 10, 0 );
@@ -41,28 +40,19 @@ class Wprus_Settings {
 			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 0 );
 
 			add_filter( 'pre_update_option_wprus', array( $this, 'require_flush' ), 10, 2 );
+			add_filter( 'wprus_settings', array( $this, 'sanitize_settings' ), 10, 1 );
 			add_filter( 'plugin_action_links_wp-remote-users-sync/wprus.php', array( $this, 'plugin_action_links' ), 10, 1 );
 		}
+
+		self::$settings = self::get_options();
 	}
 
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
 
-	public static function settings_page_id() {
-
-		return 'settings_page_wprus';
-	}
-
 	public static function get_options() {
-		self::$settings = wp_cache_get( 'wprus_settings', 'wprus' );
-
-		if ( ! self::$settings ) {
-			self::$settings = get_option( 'wprus' );
-
-			wp_cache_set( 'wprus_settings', self::$settings, 'wprus' );
-		}
-
+		self::$settings = get_option( 'wprus' );
 		self::$settings = apply_filters( 'wprus_settings', self::$settings );
 
 		return self::$settings;
@@ -143,7 +133,7 @@ class Wprus_Settings {
 		$menu_slug     = 'wprus';
 		$parent_slug   = 'options-general.php';
 		$callback      = array( $this, 'plugin_main_page' );
-		$page_hook_id  = self::settings_page_id();
+		$page_hook_id  = self::$settings_page_id;
 		$settings_page = add_submenu_page( $parent_slug, $title, $title, $capability, $menu_slug, $callback );
 
 		if ( ! empty( $settings_page ) ) {
@@ -154,7 +144,7 @@ class Wprus_Settings {
 	}
 
 	public function admin_enqueue_scripts( $hook_suffix ) {
-		$page_hook_id = self::settings_page_id();
+		$page_hook_id = self::$settings_page_id;
 
 		if ( $hook_suffix === $page_hook_id ) {
 			$locale            = get_locale();
@@ -238,7 +228,7 @@ class Wprus_Settings {
 	}
 
 	public function screen_layout_column( $columns, $screen ) {
-		$page_hook_id = self::settings_page_id();
+		$page_hook_id = self::$settings_page_id;
 
 		if ( $screen === $page_hook_id ) {
 			$columns[ $page_hook_id ] = 2;
@@ -248,7 +238,7 @@ class Wprus_Settings {
 	}
 
 	public function add_settings_meta_boxes() {
-		$page_hook_id = self::settings_page_id();
+		$page_hook_id = self::$settings_page_id;
 		$sites        = $this->get_sites();
 		$meta_keys    = $this->get_user_meta_keys();
 		$roles        = $this->get_roles();
@@ -618,6 +608,7 @@ class Wprus_Settings {
 		$default = array(
 			'force_login_logout_strict'         => false,
 			'force_disable_login_logout_strict' => false,
+			'silent_login_logout_strict'        => false,
 		);
 
 		return $default;
@@ -753,12 +744,17 @@ class Wprus_Settings {
 			if ( empty( $settings['browser_support']['force_disable_login_logout_strict'] ) ) {
 				$settings['browser_support']['force_disable_login_logout_strict'] = false;
 			}
+
+			if ( empty( $settings['browser_support']['silent_login_logout_strict'] ) ) {
+				$settings['browser_support']['silent_login_logout_strict'] = false;
+			}
 		}
 
 		if ( ! isset( $settings['browser_support'] ) ) {
 			$settings['browser_support'] = array(
 				'force_login_logout_strict'         => false,
 				'force_disable_login_logout_strict' => false,
+				'silent_login_logout_strict'        => false,
 			);
 		}
 

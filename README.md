@@ -107,7 +107,7 @@ class Wprus_Api_Example extends Wprus_Api_Abstract {
         add_action( 'wp', array( $this, 'notify_remote' ), 10, 0 );
     }
 
-    public function has_remote_async_actions() {
+    public function has_async_actions() {
 
         return true;
     }
@@ -191,7 +191,7 @@ class Wprus_Api_Example extends Wprus_Api_Abstract {
             foreach ( $sites as $index => $site ) {
                 $data['example'] = 'example data - asynchronous action';
 
-                $this->add_remote_async_action( $site['url'], $data );
+                $this->add_async_action( $site['url'], $data );
 
                 $data['example'] = 'example data - synchronous action';
 
@@ -405,7 +405,7 @@ ___
 #### wprus_before_firing_async_actions
 
 ```php
-do_action( 'wprus_before_firing_async_actions', (string) $endpoint, (mixed) $actions );
+do_action( 'wprus_before_firing_async_actions', (string) $endpoint, (mixed) $actions, (int) $user_id );
 ```
 
 **Description**  
@@ -419,7 +419,7 @@ $actions
 > (mixed) An array of request data to send to the remote sites. Structure:  
 ```php
 array (
-    0 => array(
+    $uniq_id => array(                             // $uniq_id is the unique ID of the action
         'username' => 'username',                  // The user name of the user to act on
         'base_url' => 'https://local-website.com', // The URL of the local site sending the request
         'url'      => 'https://remote-site.com/',  // The URL of the remote site supposed to receive the request
@@ -428,12 +428,15 @@ array (
     [...]                                          // More data for other requests to other remote sites if any
 );
 ```
+
+$user_id
+> (int) The ID of the user for which the actions are to be performed.  
 ___
 
 #### wprus_after_firing_async_actions
 
 ```php
-do_action( 'wprus_after_firing_async_actions', (string) $endpoint, (mixed) $actions );
+do_action( 'wprus_after_firing_async_actions', (string) $endpoint, (mixed) $actions, (int) $user_id );
 ```
 
 **Description**  
@@ -447,7 +450,7 @@ $actions
 > (mixed) An array of request data to send to the remote sites. Structure:  
 ```php
 array (
-    0 => array(
+    $uniq_id => array(                             // $uniq_id is the unique ID of the action
         'username' => 'username',                  // The user name of the user to act on
         'base_url' => 'https://local-website.com', // The URL of the local site sending the request
         'url'      => 'https://remote-site.com/',  // The URL of the remote site supposed to receive the request
@@ -456,6 +459,9 @@ array (
     [...]                                          // More data for other requests to other remote sites if any
 );
 ``` 
+
+$user_id
+> (int) The ID of the user for which the actions were performed.  
 ___
 
 #### wprus_before_firing_action
@@ -649,10 +655,12 @@ Filters index:
 * [wprus_excluded_meta_keys](#user-content-wprus_excluded_meta_keys)
 * [wprus_excluded_meta_keys_like](#user-content-wprus_excluded_meta_keys_like)
 * [wprus_init_notification_hooks](#user-content-wprus_init_notification_hooks)
+* [wprus_fire_action_timeout](#user-content-wprus_fire_action_timeout)
 * [wprus_request_token_timeout](#user-content-wprus_request_token_timeout)
 * [wprus_request_token_retry_timeout](#user-content-wprus_request_token_retry_timeout)
 * [wprus_is_authorized_remote](#user-content-wprus_is_authorized_remote)
 * [wprus_debug](#user-content-wprus_debug)
+* [wprus_action_data](#user-content-wprus_action_data)
 
 ___
 
@@ -966,6 +974,28 @@ $init_notification_hooks
 > (bool) If truthy, hooks will be initialised and notifications will be sent to remote sites upon user changes. Set to a falsy value to prevent notifications from being sent. Default `true` except in the case of user import.  
 ___
 
+#### wprus_fire_action_timeout
+
+```php
+apply_filters( 'wprus_fire_action_timeout', (int) $timeout, (string) $endpoint, (string) $url, (bool) $blocking );
+```
+**Description**  
+Filter the timeout for a synchronous action request.  
+
+**Parameters**  
+$timeout
+> (int) The timeout for a synchronous action request expressed in seconds. Default `1`.  
+
+$endpoint
+> (string) The destination endpoint.  
+
+$url
+> (string) The destination website's URL.  
+
+$blocking
+> (bool) Whether the request needs to wait for a response.  
+___
+
 #### wprus_request_token_timeout
 
 ```php
@@ -1028,4 +1058,24 @@ Filter wether to activate debug mode (PHP error logs, JavaScript console message
 **Parameters**  
 $debug
 > (bool) Wether debug mode is activated - default `WP_DEBUG` constant value.  
+___
+
+#### wprus_action_data
+
+```php
+apply_filters( 'wprus_action_data', array $data, string $endpoint, string $url );
+```
+**Description**  
+Filter the data sent to a remote site.  
+
+**Parameters**  
+$data
+> (array) The data sent to the remote site.  
+
+$endpoint
+> (string) The API endpoint receiving the action.  
+
+$url
+> (string) The URL of the remote site.  
+
 ___

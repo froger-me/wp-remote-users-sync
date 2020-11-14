@@ -1,5 +1,6 @@
 === WP Remote Users Sync ===
 Contributors: frogerme
+Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 5.5.1
@@ -45,9 +46,7 @@ Although WP Remote Users Sync works out of the box with most combinations of Wor
 
 Integrations added to core are limited to popular plugins and themes: any extra code specific to a handful of installations require a separate custom plugin not shared with the community (decision at the discretion of the WP Remote Users Sync plugin author).  
 
-A typical example of case needing integration is autologin (like in WooCommerce during checkout): some plugins may set the current user and session upon user creation without calling `wp_login` WordPress action hook (even though they absolutely **should**), which can result in the user being logged in on the local site but not the remote sites.  
-
-Other examples include plugins or themes directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.  
+A typical examples include plugins or themes directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.  
 
 If such need for plugin integration arises, website administrators may contact the author of WP Remote Users Sync to become a patron.
 
@@ -178,13 +177,25 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
-= 1.2.6 =
+= 1.2.7 =
+* Fix settings cache issues - for real...
+* Fix log output
+* Fix permalinks patterns
+* Add `wprus_fire_action_timeout` filter hook
+* Login Action: optimise compatibility with third-pary plugins and themes
+* Delete Action: fix log output
+* Add silent redirection for async actions, with opt-in in Miscellaneous settings tab
+* IMPORTANT - DEVELOPERS: Replace all instances of `remote_async_action` with `async_action`, affecting method names ; action and filter hooks not affected, classes inheriting `Wprus_Api_Abstract` need refactor.
+* Refactor `fire_async_actions` method of `Wprus_Api_Abstract` (formerly `fire_remote_async_actions`)
+* Add `wprus_action_data` filter hook
+* Update documentation
 
+= 1.2.6 =
 * Fix Object Cache compatibility
-* Optimize compatibility with Safari and iOS devices: use 303 redirects when reaching endpoint needing redirect to avoid further loding WordPress
+* Optimize compatibility with Safari and iOS devices: use 303 redirects when reaching the login endpoint
 * Optimize compatibility with Safari and iOS devices: better logout
-* Refactor asynchronous User Actions firing
-* Remove unused Query Monitor integration
+* Refactor asynchroneous User Actions firing
+* Remove outdated Query Monitor integration
 * Remove `wait.css`, `wait.min.css`, `wait.js`, `wait.min.js`, `wprus-wait.php`
 * Add `wprus-async-processing.php` and `wprus-async-processing-script.php`
 * Update documentation

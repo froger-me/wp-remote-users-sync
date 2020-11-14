@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<span class="wprus-log-date"><?php echo esc_html( gmdate( 'Y-m-d H:i:s', $log->timestamp ) ); ?></span> - <span class="log-message"><?php echo esc_html( $type_output ); ?> - <?php echo esc_html( $log->message ); ?></span>
 	<?php if ( ! empty( $log->data ) ) : ?>
 	<pre class="trace">
-		<?php print_r( maybe_unserialize( $log->data ) ); // @codingStandardsIgnoreLine ?>
+		<?php echo htmlspecialchars( print_r( maybe_unserialize( $log->data ), true ) ); // @codingStandardsIgnoreLine ?>
 	</pre>
 	<?php endif; ?>
 </div>

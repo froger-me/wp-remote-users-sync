@@ -49,7 +49,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 						// translators: %1$s is the username ; %2$s is the caller
 						__( 'Delete action failed - user "%1$s" from %2$s was not found locally.', 'wprus' ),
 						$data['username'],
-						$site['_url']
+						$site['url']
 					),
 					'alert',
 					'db_log'
@@ -86,7 +86,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 							// translators: %1$s is the username, %2$s is the caller
 							__( 'Delete action - successfully deleted user "%1$s" from %2$s.', 'wprus' ),
 							$data['username'],
-							$site['_url']
+							$site['url']
 						),
 						'success',
 						'db_log'
