@@ -16,8 +16,11 @@ class Wprus_Settings {
 	protected $aes_key;
 	protected $hmac_key;
 	protected $sites;
+	protected static $plugin_basefile;
 
-	public function __construct( $init_hooks = false ) {
+	protected static $tables = [];
+
+	public function __construct( $init_hooks = false, string $plugin_basefile = null ) {
 		$this->load_textdomain();
 		self::$actions = apply_filters(
 			'wprus_actions',
@@ -45,6 +48,7 @@ class Wprus_Settings {
 		}
 
 		self::$settings = self::get_options();
+		self::$plugin_basefile = $plugin_basefile; //\plugin_basename( __FILE__ );
 	}
 
 	/*******************************************************************
@@ -811,13 +815,15 @@ class Wprus_Settings {
 
 		$meta_keys = wp_cache_get( 'wprus_meta_keys', 'wprus' );
 
+		$_table_usermeta = Wprus_Settings::get_wpdb_table( 'usermeta' );
+
 		if ( ! $meta_keys ) {
 			$exclude      = $this->get_excluded_meta();
 			$exclude_like = $this->get_excluded_meta_like();
 
 			$sql = "
 				SELECT DISTINCT meta_key
-				FROM {$wpdb->prefix}usermeta m
+				FROM {$_table_usermeta} m
 				WHERE m.meta_key NOT IN (" . implode( ',', array_fill( 0, count( $exclude ), '%s' ) ) . ')
 				AND m.meta_key NOT LIKE 
 				' . implode( ' AND m.meta_key NOT LIKE ', array_fill( 0, count( $exclude_like ), '%s' ) ) . '
@@ -840,6 +846,115 @@ class Wprus_Settings {
 		$roles = array_keys( $wp_roles->roles );
 
 		return $roles;
+	}
+
+	/**
+	 * Get WP Table name, adding correct prefix, depending if plugin is on multisite and network active or not
+	 * 
+	 * @since	1.2.8.1
+	 * @param	string	$table
+	 * @return	string
+	*/
+	public static function get_wpdb_table( string $table = null ):?string
+	{
+
+		if( is_null( $table ) ){
+
+			return null;
+
+		}
+
+		// simple cache --> if a table name is already created, return stored value ##
+		if( isset( self::$tables[$table] ) ){
+
+			error_log( 'Returning cache for table: '.$table.' --> '. self::$tables[$table] );
+
+			return self::$tables[$table];
+
+		}
+
+		// if multisite, we need to know if the plugin is network active or install active ##
+		// error_log( 'basefile: '.self::$plugin_basefile );
+		error_log( 'table: '.$table );
+
+		// cache a check if the plugin is network active ##
+		$_is_network_active = \is_plugin_active_for_network( self::$plugin_basefile );
+
+		// import WP database object ##
+		global $wpdb;
+
+		// list tables which always use the base_prefix
+		$_use_base_prefix = [
+			'users',
+			'usermeta'
+		];
+
+		// @todo - apply_filters ##
+
+		if(
+			\is_multisite() // running on a network
+		){
+
+			error_log( 'This is a WP Network' );
+
+			if( $_is_network_active ){
+
+				error_log( 'Plugin is Network active' );
+
+				// filter in wprus nonce and log table, as these need to use base_prefix if network active ##
+				$_use_base_prefix = array_merge( $_use_base_prefix, [
+					'wprus_logs',
+					'wprus_nonce'
+				]);
+
+				// __log( $_use_base_prefix );
+
+				// @todo - apply_filters.. again ##
+
+				if( in_array( $table, $_use_base_prefix ) ){
+
+					// error_log( 'Table: '.$table.' should use base_prefix' );
+
+					$_table = $wpdb->base_prefix.$table;
+
+				} else {
+ 
+					$_table = $wpdb->prefix.$table;
+
+				}
+
+			} else {
+
+				error_log( 'Plugin is NOT Network active' );
+
+				if( in_array( $table, $_use_base_prefix ) ){
+
+					$_table = $wpdb->base_prefix.$table;
+
+				} else {
+
+					$_table = $wpdb->prefix.$table;
+
+				}
+
+			}
+
+		} else {
+
+			error_log( 'This is NOT a WP Network - return with wpdb->prefix' );
+
+			$_table = $wpdb->prefix.$table;
+
+		}
+
+		error_log( 'final table: '.$_table );
+
+		// cache ##
+		self::$tables[$table] = $_table;
+
+		// return ##
+		return $_table;
+
 	}
 
 }
