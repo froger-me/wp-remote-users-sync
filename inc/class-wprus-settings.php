@@ -867,7 +867,7 @@ class Wprus_Settings {
 		// simple cache --> if a table name is already created, return stored value ##
 		if( isset( self::$tables[$table] ) ){
 
-			error_log( 'Returning cache for table: '.$table.' --> '. self::$tables[$table] );
+			// error_log( 'Returning cache for table: '.$table.' --> '. self::$tables[$table] );
 
 			return self::$tables[$table];
 
@@ -875,7 +875,7 @@ class Wprus_Settings {
 
 		// if multisite, we need to know if the plugin is network active or install active ##
 		// error_log( 'basefile: '.self::$plugin_basefile );
-		error_log( 'table: '.$table );
+		// error_log( 'table: '.$table );
 
 		// cache a check if the plugin is network active ##
 		$_is_network_active = \is_plugin_active_for_network( self::$plugin_basefile );
@@ -895,11 +895,11 @@ class Wprus_Settings {
 			\is_multisite() // running on a network
 		){
 
-			error_log( 'This is a WP Network' );
+			// error_log( 'This is a WP Network' );
 
 			if( $_is_network_active ){
 
-				error_log( 'Plugin is Network active' );
+				// error_log( 'Plugin is Network active' );
 
 				// filter in wprus nonce and log table, as these need to use base_prefix if network active ##
 				$_use_base_prefix = array_merge( $_use_base_prefix, [
@@ -925,7 +925,7 @@ class Wprus_Settings {
 
 			} else {
 
-				error_log( 'Plugin is NOT Network active' );
+				// error_log( 'Plugin is NOT Network active' );
 
 				if( in_array( $table, $_use_base_prefix ) ){
 
@@ -941,13 +941,13 @@ class Wprus_Settings {
 
 		} else {
 
-			error_log( 'This is NOT a WP Network - return with wpdb->prefix' );
+			// error_log( 'This is NOT a WP Network - return with wpdb->prefix' );
 
 			$_table = $wpdb->prefix.$table;
 
 		}
 
-		error_log( 'final table: '.$_table );
+		// error_log( 'final table: '.$_table );
 
 		// cache ##
 		self::$tables[$table] = $_table;
