@@ -569,6 +569,14 @@ class Wprus_Settings {
 
 			foreach ( $sites as $site ) {
 
+				// hack -- force https on site URL ##
+				$url = str_replace( 'http://', 'https://', $url );
+
+				// error_log( 'site_url: '.trailingslashit( $site['url'] ) );
+				// error_log( 'url: '.trailingslashit( $url ) );
+				// error_log( 'site_url: '.$site['url'] );
+				// error_log( 'url: '.$url );
+
 				if ( trailingslashit( $url ) === trailingslashit( $site['url'] ) ) {
 
 					return $site;
