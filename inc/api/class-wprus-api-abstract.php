@@ -567,6 +567,7 @@ class Wprus_Api_Abstract {
 	 */
 	public function handle_ping_notification() {
 		$data = $this->get_data_post();
+		// \__log( $data );
 
 		if ( empty( $data ) ) {
 			Wprus_Logger::log( __( 'A ping was received but the initiator did not use matching encryption and signature action keys', 'wprus' ), 'info', 'db_log' );
