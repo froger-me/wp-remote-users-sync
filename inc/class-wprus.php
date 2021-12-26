@@ -65,9 +65,9 @@ class Wprus {
 			$charset_collate .= " COLLATE {$wpdb->collate}";
 		}
 
-		$_table_nonce = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
+		$wprus_nonce = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
 		$sql        =
-			'CREATE TABLE ' . $_table_nonce . ' (
+			'CREATE TABLE ' . $wprus_nonce . ' (
 				id int(12) NOT NULL auto_increment,
 				nonce varchar(255) NOT NULL,
 				expiry int(12) NOT NULL,
@@ -77,17 +77,17 @@ class Wprus {
 
 		dbDelta( $sql );
 
-		$table_name = $wpdb->get_var( "SHOW TABLES LIKE '" . $_table_nonce . "'" );
+		$table_name = $wpdb->get_var( "SHOW TABLES LIKE '" . $wprus_nonce . "'" );
 
-		if ( $_table_nonce !== $table_name ) {
+		if ( $wprus_nonce !== $table_name ) {
 
 			return false;
 
 		}	
 
-		$_table_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
 		$sql        =
-			'CREATE TABLE ' . $_table_logs . ' (
+			'CREATE TABLE ' . $wprus_logs . ' (
 				id int(12) NOT NULL auto_increment,
 				timestamp int(12) NOT NULL,
 				type varchar(10) NOT NULL,
@@ -99,9 +99,9 @@ class Wprus {
 
 		dbDelta( $sql );
 
-		$table_name = $wpdb->get_var( "SHOW TABLES LIKE '" . $_table_logs . "'" );
+		$table_name = $wpdb->get_var( "SHOW TABLES LIKE '" . $wprus_logs . "'" );
 
-		if ( $_table_logs !== $table_name ) {
+		if ( $wprus_logs !== $table_name ) {
 
 			return false;
 

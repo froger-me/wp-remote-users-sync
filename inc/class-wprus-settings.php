@@ -16,11 +16,10 @@ class Wprus_Settings {
 	protected $aes_key;
 	protected $hmac_key;
 	protected $sites;
-	protected static $plugin_basefile;
 
 	protected static $tables = [];
 
-	public function __construct( $init_hooks = false, string $plugin_basefile = null ) {
+	public function __construct( $init_hooks = false ) {
 		$this->load_textdomain();
 		self::$actions = apply_filters(
 			'wprus_actions',
@@ -48,7 +47,6 @@ class Wprus_Settings {
 		}
 
 		self::$settings = self::get_options();
-		self::$plugin_basefile = $plugin_basefile; //\plugin_basename( __FILE__ );
 	}
 
 	/*******************************************************************
@@ -569,15 +567,22 @@ class Wprus_Settings {
 
 			foreach ( $sites as $site ) {
 
-				// hack -- force https on site URL ##
-				$url = str_replace( 'http://', 'https://', $url );
+				/** 
+				 * note that in some cases, both the sending and master sites might use the same protocol ( for example https ) 
+				 * but the passed ot master value might return a different protocol ( for example http )
+				 * so, this fix is proposed to run the string comparison just against the domain part of the URL, not including the protocol
+				 */
+				$url_parse_url = parse_url( $url );
+				$url_host = $url_parse_url['host'];
 
-				// \__log( 'site_url: '.trailingslashit( $site['url'] ) );
-				// \__log( 'url: '.trailingslashit( $url ) );
-				// error_log( 'site_url: '.$site['url'] );
-				// error_log( 'url: '.$url );
+				$site_parse_url = parse_url( $site['url'] );
+				$site_host = $url_parse_url['host'];
 
-				if ( trailingslashit( $url ) === trailingslashit( $site['url'] ) ) {
+				error_log( 'site host: '.$site_host );
+				error_log( 'url host: '.$url_host );
+
+				if ( $site_host === $url_host ) {
+				// if ( trailingslashit( $url ) === trailingslashit( $site['url'] ) ) {
 
 					return $site;
 
@@ -824,7 +829,7 @@ class Wprus_Settings {
 
 		$meta_keys = wp_cache_get( 'wprus_meta_keys', 'wprus' );
 
-		$_table_usermeta = Wprus_Settings::get_wpdb_table( 'usermeta' );
+		$table_usermeta = self::get_wpdb_table( 'usermeta' );
 
 		if ( ! $meta_keys ) {
 			$exclude      = $this->get_excluded_meta();
@@ -832,7 +837,7 @@ class Wprus_Settings {
 
 			$sql = "
 				SELECT DISTINCT meta_key
-				FROM {$_table_usermeta} m
+				FROM {$table_usermeta} m
 				WHERE m.meta_key NOT IN (" . implode( ',', array_fill( 0, count( $exclude ), '%s' ) ) . ')
 				AND m.meta_key NOT LIKE 
 				' . implode( ' AND m.meta_key NOT LIKE ', array_fill( 0, count( $exclude_like ), '%s' ) ) . '
@@ -873,76 +878,57 @@ class Wprus_Settings {
 
 		}
 
-		// simple cache --> if a table name is already created, return stored value ##
 		if( isset( self::$tables[$table] ) ){
 
-			// error_log( 'Returning cache for table: '.$table.' --> '. self::$tables[$table] );
-
+			error_log( 'Returning cache for table: '.$table.' --> '. self::$tables[$table] );
 			return self::$tables[$table];
 
 		}
 
-		// if multisite, we need to know if the plugin is network active or install active ##
-		// error_log( 'basefile: '.self::$plugin_basefile );
-		// error_log( 'table: '.$table );
+		$is_network_active = \is_plugin_active_for_network( WPRUS_PLUGIN_BASEFILE );
 
-		// cache a check if the plugin is network active ##
-		$_is_network_active = \is_plugin_active_for_network( self::$plugin_basefile );
-
-		// import WP database object ##
 		global $wpdb;
 
-		// list tables which always use the base_prefix
-		$_use_base_prefix = [
+		$use_base_prefix = [
 			'users',
 			'usermeta'
 		];
 
-		// @todo - apply_filters ##
+		$use_base_prefix = \apply_filters( 'wprus_wpdb_use_base_prefix', $use_base_prefix );
 
 		if(
-			\is_multisite() // running on a network
+			\is_multisite()
 		){
 
-			// error_log( 'This is a WP Network' );
+			if( $is_network_active ){
 
-			if( $_is_network_active ){
-
-				// error_log( 'Plugin is Network active' );
-
-				// filter in wprus nonce and log table, as these need to use base_prefix if network active ##
-				$_use_base_prefix = array_merge( $_use_base_prefix, [
+				$use_base_prefix = array_merge( $use_base_prefix, [
 					'wprus_logs',
 					'wprus_nonce'
 				]);
 
-				// __log( $_use_base_prefix );
+				$use_base_prefix = \apply_filters( 'wprus_wpdb_use_base_prefix_network_active', $use_base_prefix );
 
-				// @todo - apply_filters.. again ##
+				if( in_array( $table, $use_base_prefix ) ){
 
-				if( in_array( $table, $_use_base_prefix ) ){
-
-					// error_log( 'Table: '.$table.' should use base_prefix' );
-
-					$_table = $wpdb->base_prefix.$table;
+					error_log( 'Table: '.$table.' should use base_prefix' );
+					$table = $wpdb->base_prefix.$table;
 
 				} else {
  
-					$_table = $wpdb->prefix.$table;
+					$table = $wpdb->prefix.$table;
 
 				}
 
 			} else {
 
-				// error_log( 'Plugin is NOT Network active' );
+				if( in_array( $table, $use_base_prefix ) ){
 
-				if( in_array( $table, $_use_base_prefix ) ){
-
-					$_table = $wpdb->base_prefix.$table;
+					$table = $wpdb->base_prefix.$table;
 
 				} else {
 
-					$_table = $wpdb->prefix.$table;
+					$table = $wpdb->prefix.$table;
 
 				}
 
@@ -950,19 +936,15 @@ class Wprus_Settings {
 
 		} else {
 
-			// error_log( 'This is NOT a WP Network - return with wpdb->prefix' );
-
-			$_table = $wpdb->prefix.$table;
+			$table = $wpdb->prefix.$table;
 
 		}
 
-		// error_log( 'final table: '.$_table );
+		error_log( 'final table: '.$table );
 
-		// cache ##
-		self::$tables[$table] = $_table;
+		self::$tables[$table] = $table;
 
-		// return ##
-		return $_table;
+		return $table;
 
 	}
 

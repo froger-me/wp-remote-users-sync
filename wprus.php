@@ -22,6 +22,10 @@ if ( ! defined( 'WPRUS_PLUGIN_URL' ) ) {
 	define( 'WPRUS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
+if ( ! defined( 'WPRUS_PLUGIN_BASEFILE' ) ) {
+	define( 'WPRUS_PLUGIN_BASEFILE', plugin_basename( __FILE__ ) );
+}
+
 require_once WPRUS_PLUGIN_PATH . 'functions.php';
 require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus.php';
 
@@ -42,7 +46,7 @@ function wprus_run() {
 	do_action( 'wprus_init' );
 	Wprus_Integration::init();
 
-	$settings       = new Wprus_Settings( true, \plugin_basename( __FILE__ ) );
+	$settings       = new Wprus_Settings( true );
 	$settings_class = get_class( $settings );
 
 	if ( $settings->validate() ) {

@@ -19,12 +19,11 @@ $sql         = "DELETE FROM $wpdb->usermeta WHERE `meta_key` LIKE %s";
 
 $wpdb->query( $wpdb->prepare( $sql, '%' . $meta_prefix . '%' ) ); // @codingStandardsIgnoreLine
 
-// get table ##
-$_table_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
-$_table_nonce = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+$wprus_nonce = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
 
-$sql = "DROP TABLE IF EXISTS {$_table_nonce};";
+$sql = "DROP TABLE IF EXISTS {$wprus_nonce};";
 $wpdb->query( $sql ); // @codingStandardsIgnoreLine
 
-$sql = "DROP TABLE IF EXISTS {$_table_logs};";
+$sql = "DROP TABLE IF EXISTS {$wprus_logs};";
 $wpdb->query( $sql ); // @codingStandardsIgnoreLine

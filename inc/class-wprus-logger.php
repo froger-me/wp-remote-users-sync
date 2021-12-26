@@ -57,16 +57,16 @@ class Wprus_Logger {
 
 		global $wpdb;
 
-		$_table_logs = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
+		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
 
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$_table_logs}
+				"DELETE FROM {$wprus_logs}
 				WHERE id <= (
 					SELECT id
 					FROM (
 						SELECT id
-						FROM {$_table_logs}
+						FROM {$wprus_logs}
 						ORDER BY id DESC
 						LIMIT 1 OFFSET %d
 						) temp
@@ -80,12 +80,11 @@ class Wprus_Logger {
 
 	public static function get_logs_count() {
 
-		// get table ##
-		$_table_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
 
 		global $wpdb;
 
-		$count = $wpdb->get_var( "SELECT COUNT(*) FROM {$_table_logs} WHERE 1 = 1;" );
+		$count = $wpdb->get_var( "SELECT COUNT(*) FROM {$wprus_logs} WHERE 1 = 1;" );
 
 		return absint( $count );
 	}
@@ -93,13 +92,12 @@ class Wprus_Logger {
 	public static function get_logs() {
 		global $wpdb;
 
-		// get table ##
-		$_table = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
 
 		$logs = '';
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$_table} ORDER BY timestamp ASC LIMIT %d;",
+				"SELECT * FROM {$wprus_logs} ORDER BY timestamp ASC LIMIT %d;",
 				self::$log_settings['min_num']
 			)
 		);
@@ -140,10 +138,9 @@ class Wprus_Logger {
 		
 		global $wpdb;
 
-		// get table ##
-		$_table_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
 
-		$wpdb->query( "TRUNCATE TABLE {$_table_logs};" );
+		$wpdb->query( "TRUNCATE TABLE {$wprus_logs};" );
 	}
 
 	public function init() {
@@ -199,11 +196,10 @@ class Wprus_Logger {
 			'data'      => maybe_serialize( $data ),
 		);
 
-		// get table ##
-		$_table_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
 
 		$result = $wpdb->insert(
-			$_table_logs,
+			$wprus_logs,
 			$log
 		);
 
