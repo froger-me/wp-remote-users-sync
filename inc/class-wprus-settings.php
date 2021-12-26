@@ -569,7 +569,7 @@ class Wprus_Settings {
 
 				/** 
 				 * note that in some cases, both the sending and master sites might use the same protocol ( for example https ) 
-				 * but the passed ot master value might return a different protocol ( for example http )
+				 * but the passed or master value might return a different protocol ( for example http )
 				 * so, this fix is proposed to run the string comparison just against the domain part of the URL, not including the protocol
 				 */
 				$url_parse_url = parse_url( $url );
@@ -578,8 +578,8 @@ class Wprus_Settings {
 				$site_parse_url = parse_url( $site['url'] );
 				$site_host = $url_parse_url['host'];
 
-				error_log( 'site host: '.$site_host );
-				error_log( 'url host: '.$url_host );
+				// error_log( 'site host: '.$site_host );
+				// error_log( 'url host: '.$url_host );
 
 				if ( $site_host === $url_host ) {
 				// if ( trailingslashit( $url ) === trailingslashit( $site['url'] ) ) {
