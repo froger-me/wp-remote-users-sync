@@ -880,12 +880,12 @@ class Wprus_Settings {
 
 		if( isset( self::$tables[$table] ) ){
 
-			error_log( 'Returning cache for table: '.$table.' --> '. self::$tables[$table] );
+			// error_log( 'Returning cache for table: '.$table.' --> '. self::$tables[$table] );
 			return self::$tables[$table];
 
 		}
 
-		$is_network_active = \is_plugin_active_for_network( WPRUS_PLUGIN_BASEFILE );
+		$is_plugin_active_for_network = \is_plugin_active_for_network( WPRUS_PLUGIN_BASEFILE );
 
 		global $wpdb;
 
@@ -900,7 +900,7 @@ class Wprus_Settings {
 			\is_multisite()
 		){
 
-			if( $is_network_active ){
+			if( $is_plugin_active_for_network ){
 
 				$use_base_prefix = array_merge( $use_base_prefix, [
 					'wprus_logs',
@@ -911,7 +911,7 @@ class Wprus_Settings {
 
 				if( in_array( $table, $use_base_prefix ) ){
 
-					error_log( 'Table: '.$table.' should use base_prefix' );
+					// error_log( 'Table: '.$table.' should use base_prefix' );
 					$table = $wpdb->base_prefix.$table;
 
 				} else {
@@ -940,7 +940,7 @@ class Wprus_Settings {
 
 		}
 
-		error_log( 'final table: '.$table );
+		// error_log( 'table: '.$table );
 
 		self::$tables[$table] = $table;
 

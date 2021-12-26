@@ -12,7 +12,6 @@ if ( ! function_exists( 'wp_hash_password' ) ) {
 
 		if ( empty( $wp_hasher ) ) {
 			require_once ABSPATH . WPINC . '/class-phpass.php';
-
 			$wp_hasher = new PasswordHash( 8, true ); // @codingStandardsIgnoreLine
 		}
 
@@ -25,7 +24,6 @@ if ( ! function_exists( 'wp_hash_password' ) ) {
 if ( ! function_exists( 'wprus_log' ) ) {
 
 	function wprus_log( $expression, $extend = '', $destination = 'error_log' ) {
-
 		Wprus_Logger::log( $expression, $extend, $destination );
 	}
 }
