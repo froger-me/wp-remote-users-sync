@@ -38,6 +38,7 @@ function wprus_run() {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	require_once ABSPATH . 'wp-admin/includes/user.php';
 	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-database.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-logger.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-settings.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-abstract.php';

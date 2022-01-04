@@ -62,7 +62,7 @@ class Wprus_Nonce {
 	public static function get_nonce_expiry( $nonce ) {
 		global $wpdb;
 
-		$wprus_nonce = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
+		$wprus_nonce = Wprus_Database::get_table( 'wprus_nonce' );
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -103,7 +103,7 @@ class Wprus_Nonce {
 			'expiry' => time() + self::$expiry_length,
 		);
 
-		$wprus_nonce = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
+		$wprus_nonce = Wprus_Database::get_table( 'wprus_nonce' );
 
 		$result = $wpdb->insert(
 			$wprus_nonce,
@@ -123,7 +123,7 @@ class Wprus_Nonce {
 
 		global $wpdb;
 
-		$wprus_nonce = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
+		$wprus_nonce = Wprus_Database::get_table( 'wprus_nonce' );
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -154,7 +154,7 @@ class Wprus_Nonce {
 	public static function delete_nonce( $value ) {
 		global $wpdb;
 
-		$wprus_nonce = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
+		$wprus_nonce = Wprus_Database::get_table( 'wprus_nonce' );
 
 		$where  = array( 'nonce' => $value );
 		$result = $wpdb->delete(
@@ -174,7 +174,7 @@ class Wprus_Nonce {
 
 		global $wpdb;
 
-		$wprus_nonce = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
+		$wprus_nonce = Wprus_Database::get_table( 'wprus_nonce' );
 
 		$result = $wpdb->query(
 			$wpdb->prepare(

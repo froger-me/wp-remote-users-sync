@@ -38,6 +38,7 @@ class Wprus {
 	}
 
 	public static function deactivate() {
+
 		global $wpdb;
 
 		$prefix = $wpdb->esc_like( '_transient_wprus_' );
@@ -54,6 +55,7 @@ class Wprus {
 		global $wpdb;
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-database.php';
 
 		$charset_collate = '';
 
@@ -65,7 +67,7 @@ class Wprus {
 			$charset_collate .= " COLLATE {$wpdb->collate}";
 		}
 
-		$wprus_nonce = Wprus_Settings::get_wpdb_table( 'wprus_nonce' );
+		$wprus_nonce = Wprus_Database::get_table( 'wprus_nonce' );
 		$sql        =
 			'CREATE TABLE ' . $wprus_nonce . ' (
 				id int(12) NOT NULL auto_increment,
@@ -85,7 +87,7 @@ class Wprus {
 
 		}	
 
-		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Database::get_table( 'wprus_logs' );
 		$sql        =
 			'CREATE TABLE ' . $wprus_logs . ' (
 				id int(12) NOT NULL auto_increment,

@@ -57,7 +57,7 @@ class Wprus_Logger {
 
 		global $wpdb;
 
-		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Database::get_table( 'wprus_logs' );
 
 		$result = $wpdb->query(
 			$wpdb->prepare(
@@ -80,7 +80,7 @@ class Wprus_Logger {
 
 	public static function get_logs_count() {
 
-		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Database::get_table( 'wprus_logs' );
 
 		global $wpdb;
 
@@ -92,7 +92,7 @@ class Wprus_Logger {
 	public static function get_logs() {
 		global $wpdb;
 
-		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Database::get_table( 'wprus_logs' );
 
 		$logs = '';
 		$rows = $wpdb->get_results(
@@ -138,7 +138,7 @@ class Wprus_Logger {
 		
 		global $wpdb;
 
-		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Database::get_table( 'wprus_logs' );
 
 		$wpdb->query( "TRUNCATE TABLE {$wprus_logs};" );
 	}
@@ -196,7 +196,7 @@ class Wprus_Logger {
 			'data'      => maybe_serialize( $data ),
 		);
 
-		$wprus_logs = Wprus_Settings::get_wpdb_table( 'wprus_logs' );
+		$wprus_logs = Wprus_Database::get_table( 'wprus_logs' );
 
 		$result = $wpdb->insert(
 			$wprus_logs,
