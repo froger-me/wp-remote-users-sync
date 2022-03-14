@@ -20,7 +20,7 @@ class Wprus_Api_Abstract {
 	 */
 	protected static $browser_support_settings;
 	/**
-	 * The whitelist of IP addresses.
+	 * The whitelist of IP ranges.
 	 *
 	 * @var array
 	 */
@@ -214,7 +214,13 @@ class Wprus_Api_Abstract {
 			$ip_whitelist = self::$settings_class::get_option( 'ip_whitelist' );
 
 			if ( ! empty( $ip_whitelist ) ) {
-				self::$ip_whitelist = array_filter( array_map( 'trim', explode( "\n", $ip_whitelist ) ) );
+				$ip_whitelist = array_filter( array_map( 'trim', explode( "\n", $ip_whitelist ) ) );
+				self::$ip_whitelist = array_map(
+					function ( $ip ) {
+						return preg_match( '/\//', $ip ) ? $ip : $ip . '/32';
+					},
+					$ip_whitelist
+				);
 			} else {
 				self::$ip_whitelist = false;
 			}
@@ -349,7 +355,13 @@ class Wprus_Api_Abstract {
 			} elseif ( 'post' === $this->method ) {
 
 				if ( self::$ip_whitelist ) {
-					$is_authorized_remote = in_array( $_SERVER['REMOTE_ADDR'], self::$ip_whitelist, true );
+					foreach ( self::$ip_whitelist as $range ) {
+						if ( self::cidr_match( $_SERVER['REMOTE_ADDR'], $range ) ) {
+							$is_authorized_remote = true;
+							break;
+						}
+					}
+					
 				} else {
 					$is_authorized_remote = true;
 				}
@@ -1300,4 +1312,18 @@ class Wprus_Api_Abstract {
 		return $output;
 	}
 
+	/**
+	 * check if ip is in range
+	 *
+	 * @param string $ip The ip address to check against the range
+	 * @param string $range
+	 * @return bool True if the ip is in range, false otherwise
+	 */
+	protected function cidr_match( $ip, $range ) {
+		$ip    = ip2long( $ip );
+		$range = ip2long( $range );
+		$range = $range & 0xFFFFFF00;
+
+		return ( $ip & $range ) == $range;
+	}
 }
