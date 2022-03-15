@@ -357,19 +357,7 @@ class Wprus_Api_Abstract {
 				if ( self::$ip_whitelist ) {
 					foreach ( self::$ip_whitelist as $range ) {
 						if ( self::cidr_match( $_SERVER['REMOTE_ADDR'], $range ) ) {
-			function cidr_match($ip, $range){
-    list ($subnet, $bits) = explode('/', $range);
-    $ip = ip2long($ip);
-    $subnet = ip2long($subnet);
-    
-    if ( !$ip || !$subnet || !$bits) {
-      return false;
-    }
-    
-    $mask = -1 << (32 - $bits);
-    $subnet &= $mask; // in case the supplied subnet was not correctly aligned
-    return ($ip & $mask) == $subnet;
-}				$is_authorized_remote = true;
+							$is_authorized_remote = true;
 							break;
 						}
 					}
