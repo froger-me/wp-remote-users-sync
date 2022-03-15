@@ -356,12 +356,11 @@ class Wprus_Api_Abstract {
 
 				if ( self::$ip_whitelist ) {
 					foreach ( self::$ip_whitelist as $range ) {
-						if ( self::cidr_match( $_SERVER['REMOTE_ADDR'], $range ) ) {
+						if ( $this->cidr_match( $_SERVER['REMOTE_ADDR'], $range ) ) {
 							$is_authorized_remote = true;
 							break;
 						}
 					}
-					
 				} else {
 					$is_authorized_remote = true;
 				}
@@ -1316,7 +1315,7 @@ class Wprus_Api_Abstract {
 	 * check if ip is in range
 	 *
 	 * @param string $ip The ip address to check against the range
-	 * @param string $range
+	 * @param string $range The CIDR
 	 * @return bool True if the ip is in range, false otherwise
 	 */
 	protected function cidr_match( $ip, $range ) {
