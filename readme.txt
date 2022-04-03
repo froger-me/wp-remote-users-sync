@@ -3,7 +3,7 @@ Contributors: frogerme
 Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
-Tested up to: 5.8
+Tested up to: 5.9
 Stable tag: trunk
 Requires PHP: 7.0
 License: GPLv3
@@ -176,6 +176,10 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed without a fee (transfer method and amount at the discretion of the plugin author).
 
 == Changelog ==
+
+= 1.2.9 =
+* WordPress tested up to: 5.8
+* Add support for IP range (CIDR) - thx to @honggyu420 on Github
 
 = 1.2.8 =
 * WordPress tested up to: 5.8
