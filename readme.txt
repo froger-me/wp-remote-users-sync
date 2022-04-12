@@ -177,6 +177,9 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 
 == Changelog ==
 
+= 1.2.11 =
+* Make sure the `HTTP_USER_AGENT` is set before testing it
+
 = 1.2.9 =
 * WordPress tested up to: 5.8
 * Add support for IP range (CIDR) - thx to @honggyu420 on Github

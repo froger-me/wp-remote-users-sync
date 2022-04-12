@@ -44,7 +44,10 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 			(
 				self::$browser_support_settings['force_login_logout_strict'] ||
 				$is_safari ||
-				1 === preg_match( '/iPhone|iPad/', $_SERVER['HTTP_USER_AGENT'] )
+				(
+					isset( $_SERVER['HTTP_USER_AGENT'] ) &&
+					1 === preg_match( '/iPhone|iPad/', $_SERVER['HTTP_USER_AGENT'] )
+				)
 			) &&
 			! self::$browser_support_settings['force_disable_login_logout_strict']
 		) {
@@ -75,7 +78,10 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 					(
 						self::$browser_support_settings['force_login_logout_strict'] ||
 						$is_safari ||
-						1 === preg_match( '/iPhone|iPad/', $_SERVER['HTTP_USER_AGENT'] )
+						(
+							isset( $_SERVER['HTTP_USER_AGENT'] ) &&
+							1 === preg_match( '/iPhone|iPad/', $_SERVER['HTTP_USER_AGENT'] )
+						)
 					) &&
 					! self::$browser_support_settings['force_disable_login_logout_strict']
 				) {
