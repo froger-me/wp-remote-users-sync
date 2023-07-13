@@ -37,7 +37,7 @@ class Wprus_Settings {
 			add_action( 'init', array( $this, 'load_textdomain' ), PHP_INT_MIN - 10, 0 );
 			add_action( 'init', array( $this, 'set_cache_policy' ), PHP_INT_MIN - 10, 0 );
 			add_action( 'admin_menu', array( $this, 'plugin_options_menu_main' ), 10, 0 );
-			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 0 );
+			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 1 );
 
 			add_filter( 'pre_update_option_wprus', array( $this, 'require_flush' ), 10, 2 );
 			add_filter( 'wprus_settings', array( $this, 'sanitize_settings' ), 10, 1 );
@@ -237,7 +237,12 @@ class Wprus_Settings {
 		return $columns;
 	}
 
-	public function add_settings_meta_boxes() {
+	public function add_settings_meta_boxes($post_type) {
+		
+		if( $post_type !== self::$settings_page_id ) {
+			return;
+		}
+
 		$page_hook_id = self::$settings_page_id;
 		$sites        = $this->get_sites();
 		$meta_keys    = $this->get_user_meta_keys();
