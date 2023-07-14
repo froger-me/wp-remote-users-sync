@@ -237,9 +237,10 @@ class Wprus_Settings {
 		return $columns;
 	}
 
-	public function add_settings_meta_boxes($post_type) {
+	public function add_settings_meta_boxes( $post_type ) {
 		
 		if( $post_type !== self::$settings_page_id ) {
+
 			return;
 		}
 
