@@ -87,11 +87,18 @@ class Wprus_Api_Abstract {
 	 */
 	protected $role_handler;
 	/**
+	 * The password handler object.
+	 *
+	 * @var Wprus_Api_Password|mixed
+	 */
+	protected $password_handler;
+	/**
 	 * Whether the current action is authorized
 	 *
 	 * @var bool
 	 */
 	protected $is_authorized_remote;
+
 
 	/**
 	 * Constructor
