@@ -132,7 +132,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 		$sites               = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 
 		if ( ! empty( $sites ) ) {
-			$remember = filter_input( INPUT_POST, 'rememberme', FILTER_SANITIZE_STRING );
+			$remember = filter_input( INPUT_POST, 'rememberme', FILTER_UNSAFE_RAW );
 
 			Wprus_Logger::log(
 				sprintf(

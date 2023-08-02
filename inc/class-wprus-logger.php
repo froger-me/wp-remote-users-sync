@@ -115,6 +115,16 @@ class Wprus_Logger {
 	}
 
 	public function refresh_logs_async() {
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
+
+		if ( ! wp_verify_nonce( $nonce, 'wprus_logs_nonce' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ),
+				)
+			);
+		}
+
 		wp_send_json_success(
 			array(
 				'html'               => self::get_logs(),

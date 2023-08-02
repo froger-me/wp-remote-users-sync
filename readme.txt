@@ -3,7 +3,7 @@ Contributors: frogerme
 Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
-Tested up to: 5.9
+Tested up to: 6.3
 Stable tag: trunk
 Requires PHP: 7.0
 License: GPLv3
@@ -32,30 +32,25 @@ This plugin adds the following major features to WordPress:
 
 Please read the plugin FAQ, there is a lot that may help you there!  
 
-WP Remote Users Sync is regularly updated, and bug reports are welcome, preferably on [Github](https://github.com/froger-me/wp-remote-users-sync/issues), especially for advanced troubleshooting.  
+WP Remote Users Sync is regularly updated for compatibility, and bug reports are welcome, preferably on [Github](https://github.com/froger-me/wp-remote-users-sync/issues).  
 
-Each **bug** report will be addressed in a timely manner, but general inquiries and issues reported on the WordPress forum may take significantly longer to receive a response.  
+In case the plugin has not been updated for a while, no panic: it simply means the compatibility flag has not been changed, and it very likely remains compatible with the latest version of WordPress. This is because it was designed with long-term compatibility in mind from the ground up.  
+
+Each **bug** report will be addressed in a timely manner if properly documented - general inquiries and issues reported on the WordPress forum may take significantly longer to receive a response (if any).  
 
 **Only issues occurring with included integrated plugins (or plugin features), core WordPress and default WordPress themes (incl. WooCommerce Storefront) will be considered without compensation.**  
 
-**Troubleshooting involving 3rd-party plugins or themes will require compensation in any case, and will not be addressed on the WordPress support forum**.
+**Troubleshooting involving 3rd-party plugins or themes will not be addressed on the WordPress support forum**.
 
 == Integrations ==
 
 Although WP Remote Users Sync works out of the box with most combinations of WordPress plugins and themes, there are some edge cases necessitating integration, with code included in the core files of WP Remote Users Sync executing under certain conditions.  
 
-Integrations added to core are limited to popular plugins and themes: any extra code specific to a handful of installations require a separate custom plugin not shared with the community (decision at the discretion of the WP Remote Users Sync plugin author).  
+Integrations added to core are limited to popular plugins and themes: any extra code specific to a handful of installations require a separate custom plugin not shared with the community (created and maintained by a third-party developer).  
 
-A typical examples include plugins or themes directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.  
+A typical example necessitating a  includes plugins or themes directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.  
 
-If such need for plugin integration arises, website administrators may contact the author of WP Remote Users Sync to become a patron.
-
-**All integrations are to be funded by plugin users, with downpayment and delivery payment, at the plugin author's discretion, without exception**.  
-The patron in return may be credited with their name (or company name) and a link to a page of their choice in the plugin's Changelog.  
-
-== Upgrade Notice ==
-
-Because WP Remote Users Sync settings do not need to be changed often once set, the settings page has been moved under "Settings > WP Remote Users Sync" to avoid making the main WordPress admin menu more crowded than necessary.
+If such need for plugin integration arises, website administrators **MUST** contact a third-party developer. The plugin author currently does not have the bandwidth to take on custom work for WPRUS.  
 
 == Installation ==
 
@@ -101,9 +96,9 @@ Please note that the Login User Action takes a significantly longer time to proc
 = Login & Logout are not working =
 Login and Logout User Actions need to output some code in the browser to have an effect on the remote website because of the cookies used for authentication.
 
-What this means in practice is that if your theme or a third party plugin allows users to login/logout without page reload, WP Remote Users Sync cannot output its code on the page, and without extra change to your website code base, the synchronisation can only happen after the page where the user logged in or logged out is actually reloaded.  
+What this means in practice is that if your theme or a third-party plugin allows users to login/logout without page reload, WP Remote Users Sync cannot output its code on the page, and without extra change to your website code base, the synchronisation can only happen after the page where the user logged in or logged out is actually reloaded.  
 
-Please also note that unless "Force Login Redirects & Logout Everywhere" is active, or if "Force Disable Login Redirects & Logout Everywhere" options is active in the "Browser Support" section of the "Miscellaneous" tab, Login and Logout User Actions will not work in browsers preventing cross-domain third party cookie manipulation when the connected websites are on different domains.
+Please also note that unless "Force Login Redirects & Logout Everywhere" is active, or if "Force Disable Login Redirects & Logout Everywhere" options is active in the "Browser Support" section of the "Miscellaneous" tab, Login and Logout User Actions will not work in browsers preventing cross-domain third-party cookie manipulation when the connected websites are on different domains.
 
 = What happens to existing users after activating WP Remote Users Sync? =
 Existing users remain untouched, until an enabled incoming action is received from a remote site.  
@@ -173,9 +168,18 @@ User passwords cannot be and are NOT exported.
 
 More help can be found on <a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">the WordPress support forum</a> for general inquiries and on <a href="https://github.com/froger-me/wp-remote-users-sync">Github</a> for advanced troubleshooting.  
 
-Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed without a fee (transfer method and amount at the discretion of the plugin author).
+Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Webiste administrators must cont).
 
 == Changelog ==
+
+= 1.2.12 =
+* WordPress tested up to: 6.3
+* Optimise settings page - thx to @foloed on Github
+* Update variable filter IDs - php 8.x compat
+* Ping & log refresh ajax check - thx to István Márton from Wordfence
+* Drop paid custom code support from `readme.txt`
+* Refactor integration class & documentation
+* Minor fixes
 
 = 1.2.11 =
 * Make sure the `HTTP_USER_AGENT` is set before testing it
@@ -212,7 +216,7 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 * Update documentation
 
 = 1.2.5 =
-* Add compatibility with Safari and iOS devices: do not rely on cross-domain third party cookies manipulation, but use explicit redirections for Login, and destroy all sessions for Logout
+* Add compatibility with Safari and iOS devices: do not rely on cross-domain third-party cookies manipulation, but use explicit redirections for Login, and destroy all sessions for Logout
 * Add template for explicit redirection processing screen
 * Add Miscellaneous settings with a section for Browser Support
 * Query Monitor integration
@@ -237,7 +241,7 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 * Fix minified scripts inclusion
 * Removed unused URL parameter from the API
 * Fix flushing of rewrite rules
-* Set priority of all `init` action hooks to `PHP_INT_MIN - 10` to maximize compatibility with third party plugins
+* Set priority of all `init` action hooks to `PHP_INT_MIN - 10` to maximize compatibility with third-party plugins
 * Refactor integrations
 * Remove `wprus_integration` filter ; add `wprus_integration` action instead.
 * Add `wprus_init` action.
@@ -289,7 +293,7 @@ Help is provided for general enquiries and bug fixes only: feature requests, ext
 * Adjust log messages
 
 = 1.1.5 =
-* Integration - make sure third party plugins calling `wp_redirect()` or `wp_safe_redirect()` without calling `exit` afterwards do not interfere with asynchronous actions ; `exit` should be called after these 2 functions unless there is a documented good reason not to, but some plugins (like Gravity Forms User Registration Add-On) or themes may not follow the WordPress best practices.
+* Integration - make sure third-party plugins calling `wp_redirect()` or `wp_safe_redirect()` without calling `exit` afterwards do not interfere with asynchronous actions ; `exit` should be called after these 2 functions unless there is a documented good reason not to, but some plugins (like Gravity Forms User Registration Add-On) or themes may not follow the WordPress best practices.
 * Add missing Logout action logs
 * Update Async actions logs
 * Refactor resetting Async actions 

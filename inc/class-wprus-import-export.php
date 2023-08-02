@@ -74,7 +74,7 @@ class Wprus_Import_Export {
 	}
 
 	public function export() {
-		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING );
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
 
 		if ( ! wp_verify_nonce( $nonce, 'wprus_import_export_nonce' ) ) {
 			wp_send_json_error(
@@ -101,9 +101,9 @@ class Wprus_Import_Export {
 		$offset      = absint( filter_input( INPUT_POST, 'offset', FILTER_VALIDATE_INT ) );
 		$max         = absint( filter_input( INPUT_POST, 'max', FILTER_VALIDATE_INT ) );
 		$keep_role   = absint( filter_input( INPUT_POST, 'keep_role', FILTER_VALIDATE_INT ) );
-		$user_roles  = filter_input( INPUT_POST, 'user_roles', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
-		$meta_keys   = filter_input( INPUT_POST, 'meta_keys', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
-		$user_logins = filter_input( INPUT_POST, 'user_list', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$user_roles  = filter_input( INPUT_POST, 'user_roles', FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY );
+		$meta_keys   = filter_input( INPUT_POST, 'meta_keys', FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY );
+		$user_logins = filter_input( INPUT_POST, 'user_list', FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY );
 		$pages       = null;
 		$limit       = self::RESULTS_PER_QUERY;
 		$aborted     = false;
@@ -208,7 +208,7 @@ class Wprus_Import_Export {
 	}
 
 	public function import() {
-		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING );
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
 
 		if ( ! wp_verify_nonce( $nonce, 'wprus_import_export_nonce' ) ) {
 			wp_send_json_error(
@@ -219,7 +219,7 @@ class Wprus_Import_Export {
 		}
 
 		if ( isset( $_FILES['file'] ) ) {
-			$file_info = filter_var( $_FILES['file'], FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+			$file_info = filter_var( $_FILES['file'], FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY );
 		} else {
 			$file_info = false;
 		}
@@ -319,8 +319,8 @@ class Wprus_Import_Export {
 	}
 
 	public function get_usernames_json() {
-		$nonce     = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_STRING );
-		$term      = filter_input( INPUT_POST, 'q', FILTER_SANITIZE_STRING );
+		$nonce     = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
+		$term      = filter_input( INPUT_POST, 'q', FILTER_UNSAFE_RAW );
 		$page      = filter_input( INPUT_POST, 'page', FILTER_VALIDATE_INT );
 		$user_info = array();
 		$return    = array( 'users' => array() );

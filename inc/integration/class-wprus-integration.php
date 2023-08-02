@@ -34,14 +34,10 @@ class Wprus_Integration {
 		foreach ( $integrations as $slug => $info ) {
 
 			if ( is_plugin_active( $info['plugin'] ) ) {
-				$filename   = 'class-' . strtolower( str_replace( '_', '-', $info['class_name'] ) ) . '.php';
-				$file_path  = WPRUS_PLUGIN_PATH . 'inc/integration/' . $slug . '/' . $filename;
 				$class_name = $info['class_name'];
 
-				if ( ! class_exists( $class_name ) && file_exists( $file_path ) ) {
-					require_once $file_path;
-				} else {
-					do_action( 'wprus_require_integration_file', $slug, $class_name );
+				if ( ! class_exists( $class_name ) ) {
+					do_action( 'wprus_require_integration_file', $slug, $info['class_name'] );
 				}
 
 				if ( class_exists( $class_name ) ) {
@@ -59,11 +55,8 @@ class Wprus_Integration {
 		$this->settings     = $settings;
 		$this->wprus_logger = $wprus_logger;
 
-		$this->init_hooks();
 		do_action( 'wprus_integration_run', $this );
 	}
-
-	public function init_hooks() {}
 
 	/*******************************************************************
 	 * Protected methods

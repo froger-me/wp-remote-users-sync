@@ -52,6 +52,15 @@
 	white-space: normal;
 }
 
+#site_add .wprus-container {
+    display: inline-flex;
+    gap: 0.5em;
+}
+
+#wprus_add_value {
+    width: 90%;
+}
+
 .wprus-site select {
 	width: 100%;
 	display: block;

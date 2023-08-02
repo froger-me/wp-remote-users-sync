@@ -28,7 +28,10 @@ jQuery(document).ready(function($) {
 			$.ajax({
 				url: WPRUS.ajax_url,
 				type: 'POST',
-				data: { action: 'wprus_refresh_logs' },
+				data: {
+					nonce : $('#wprus_logs_nonce').val(),
+					action: 'wprus_refresh_logs'
+				},
 				success: function(response) {
 
 					if ( response.success ) {
@@ -165,6 +168,7 @@ jQuery(document).ready(function($) {
 			dataContainer = button.parent(),
 			row           = button.closest('tr'),
 			data          = {
+				nonce     : $('#wprus_ping_nonce').val(),
 				site_url  : button.closest('.wprus-container').data('url'),
 				direction : dataContainer.data('direction'),
 				data      : { username: WPRUS.username },

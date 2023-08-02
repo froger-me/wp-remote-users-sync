@@ -606,6 +606,23 @@ $wprus_api_object
 > (mixed) The `Wprus_Api_Abstract` object adding the notification hooks.  
 ___
 
+#### wprus_require_integration_file
+
+```php
+do_action( 'wprus_require_integration_file', (string) $plugin_slug, (string) $class_name );
+```
+**Description**  
+Fired when an integration with a third-party plugin needs to load a class file inheriting `Wprus_Integration`.  
+
+**Parameters**  
+$plugin_slug
+> (string) The slug of the plugin integrated.  
+
+$class_name
+> (string) The name of the integration class - must inherit `Wprus_Integration`.
+
+___
+
 #### wprus_integration
 
 ```php
@@ -623,13 +640,13 @@ $plugin_slug
 
 ___
 
-#### wprus_integration
+#### wprus_integration_run
 
 ```php
 do_action( 'wprus_integration_run', (mixed) $wprus_integration_obj );
 ```
 **Description**  
-Fired when an integration with a third-party plugin' hooks are fully initialized.  
+Fired when an integration with a third-party plugin hooks is fully initialized.  
 
 **Parameters**  
 $wprus_integration_obj
@@ -661,6 +678,7 @@ Filters index:
 * [wprus_is_authorized_remote](#user-content-wprus_is_authorized_remote)
 * [wprus_debug](#user-content-wprus_debug)
 * [wprus_action_data](#user-content-wprus_action_data)
+* [wprus_registered_integration](#user-content-wprus_registered_integration)
 
 ___
 
@@ -1079,3 +1097,26 @@ $url
 > (string) The URL of the remote site.  
 
 ___
+
+#### wprus_registered_integration
+
+```php
+apply_filters( 'wprus_registered_integration', array $integrations );
+```
+**Description**  
+Filter integrations. See `inc/integration/class-wprus-integration.php`.  
+
+**Parameters**  
+$integrations
+> (array) The integrations info. Structure:  
+```php
+array (
+    $slug => array(                          // $slug is the unique integration slug
+        'plugin'     => 'plugin_name',       // name of the plugin being integrated ; passed to is_plugin_active() to determine if the integration needs to be loaded
+        'class_name' => 'Integration_Class', // Class name of the integration class ; the class must be included using the action wprus_require_integration_file, and must inherit the Wprus_Integration class
+    ),
+);
+```
+
+___
+

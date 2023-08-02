@@ -331,7 +331,7 @@ class Wprus_Api_Abstract {
 	 *
 	 */
 	public function authorize_notification() {
-		$token_filter         = FILTER_SANITIZE_STRING;
+		$token_filter         = FILTER_UNSAFE_RAW;
 		$token                = filter_input( INPUT_GET, 'token', $token_filter );
 		$token                = ( ! $token ) ? filter_input( INPUT_POST, 'token', $token_filter ) : $token;
 		$is_authorized_remote = false;
@@ -533,8 +533,8 @@ class Wprus_Api_Abstract {
 	 *
 	 */
 	public function init_data() {
-		$data_get     = filter_input( INPUT_GET, 'wprusdata', FILTER_SANITIZE_STRING );
-		$data_post    = filter_input( INPUT_POST, 'wprusdata', FILTER_SANITIZE_STRING );
+		$data_get     = filter_input( INPUT_GET, 'wprusdata', FILTER_UNSAFE_RAW );
+		$data_post    = filter_input( INPUT_POST, 'wprusdata', FILTER_UNSAFE_RAW );
 		$this->method = ( $data_post ) ? 'post' : 'get';
 		$this->data   = array(
 			'get'  => ( $data_get ) ? $this->decrypt_data( $data_get ) : null,
@@ -672,9 +672,15 @@ class Wprus_Api_Abstract {
 	 *
 	 */
 	public function notify_ping_remote() {
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
+
+		if ( ! wp_verify_nonce( $nonce, 'wprus_ping_nonce' ) ) {
+			wp_send_json_error( __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ) );
+		}
+
 		$url          = filter_input( INPUT_POST, 'site_url', FILTER_VALIDATE_URL );
-		$direction    = filter_input( INPUT_POST, 'direction', FILTER_SANITIZE_STRING );
-		$data         = filter_input( INPUT_POST, 'data', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$direction    = filter_input( INPUT_POST, 'direction', FILTER_UNSAFE_RAW );
+		$data         = filter_input( INPUT_POST, 'data', FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY );
 		$success      = false;
 		$payload      = false;
 		$default_data = array(
