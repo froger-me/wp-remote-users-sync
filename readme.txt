@@ -168,9 +168,12 @@ User passwords cannot be and are NOT exported.
 
 More help can be found on <a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">the WordPress support forum</a> for general inquiries and on <a href="https://github.com/froger-me/wp-remote-users-sync">Github</a> for advanced troubleshooting.  
 
-Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Webiste administrators must cont).
+Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 1.2.13 =
+* Use `wp_safe_remote_post` instead of `wp_remote_post`
 
 = 1.2.12 =
 * WordPress tested up to: 6.3

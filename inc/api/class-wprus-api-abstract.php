@@ -878,7 +878,7 @@ class Wprus_Api_Abstract {
 			'wprusdata' => $this->encrypt_data( $data ),
 			'token'     => $this->get_token( $url, $data['username'], 'post' ),
 		);
-		$response = wp_remote_post(
+		$response = wp_safe_remote_post(
 			trailingslashit( $url ) . 'wprus/' . trailingslashit( $endpoint ),
 			array(
 				'body'     => $body,
