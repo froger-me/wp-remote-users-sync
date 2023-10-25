@@ -34,7 +34,7 @@ class Wprus_Nonce {
 		$delegate_args = array()
 	) {
 
-		if ( $delegate ) {
+		if ( $delegate && ( is_array( $delegate ) ) ) {
 			$nonce = call_user_func_array( $delegate, $delegate_args );
 		} else {
 			$id    = self::generate_id();
@@ -65,7 +65,7 @@ class Wprus_Nonce {
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}wprus_nonce WHERE nonce = %s;",
-				$value
+				$nonce
 			)
 		);
 
