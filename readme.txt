@@ -173,7 +173,7 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 
 == Changelog ==
 
-= 1.3 =
+= 2.0 =
 * Removed all `wprus_template_*` hooks ; added `wprus_get_admin_template_name`, `wprus_get_admin_template_args`, `wprus_get_template_name`, `wprus_get_template_args`, `wprus_locate_template`, `wprus_locate_template_paths` and `wprus_locate_admin_template` instead.
 * Added Multisite support
 * Code cleanup
