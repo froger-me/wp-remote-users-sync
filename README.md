@@ -667,7 +667,6 @@ Filters index:
 * [wprus_option](#user-content-wprus_option)
 * [wprus_settings_valid](#user-content-wprus_settings_valid)
 * [wprus_settings_metaboxes](#user-content-wprus_settings_metaboxes)
-* [wprus_template](#user-content-wprus_template)
 * [wprus_sanitize_settings](#user-content-wprus_sanitize_settings)
 * [wprus_excluded_meta_keys](#user-content-wprus_excluded_meta_keys)
 * [wprus_excluded_meta_keys_like](#user-content-wprus_excluded_meta_keys_like)
@@ -679,6 +678,12 @@ Filters index:
 * [wprus_debug](#user-content-wprus_debug)
 * [wprus_action_data](#user-content-wprus_action_data)
 * [wprus_registered_integration](#user-content-wprus_registered_integration)
+* [wprus_get_admin_template_name](#user-content-wprus_get_admin_template_name)
+* [wprus_get_admin_template_args](#user-content-wprus_get_admin_template_args)
+* [wprus_get_template_name](#user-content-wprus_get_template_name)
+* [wprus_get_template_args](#user-content-wprus_get_template_args)
+* [wprus_locate_template](#user-content-wprus_locate_template)
+* [wprus_locate_template_paths](#user-content-wprus_locate_template_paths)
 
 ___
 
@@ -870,34 +875,6 @@ array(
     [...]                                              // Other metabox items
 );
 ```
-___
-
-#### wprus_template
-
-```php
-apply_filters( 'wprus_template_' . $template_slug, (string) $template_path );
-```
-**Description**  
-Filter a template of the plugin.  
-This is actually a combination of filters, where the full name of the filter is determined by the `$template_slug` variable.
-Possible values for `$template_slug`:
-* `submit-settings-metabox`
-* `add-site-metabox`
-* `encryption-metabox`
-* `ip-whitelist-metabox`
-* `logs-metabox`
-* `site-metabox`
-* `site-metabox-template`
-* `export-metabox`
-* `import-metabox`
-* `main-settings-page`
-* `log-row`
-* `async-processing`
-* `async-processing-script`
-
-**Parameters**  
-$template_path
-> (string) The path of the template.  
 ___
 
 #### wprus_sanitize_settings
@@ -1120,3 +1097,133 @@ array (
 
 ___
 
+#### wprus_get_admin_template_name
+
+```php
+apply_filters( 'wprus_get_admin_template_name', string $template_name, array $args );
+```
+**Description**  
+Filter the file name of the template to include.  
+
+**Parameters**  
+$template_name
+> (string) The file name of the template to include.  
+
+$args
+> (array) The variables passed to the template.  
+
+___
+
+#### wprus_get_admin_template_args
+
+```php
+apply_filters( 'wprus_get_admin_template_args', array $args, string $template_name );
+```
+**Description**  
+Filter the variables passed to the template.  
+
+**Parameters**  
+$args
+> (array) The variables passed to the template.  
+
+$template_name
+> (string) The file name of the template.   
+
+___
+
+#### wprus_get_template_name
+
+```php
+apply_filters( 'wprus_get_template_name', string $template_name, array $args );
+```
+**Description**  
+Filter the file name of the template to include.  
+
+**Parameters**  
+$template_name
+> (string) The file name of the template to include.  
+
+$args
+> (array) The variables passed to the template.  
+
+___
+
+#### wprus_get_template_args
+
+```php
+apply_filters( 'wprus_get_template_args', array $args, string $template_name );
+```
+**Description**  
+Filter the variables passed to the template.  
+
+**Parameters**  
+$args
+> (array) The variables passed to the template.  
+
+$template_name
+> (string) The file name of the template.  
+
+___
+
+#### wprus_locate_template
+
+```php
+apply_filters( 'wprus_locate_template', string $template_file, string $template_name, string $template_path );
+```
+**Description**  
+Filter the fully qualified path of the template file.  
+
+**Parameters**  
+$template_file
+> (string) The fully qualified path of the template file.  
+
+$template_name
+> (string) The file name.  
+
+$template_path
+> (string) The file path.  
+
+___
+
+#### wprus_locate_admin_template
+
+```php
+apply_filters( 'wprus_locate_admin_template', string $template_file, string $template_name, string $template_path );
+```
+**Description**  
+Filter the fully qualified path of the admin template file.  
+
+**Parameters**  
+$template_file
+> (string) The fully qualified path of the admin template file.  
+
+$template_name
+> (string) The file name.  
+
+$template_path
+> (string) The file path.  
+
+___
+
+#### wprus_locate_template_paths
+
+```php
+apply_filters( 'wprus_locate_template_paths', array $paths );
+```
+**Description**  
+Filter the list of possible theme paths for the template file.  
+
+**Parameters**  
+$paths 
+> (array) The list of possible theme paths for the template file. Structure:  
+```php
+// Paths relative to WordPress theme's folder ; $name is the template's file name
+array(
+    'plugins/wprus/templates/' . $name,
+    'plugins/wprus/' . $name,
+    'wprus/templates/' . $name,
+    'wprus/' . $name,
+);
+```
+
+___

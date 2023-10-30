@@ -15,12 +15,17 @@ $sql           = "DELETE FROM $wpdb->options WHERE `option_name` LIKE %s";
 $wpdb->query( $wpdb->prepare( $sql, '%' . $option_prefix . '%' ) ); // @codingStandardsIgnoreLine
 
 $meta_prefix = 'wprus';
-$sql         = "DELETE FROM $wpdb->usermeta WHERE `meta_key` LIKE %s";
+$table       = self::get_table( 'usermeta' );
+$sql         = "DELETE FROM $table WHERE `meta_key` LIKE %s";
 
 $wpdb->query( $wpdb->prepare( $sql, '%' . $meta_prefix . '%' ) ); // @codingStandardsIgnoreLine
 
-$sql = "DROP TABLE IF EXISTS {$wpdb->prefix}wprus_nonce;";
+$table = self::get_table( 'wprus_nonce' );
+$sql   = "DROP TABLE IF EXISTS {$table};";
+
 $wpdb->query( $sql ); // @codingStandardsIgnoreLine
 
-$sql = "DROP TABLE IF EXISTS {$wpdb->prefix}wprus_logs;";
+$table = self::get_table( 'wprus_logs' );
+$sql   = "DROP TABLE IF EXISTS {$table};";
+
 $wpdb->query( $sql ); // @codingStandardsIgnoreLine

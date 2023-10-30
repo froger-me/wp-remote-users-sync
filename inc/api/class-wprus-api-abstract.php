@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Wprus_Api_Abstract {
+abstract class Wprus_Api_Abstract {
 	const TOKEN_EXPIRY_BUFFER = MINUTE_IN_SECONDS / 2;
 
 	/**
@@ -221,9 +221,10 @@ class Wprus_Api_Abstract {
 			$ip_whitelist = self::$settings_class::get_option( 'ip_whitelist' );
 
 			if ( ! empty( $ip_whitelist ) ) {
-				$ip_whitelist = array_filter( array_map( 'trim', explode( "\n", $ip_whitelist ) ) );
+				$ip_whitelist       = array_filter( array_map( 'trim', explode( "\n", $ip_whitelist ) ) );
 				self::$ip_whitelist = array_map(
 					function ( $ip ) {
+
 						return preg_match( '/\//', $ip ) ? $ip : $ip . '/32';
 					},
 					$ip_whitelist
@@ -233,6 +234,20 @@ class Wprus_Api_Abstract {
 			}
 		}
 	}
+
+	/**
+	 * Handle notifications from remote websites when an action is triggered
+	 *
+	 * @return $result whether the operation was successful
+	 */
+	public function handle_notification() {
+		return null;
+	}
+
+	/**
+	 * Initialize the hooks to trigger when the action is triggered
+	 */
+	public function init_notification_hooks() { }
 
 	/**
 	 * Handle request for security tokens and reply with JSON data
@@ -324,7 +339,7 @@ class Wprus_Api_Abstract {
 			if ( $this->needs_redirect() ) {
 				$url = isset( $data['callback_url'] ) ? $data['callback_url'] : home_url();
 
-				wp_redirect( $url, 303 );
+				wp_redirect( $url, 303 ); //@codingStandardsIgnoreLine
 
 				exit();
 			}
@@ -411,7 +426,7 @@ class Wprus_Api_Abstract {
 			} elseif ( $this->needs_redirect() ) {
 				$url = isset( $remote_data['callback_url'] ) ? $remote_data['callback_url'] : home_url();
 
-				wp_redirect( $url, 303 );
+				wp_redirect( $url, 303 ); //@codingStandardsIgnoreLine
 
 				exit();
 			} else {
@@ -1218,7 +1233,7 @@ class Wprus_Api_Abstract {
 		);
 
 		if ( $this->is_silent_async_action_redirect() ) {
-			wp_redirect( $async_url, 303 );
+			wp_redirect( $async_url, 303 ); // @codingStandardsIgnoreLine
 		}
 
 		echo $output; // @codingStandardsIgnoreLine
@@ -1280,16 +1295,7 @@ class Wprus_Api_Abstract {
 
 		ob_start();
 
-		$template = apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_redirect-processing',
-			WPRUS_PLUGIN_PATH . 'inc/templates/redirect-processing.php'
-		);
-
-		if ( ! file_exists( $template ) ) {
-			$template = WPRUS_PLUGIN_PATH . 'inc/templates/redirect-processing.php';
-		}
-
-		require_once $template;
+		wprus_get_template( 'redirect-processing.php' );
 
 		$output  = ob_get_clean();
 		$search  = array(
@@ -1308,16 +1314,13 @@ class Wprus_Api_Abstract {
 
 		ob_start();
 
-		$template = apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_redirect-processing-script',
-			WPRUS_PLUGIN_PATH . 'inc/templates/redirect-processing-script.php'
+		wprus_get_template(
+			'redirect-processing-script.php',
+			array(
+				'async_url' => $async_url,
+				'output'    => $output,
+			)
 		);
-
-		if ( ! file_exists( $template ) ) {
-			$template = WPRUS_PLUGIN_PATH . 'inc/templates/redirect-processing-script.php';
-		}
-
-		require_once $template;
 
 		$output = ob_get_clean();
 
@@ -1332,16 +1335,18 @@ class Wprus_Api_Abstract {
 	 * @return bool True if the ip is in range, false otherwise
 	 */
 	protected function cidr_match( $ip, $range ) {
-		list ($subnet, $bits) = explode('/', $range);
-		$ip = ip2long($ip);
-		$subnet = ip2long($subnet);
-		
-		if ( !$ip || !$subnet || !$bits ) {
-		  return false;
+		list ( $subnet, $bits ) = explode( '/', $range );
+		$ip                     = ip2long( $ip );
+		$subnet                 = ip2long( $subnet );
+
+		if ( ! $ip || ! $subnet || ! $bits ) {
+
+			return false;
 		}
-		
-		$mask = -1 << (32 - $bits);
+
+		$mask    = -1 << ( 32 - $bits );
 		$subnet &= $mask; // in case the supplied subnet was not correctly aligned
-		return ($ip & $mask) == $subnet;
+
+		return ( $ip & $mask ) === $subnet;
 	}
 }

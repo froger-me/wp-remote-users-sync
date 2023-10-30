@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Wprus {
+	protected static $tables;
+
 	protected $authorised_endpoints;
 	protected $wprus_settings;
 
@@ -65,9 +67,9 @@ class Wprus {
 			$charset_collate .= " COLLATE {$wpdb->collate}";
 		}
 
-		$table_name = $wpdb->prefix . 'wprus_nonce';
-		$sql        =
-			'CREATE TABLE ' . $table_name . ' (
+		$table = self::get_table( 'wprus_nonce' );
+		$sql   =
+			'CREATE TABLE ' . $table . ' (
 				id int(12) NOT NULL auto_increment,
 				nonce varchar(255) NOT NULL,
 				expiry int(12) NOT NULL,
@@ -77,16 +79,16 @@ class Wprus {
 
 		dbDelta( $sql );
 
-		$table_name = $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "wprus_nonce'" );
+		$table = $wpdb->get_var( "SHOW TABLES LIKE '" . self::get_table( 'wprus_nonce' ) . "'" ); // @codingStandardsIgnoreLine
 
-		if ( $wpdb->prefix . 'wprus_nonce' !== $table_name ) {
+		if ( self::get_table( 'wprus_nonce' ) !== $table ) {
 
 			return false;
 		}
 
-		$table_name = $wpdb->prefix . 'wprus_logs';
-		$sql        =
-			'CREATE TABLE ' . $table_name . ' (
+		$table = self::get_table( 'wprus_logs' );
+		$sql   =
+			'CREATE TABLE ' . $table . ' (
 				id int(12) NOT NULL auto_increment,
 				timestamp int(12) NOT NULL,
 				type varchar(10) NOT NULL,
@@ -98,14 +100,114 @@ class Wprus {
 
 		dbDelta( $sql );
 
-		$table_name = $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "wprus_logs'" );
+		$table = $wpdb->get_var( "SHOW TABLES LIKE '" . self::get_table( 'wprus_logs' ) . "'" ); // @codingStandardsIgnoreLine
 
-		if ( $wpdb->prefix . 'wprus_logs' !== $table_name ) {
+		if ( self::get_table( 'wprus_logs' ) !== $table ) {
 
 			return false;
 		}
 
 		return true;
+	}
+
+	public static function get_table( $table = null ) {
+
+		if ( is_null( $table ) ) {
+
+			return $table;
+		}
+
+		if ( isset( self::$tables[ $table ] ) ) {
+
+			return self::$tables[ $table ];
+		}
+
+		global $wpdb;
+
+		$is_plugin_active_for_network = is_plugin_active_for_network( WPRUS_PLUGIN_FILE );
+		$use_base_prefix              = array(
+			'users',
+			'usermeta',
+		);
+
+		$use_base_prefix = apply_filters( 'wprus_wpdb_use_base_prefix', $use_base_prefix );
+
+		if ( is_multisite() ) {
+			if ( $is_plugin_active_for_network ) {
+
+				$use_base_prefix = array_merge(
+					$use_base_prefix,
+					array(
+						'wprus_logs',
+						'wprus_nonce',
+					)
+				);
+
+				$use_base_prefix = apply_filters( 'wprus_wpdb_use_base_prefix_network_active', $use_base_prefix );
+
+				if ( in_array( $table, $use_base_prefix, true ) ) {
+					$table = $wpdb->base_prefix . $table;
+				} else {
+					$table = $wpdb->prefix . $table;
+				}
+			} else {
+
+				if ( in_array( $table, $use_base_prefix, true ) ) {
+					$table = $wpdb->base_prefix . $table;
+				} else {
+					$table = $wpdb->prefix . $table;
+				}
+			}
+		} else {
+			$table = $wpdb->prefix . $table;
+		}
+
+		self::$tables[ $table ] = $table;
+
+		return $table;
+	}
+
+	public static function locate_template( $template_name, $load = false, $require_once = true ) {
+		$name     = str_replace( 'templates/', '', $template_name );
+		$paths    = array(
+			'plugins/wprus/templates/' . $name,
+			'plugins/wprus/' . $name,
+			'wprus/templates/' . $name,
+			'wprus/' . $name,
+		);
+		$template = locate_template( apply_filters( 'wprus_locate_template_paths', $paths ) );
+
+		if ( empty( $template ) ) {
+			$template = WPRUS_PLUGIN_PATH . 'inc/templates/' . $template_name;
+		}
+
+		$template = apply_filters(
+			'wprus_locate_template',
+			$template,
+			$template_name,
+			str_replace( $template_name, '', $template )
+		);
+
+		if ( $load && '' !== $template ) {
+			load_template( $template, $require_once );
+		}
+
+		return $template;
+	}
+
+	public static function locate_admin_template( $template_name, $load = false, $require_once = true ) {
+		$template = apply_filters(
+			'wprus_locate_admin_template',
+			WPRUS_PLUGIN_PATH . 'inc/templates/admin/' . $template_name,
+			$template_name,
+			str_replace( $template_name, '', WPRUS_PLUGIN_PATH . 'inc/templates/admin/' )
+		);
+
+		if ( $load && '' !== $template ) {
+			load_template( $template, $require_once );
+		}
+
+		return $template;
 	}
 
 	public function add_query_vars( $vars ) {

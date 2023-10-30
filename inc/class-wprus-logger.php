@@ -57,18 +57,21 @@ class Wprus_Logger {
 
 		global $wpdb;
 
+		$table  = Wprus::get_table( 'wprus_logs' );
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}wprus_logs
+				"DELETE FROM $table " // @codingStandardsIgnoreLine
+				. "
 				WHERE id <= (
 					SELECT id
 					FROM (
 						SELECT id
-						FROM {$wpdb->prefix}wprus_logs
+						FROM $table " // @codingStandardsIgnoreLine
+						. '
 						ORDER BY id DESC
 						LIMIT 1 OFFSET %d
 						) temp
-					);",
+					);',
 				self::$log_settings['min_num']
 			)
 		);
@@ -79,7 +82,8 @@ class Wprus_Logger {
 	public static function get_logs_count() {
 		global $wpdb;
 
-		$count = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}wprus_logs WHERE 1 = 1;" );
+		$table = Wprus::get_table( 'wprus_logs' );
+		$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE 1 = 1;" ); // @codingStandardsIgnoreLine
 
 		return absint( $count );
 	}
@@ -87,10 +91,11 @@ class Wprus_Logger {
 	public static function get_logs() {
 		global $wpdb;
 
-		$logs = '';
-		$rows = $wpdb->get_results(
+		$logs  = '';
+		$table = Wprus::get_table( 'wprus_logs' );
+		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wprus_logs ORDER BY timestamp ASC LIMIT %d;",
+				"SELECT * FROM $table ORDER BY timestamp ASC LIMIT %d;", // @codingStandardsIgnoreLine
 				self::$log_settings['min_num']
 			)
 		);
@@ -102,9 +107,13 @@ class Wprus_Logger {
 
 				ob_start();
 
-				include apply_filters( // @codingStandardsIgnoreLine
-					'wprus_template_log-row',
-					WPRUS_PLUGIN_PATH . 'inc/templates/admin/log-row.php'
+				wprus_get_admin_template(
+					'log-row.php',
+					array(
+						'rows'        => $rows,
+						'log'         => $log,
+						'type_output' => $type_output,
+					),
 				);
 
 				$logs .= ob_get_clean();
@@ -140,7 +149,9 @@ class Wprus_Logger {
 	public function clear_logs_async() {
 		global $wpdb;
 
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}wprus_logs;" );
+		$table = Wprus::get_table( 'wprus_logs' );
+
+		$wpdb->query( "TRUNCATE TABLE $table;" ); // @codingStandardsIgnoreLine
 	}
 
 	public function init() {
@@ -189,17 +200,14 @@ class Wprus_Logger {
 			$message = $expression;
 		}
 
-		$log = array(
+		$log    = array(
 			'timestamp' => time(),
 			'type'      => ( ! in_array( $type, array_keys( self::$log_types ), true ) ) ? 'info' : $type,
 			'message'   => $message,
 			'data'      => maybe_serialize( $data ),
 		);
-
-		$result = $wpdb->insert(
-			$wpdb->prefix . 'wprus_logs',
-			$log
-		);
+		$table  = Wprus::get_table( 'wprus_logs' );
+		$result = $wpdb->insert( $table, $log );
 
 		if ( (bool) $result ) {
 

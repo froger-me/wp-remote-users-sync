@@ -16,6 +16,7 @@ class Wprus_Settings {
 	protected $aes_key;
 	protected $hmac_key;
 	protected $sites;
+	protected $error;
 
 	public function __construct( $init_hooks = false ) {
 		$this->load_textdomain();
@@ -133,7 +134,6 @@ class Wprus_Settings {
 		$menu_slug     = 'wprus';
 		$parent_slug   = 'options-general.php';
 		$callback      = array( $this, 'plugin_main_page' );
-		$page_hook_id  = self::$settings_page_id;
 		$settings_page = add_submenu_page( $parent_slug, $title, $title, $capability, $menu_slug, $callback );
 
 		if ( ! empty( $settings_page ) ) {
@@ -203,9 +203,9 @@ class Wprus_Settings {
 			}
 
 			foreach ( $scripts as $script ) {
-				$key     = 'wprus-' . $script . '-script';
-				$is_lib  = ( false !== strpos( $script, 'lib/' ) );
-				$js_ext  = ( $debug || $is_lib ) ? '.js' : '.min.js';
+				$key    = 'wprus-' . $script . '-script';
+				$is_lib = ( false !== strpos( $script, 'lib/' ) );
+				$js_ext = ( $debug || $is_lib ) ? '.js' : '.min.js';
 
 				if ( ! file_exists( WPRUS_PLUGIN_PATH . 'js/' . $script . $js_ext ) ) {
 
@@ -362,64 +362,38 @@ class Wprus_Settings {
 	}
 
 	public function get_submit_metabox() {
-		ob_start();
-
-		include apply_filters(
-			'wprus_template_submit-settings-metabox', // @codingStandardsIgnoreLine
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/submit-settings-metabox.php'
-		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
+		wprus_get_admin_template( 'submit-settings-metabox.php' );
 	}
 
 	public function get_add_site_metabox() {
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_add-site-metabox',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/add-site-metabox.php'
-		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
+		wprus_get_admin_template( 'add-site-metabox.php' );
 	}
 
 	public function get_encryption_metabox() {
 		$encryption_settings = self::get_option( 'encryption' );
 
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_encryption-metabox',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/encryption-metabox.php'
+		wprus_get_admin_template(
+			'encryption-metabox.php',
+			array( 'encryption_settings' => $encryption_settings )
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function get_browser_support_metabox() {
 		$browser_support_settings = self::get_option( 'browser_support' );
 
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_browser-support-metabox',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/browser-support-metabox.php'
+		wprus_get_admin_template(
+			'browser-support-metabox.php',
+			array( 'browser_support_settings' => $browser_support_settings )
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function get_ip_whitelist_metabox() {
 		$ips = self::get_option( 'ip_whitelist' );
 
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_ip-whitelist-metabox',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/ip-whitelist-metabox.php'
+		wprus_get_admin_template(
+			'ip-whitelist-metabox.php',
+			array( 'ips' => $ips )
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function get_logs_metabox() {
@@ -433,74 +407,58 @@ class Wprus_Settings {
 			)
 		);
 
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_logs-metabox',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/logs-metabox.php'
+		wprus_get_admin_template(
+			'logs-metabox.php',
+			array(
+				'num_logs'      => $num_logs,
+				'logs'          => $logs,
+				'logs_settings' => $logs_settings,
+			)
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function get_site_metabox( $page_hook_id, $data ) {
-		$site_id   = $data['args']['site_id'];
-		$site      = $data['args']['site'];
-		$labels    = self::$actions;
-		$meta_keys = $data['args']['meta_keys'];
-		$roles     = $data['args']['roles'];
-
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_site-metabox',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/site-metabox.php'
+		wprus_get_admin_template(
+			'site-metabox.php',
+			array(
+				'site_id'   => $data['args']['site_id'],
+				'site'      => $data['args']['site'],
+				'labels'    => self::$actions,
+				'meta_keys' => $data['args']['meta_keys'],
+				'roles'     => $data['args']['roles'],
+			)
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function get_site_metabox_template( $page_hook_id, $data ) {
-		$labels    = self::$actions;
-		$meta_keys = $data['args']['meta_keys'];
-		$roles     = $data['args']['roles'];
-
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_site-metabox-template',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/site-metabox-template.php'
+		wprus_get_admin_template(
+			'site-metabox-template.php',
+			array(
+				'labels'    => self::$actions,
+				'meta_keys' => $data['args']['meta_keys'],
+				'roles'     => $data['args']['roles'],
+			)
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function get_export_metabox_template( $page_hook_id, $data ) {
-		$meta_keys = $data['args']['meta_keys'];
-		$roles     = $data['args']['roles'];
-
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_export-metabox',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/export-metabox.php'
+		wprus_get_admin_template(
+			'export-metabox.php',
+			array(
+				'meta_keys' => $data['args']['meta_keys'],
+				'roles'     => $data['args']['roles'],
+			)
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function get_import_metabox_template( $page_hook_id, $data ) {
-		$meta_keys = $data['args']['meta_keys'];
-		$roles     = $data['args']['roles'];
-
-		ob_start();
-
-		include apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_import-metabox',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/import-metabox.php'
+		wprus_get_admin_template(
+			'import-metabox.php',
+			array(
+				'meta_keys' => $data['args']['meta_keys'],
+				'roles'     => $data['args']['roles'],
+			)
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function plugin_main_page() {
@@ -514,14 +472,10 @@ class Wprus_Settings {
 		do_action( 'wprus_settings_page_init' );
 		do_action( 'add_meta_boxes', $hook_suffix, null );
 
-		ob_start();
-
-		require_once apply_filters( // @codingStandardsIgnoreLine
-			'wprus_template_main-settings-page',
-			WPRUS_PLUGIN_PATH . 'inc/templates/admin/main-settings-page.php'
+		wprus_get_admin_template(
+			'main-settings-page.php',
+			array( 'hook_suffix' => $hook_suffix )
 		);
-
-		echo ob_get_clean(); // @codingStandardsIgnoreLine
 	}
 
 	public function sanitize_settings( $settings ) {
@@ -570,8 +524,12 @@ class Wprus_Settings {
 		if ( ! empty( $sites ) ) {
 
 			foreach ( $sites as $site ) {
+				$url_parse_url  = wp_parse_url( $url );
+				$url_host       = isset( $url_parse_url['host'] ) ? $url_parse_url['host'] : false;
+				$site_parse_url = wp_parse_url( $site['url'] );
+				$site_host      = isset( $site_parse_url['host'] ) ? $site_parse_url['host'] : false;
 
-				if ( trailingslashit( $url ) === trailingslashit( $site['url'] ) ) {
+				if ( $site_host && $url_host && $site_host === $url_host ) {
 
 					return $site;
 				}
@@ -820,12 +778,13 @@ class Wprus_Settings {
 		if ( ! $meta_keys ) {
 			$exclude      = $this->get_excluded_meta();
 			$exclude_like = $this->get_excluded_meta_like();
+			$table        = Wprus::get_table( 'usermeta' );
 
 			$sql = "
 				SELECT DISTINCT meta_key
-				FROM {$wpdb->prefix}usermeta m
+				FROM {$table} m
 				WHERE m.meta_key NOT IN (" . implode( ',', array_fill( 0, count( $exclude ), '%s' ) ) . ')
-				AND m.meta_key NOT LIKE 
+				AND m.meta_key NOT LIKE
 				' . implode( ' AND m.meta_key NOT LIKE ', array_fill( 0, count( $exclude_like ), '%s' ) ) . '
 				ORDER BY m.meta_key ASC
 			;';

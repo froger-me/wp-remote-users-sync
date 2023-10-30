@@ -94,7 +94,7 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 				sprintf(
 					// translators: %s is the url of the caller
 					__( 'Role action failed - incoming role action not enabled for %s', 'wprus' ),
-					$data['base_url']
+					$site['url']
 				),
 				'alert',
 				'db_log'

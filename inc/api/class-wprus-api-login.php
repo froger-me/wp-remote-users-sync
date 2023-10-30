@@ -195,7 +195,8 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 		if ( false !== strpos( $url, 'wp-login.php' ) ) {
 
 			if ( isset( $_REQUEST['redirect_to'] ) ) { // @codingStandardsIgnoreLine
-				$redirect_to = $_REQUEST['redirect_to']; // @codingStandardsIgnoreLine
+				$redirect_to   = $_REQUEST['redirect_to']; // @codingStandardsIgnoreLine
+				$secure_cookie = is_ssl();
 
 				if ( $secure_cookie && false !== strpos( $redirect_to, 'wp-admin' ) ) {
 					$redirect_to = preg_replace( '|^http://|', 'https://', $redirect_to );

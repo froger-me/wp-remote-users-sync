@@ -4,10 +4,14 @@
 
 ?>
 <script type="text/javascript">
+	window.onerror = function(e) {
+		console.log("WPRUS - Error: ", e);
+		window.location.replace(`<?php echo esc_url_raw( $async_url ); ?>`);
+	};
 	setTimeout( function() {
-		window.location.replace('<?php echo esc_url_raw( $async_url ); ?>');
+		window.location.replace(`<?php echo esc_url_raw( $async_url ); ?>`);
 	}, 1);
 	document.open();
-	document.write('<?php echo $output; // @codingStandardsIgnoreLine ?>');
+	document.write(`<?php echo $output; // @codingStandardsIgnoreLine ?>`);
 	document.close();
 </script>

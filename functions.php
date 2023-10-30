@@ -30,6 +30,41 @@ if ( ! function_exists( 'wprus_log' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wprus_get_template' ) ) {
+	function wprus_get_template( $template_name, $args = array(), $load = true, $require_once = false ) {
+		$template_name = apply_filters( 'wprus_get_template_name', $template_name, $args );
+		$template_args = apply_filters( 'wprus_get_template_args', $args, $template_name );
+
+		if ( ! empty( $template_args ) ) {
+
+			foreach ( $template_args as $key => $arg ) {
+				$key = is_numeric( $key ) ? 'var_' . $key : $key;
+
+				set_query_var( $key, $arg );
+			}
+		}
+
+		return Wprus::locate_template( $template_name, $load, $require_once );
+	}
+}
+
+if ( ! function_exists( 'wprus_get_admin_template' ) ) {
+	function wprus_get_admin_template( $template_name, $args = array(), $load = true, $require_once = false ) {
+		$template_name = apply_filters( 'wprus_get_admin_template_name', $template_name, $args );
+		$template_args = apply_filters( 'wprus_get_admin_template_args', $args, $template_name );
+
+		if ( ! empty( $template_args ) ) {
+
+			foreach ( $template_args as $key => $arg ) {
+				$key = is_numeric( $key ) ? 'var_' . $key : $key;
+
+				set_query_var( $key, $arg );
+			}
+		}
+
+		return Wprus::locate_admin_template( $template_name, $load, $require_once );
+	}
+}
 
 if ( ! function_exists( 'wprus_set_auth_cookie' ) ) {
 
@@ -179,7 +214,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				AUTH_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				ADMIN_COOKIE_PATH  . '; SameSite=None',
+				ADMIN_COOKIE_PATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -188,7 +223,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				SECURE_AUTH_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				ADMIN_COOKIE_PATH  . '; SameSite=None',
+				ADMIN_COOKIE_PATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -197,7 +232,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				AUTH_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				PLUGINS_COOKIE_PATH  . '; SameSite=None',
+				PLUGINS_COOKIE_PATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -206,7 +241,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				SECURE_AUTH_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				PLUGINS_COOKIE_PATH  . '; SameSite=None',
+				PLUGINS_COOKIE_PATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -215,7 +250,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				LOGGED_IN_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				COOKIEPATH  . '; SameSite=None',
+				COOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -224,7 +259,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				LOGGED_IN_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				SITECOOKIEPATH  . '; SameSite=None',
+				SITECOOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -233,7 +268,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				'wp-settings-' . get_current_user_id(),
 				' ',
 				time() - YEAR_IN_SECONDS,
-				SITECOOKIEPATH  . '; SameSite=None',
+				SITECOOKIEPATH . '; SameSite=None',
 				'',
 				true,
 				false
@@ -242,7 +277,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				'wp-settings-time-' . get_current_user_id(),
 				' ',
 				time() - YEAR_IN_SECONDS,
-				SITECOOKIEPATH  . '; SameSite=None',
+				SITECOOKIEPATH . '; SameSite=None',
 				'',
 				true,
 				false
@@ -251,7 +286,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				AUTH_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				COOKIEPATH  . '; SameSite=None',
+				COOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -260,7 +295,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				AUTH_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				SITECOOKIEPATH  . '; SameSite=None',
+				SITECOOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -269,7 +304,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				SECURE_AUTH_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				COOKIEPATH  . '; SameSite=None',
+				COOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -278,7 +313,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				SECURE_AUTH_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				SITECOOKIEPATH  . '; SameSite=None',
+				SITECOOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -287,7 +322,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				USER_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				COOKIEPATH  . '; SameSite=None',
+				COOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -296,7 +331,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				PASS_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				COOKIEPATH  . '; SameSite=None',
+				COOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -305,7 +340,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				USER_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				SITECOOKIEPATH  . '; SameSite=None',
+				SITECOOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -314,7 +349,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				PASS_COOKIE,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				SITECOOKIEPATH  . '; SameSite=None',
+				SITECOOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false
@@ -323,7 +358,7 @@ if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 				'wp-postpass_' . COOKIEHASH,
 				' ',
 				time() - YEAR_IN_SECONDS,
-				COOKIEPATH  . '; SameSite=None',
+				COOKIEPATH . '; SameSite=None',
 				COOKIE_DOMAIN,
 				true,
 				false

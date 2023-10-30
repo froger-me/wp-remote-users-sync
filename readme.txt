@@ -32,13 +32,13 @@ This plugin adds the following major features to WordPress:
 
 Please read the plugin FAQ, there is a lot that may help you there!
 
-WP Remote Users Sync is regularly updated for compatibility, and bug reports are welcome, preferably on [Github](https://github.com/froger-me/wp-remote-users-sync/issues).
+WP Remote Users Sync is regularly updated for compatibility, and bug reports are welcome, preferably on [Github](https://github.com/froger-me/wp-remote-users-sync/issues). Pull Requests from developers following the [WordPress Coding Standards](https://github.com/WordPress/WordPress-Coding-Standards) (`WordPress-Extra` ruleset) are highly appreciated and will be credited upon merge.
 
 In case the plugin has not been updated for a while, no panic: it simply means the compatibility flag has not been changed, and it very likely remains compatible with the latest version of WordPress. This is because it was designed with long-term compatibility in mind from the ground up.
 
-Each **bug** report will be addressed in a timely manner if properly documented - general inquiries and issues reported on the WordPress forum may take significantly longer to receive a response (if any).
+Each **bug** report will be addressed in a timely manner if properly documented - previously unanswered general inquiries and issues reported on the WordPress forum may take significantly longer to receive a response (if any).
 
-**Only issues occurring with included integrated plugins (or plugin features), core WordPress and default WordPress themes (incl. WooCommerce Storefront) will be considered without compensation.**
+**Only issues occurring with included plugin features mentioned in "Synchronise all user data", core WordPress and default WordPress themes (incl. WooCommerce Storefront) will be considered.**
 
 **Troubleshooting involving 3rd-party plugins or themes will not be addressed on the WordPress support forum**.
 
@@ -48,7 +48,7 @@ Although WP Remote Users Sync works out of the box with most combinations of Wor
 
 Integrations added to core are limited to popular plugins and themes: any extra code specific to a handful of installations require a separate custom plugin not shared with the community (created and maintained by a third-party developer).
 
-A typical example necessitating a  includes plugins or themes directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.
+A typical example necessitating custom integration includes plugins or themes relying on their own custom tables, directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.
 
 If such need for plugin integration arises, website administrators **MUST** contact a third-party developer. The plugin author currently does not have the bandwidth to take on custom work for WPRUS.
 
@@ -82,6 +82,7 @@ Before opening a new issue on <a href="https://github.com/froger-me/wp-remote-us
 * The URLs used in settings of WP Remote Users Sync **exactly** match the URL in your WordPress settings: the protocol (`https` vs. `https`) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the `home` option in the `wp_options` table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.
 * Visit the permalinks page of each connected site (Settings > Permalinks)
 * Activate and check the logs on both local and remote sites when testing (WP Remote Users Sync > Activity Logs > Enable Logs) ; try to find any discrepancies and adjust the settings
+* Make sure the feature you have issue with is NOT triggered by a third-party package (plugin or theme). If it is (for instance, data is not synced when updating a user from the front end, but works fine in the admin area), please contact the developer of the third-party package and ask them to follow best practices by triggering the appropriate actions like WordPress core does in the admin area when a user is updated.
 * Read the Resolved threads of the support forum - your issue might have already been addressed there
 
 Only then should you open a support thread, with as much information as possible, including logs (with critical information obfuscated if necessary).
@@ -168,9 +169,18 @@ User passwords cannot be and are NOT exported.
 
 More help can be found on <a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">the WordPress support forum</a> for general inquiries and on <a href="https://github.com/froger-me/wp-remote-users-sync">Github</a> for advanced troubleshooting.
 
-Help is provided for general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
+Help is provided for previously unanswered general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 1.3 =
+* Removed all `wprus_template_*` hooks ; added `wprus_get_admin_template_name`, `wprus_get_admin_template_args`, `wprus_get_template_name`, `wprus_get_template_args`, `wprus_locate_template`, `wprus_locate_template_paths` and `wprus_locate_admin_template` instead.
+* Added Multisite support
+* Code cleanup
+* Remote site URL check does not check the protocol anymore for convenience
+* Attempt at solving `‘); document.close();` issue on Safari browser - use of backticks, better error handling in browser console
+* Minor fixes - cron
+* Documentation update
 
 = 1.2.14 =
 * Minor fixes with true nonces
