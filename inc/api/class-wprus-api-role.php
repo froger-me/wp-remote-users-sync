@@ -178,5 +178,4 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 
 		return $this->incoming_roles;
 	}
-
 }

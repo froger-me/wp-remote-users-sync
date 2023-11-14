@@ -150,7 +150,7 @@ class Wprus_Nonce {
 		return (bool) $result;
 	}
 
-	public static function clear_nonces( $force = false ) {
+	public static function clear_nonces() {
 
 		if ( defined( 'WP_SETUP_CONFIG' ) || defined( 'WP_INSTALLING' ) ) {
 
@@ -168,9 +168,7 @@ class Wprus_Nonce {
 		);
 
 		return (bool) $result;
-
 	}
-
 
 	protected static function generate_id() {
 
@@ -180,5 +178,4 @@ class Wprus_Nonce {
 
 		return md5( $hasher->get_random_bytes( 100, false ) );
 	}
-
 }

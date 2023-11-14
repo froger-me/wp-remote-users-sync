@@ -343,5 +343,4 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 
 		return $data;
 	}
-
 }

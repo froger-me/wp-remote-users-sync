@@ -198,5 +198,4 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 
 		return $data;
 	}
-
 }

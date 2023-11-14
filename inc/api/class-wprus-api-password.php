@@ -145,5 +145,4 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 
 		return $valid;
 	}
-
 }

@@ -150,13 +150,10 @@ class Wprus {
 				} else {
 					$table = $wpdb->prefix . $table;
 				}
+			} elseif ( in_array( $table, $use_base_prefix, true ) ) {
+				$table = $wpdb->base_prefix . $table;
 			} else {
-
-				if ( in_array( $table, $use_base_prefix, true ) ) {
-					$table = $wpdb->base_prefix . $table;
-				} else {
-					$table = $wpdb->prefix . $table;
-				}
+				$table = $wpdb->prefix . $table;
 			}
 		} else {
 			$table = $wpdb->prefix . $table;
@@ -167,7 +164,7 @@ class Wprus {
 		return $table;
 	}
 
-	public static function locate_template( $template_name, $load = false, $require_once = true ) {
+	public static function locate_template( $template_name, $load = false, $required_once = true ) {
 		$name     = str_replace( 'templates/', '', $template_name );
 		$paths    = array(
 			'plugins/wprus/templates/' . $name,
@@ -189,13 +186,13 @@ class Wprus {
 		);
 
 		if ( $load && '' !== $template ) {
-			load_template( $template, $require_once );
+			load_template( $template, $required_once );
 		}
 
 		return $template;
 	}
 
-	public static function locate_admin_template( $template_name, $load = false, $require_once = true ) {
+	public static function locate_admin_template( $template_name, $load = false, $required_once = true ) {
 		$template = apply_filters(
 			'wprus_locate_admin_template',
 			WPRUS_PLUGIN_PATH . 'inc/templates/admin/' . $template_name,
@@ -204,7 +201,7 @@ class Wprus {
 		);
 
 		if ( $load && '' !== $template ) {
-			load_template( $template, $require_once );
+			load_template( $template, $required_once );
 		}
 
 		return $template;
@@ -276,5 +273,4 @@ class Wprus {
 
 		include get_query_template( '404' );
 	}
-
 }

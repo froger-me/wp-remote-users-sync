@@ -22,10 +22,12 @@ class Wprus_Logger {
 			'alert'   => __( 'Alert', 'wprus' ),
 		);
 
-		add_action( 'wp', array( get_class(), 'register_logs_cleanup' ) );
-		add_action( 'wprus_logs_cleanup', array( get_class(), 'clear_logs' ) );
-		add_action( 'wp_ajax_wprus_refresh_logs', array( $this, 'refresh_logs_async' ), 10, 0 );
-		add_action( 'wp_ajax_wprus_clear_logs', array( $this, 'clear_logs_async' ), 10, 0 );
+		if ( $init_hooks ) {
+			add_action( 'wp', array( get_class(), 'register_logs_cleanup' ) );
+			add_action( 'wprus_logs_cleanup', array( get_class(), 'clear_logs' ) );
+			add_action( 'wp_ajax_wprus_refresh_logs', array( $this, 'refresh_logs_async' ), 10, 0 );
+			add_action( 'wp_ajax_wprus_clear_logs', array( $this, 'clear_logs_async' ), 10, 0 );
+		}
 
 		self::init();
 	}
@@ -48,7 +50,7 @@ class Wprus_Logger {
 		}
 	}
 
-	public static function clear_logs( $force = false ) {
+	public static function clear_logs() {
 
 		if ( defined( 'WP_SETUP_CONFIG' ) || defined( 'WP_INSTALLING' ) ) {
 
@@ -113,7 +115,7 @@ class Wprus_Logger {
 						'rows'        => $rows,
 						'log'         => $log,
 						'type_output' => $type_output,
-					),
+					)
 				);
 
 				$logs .= ob_get_clean();
@@ -260,5 +262,4 @@ class Wprus_Logger {
 
 		error_log( $context . $expression ); // @codingStandardsIgnoreLine
 	}
-
 }

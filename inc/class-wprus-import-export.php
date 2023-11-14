@@ -408,7 +408,7 @@ class Wprus_Import_Export {
 			$num_results = 0;
 
 			while ( ! feof( $fp )  ) { // @codingStandardsIgnoreLine
-				$line ++;
+				++$line;
 
 				$line_content = fgets( $fp );
 
@@ -419,7 +419,7 @@ class Wprus_Import_Export {
 					if ( true !== $result ) {
 						$errors[] = $result;
 					} else {
-						$num_results ++;
+						++$num_results;
 					}
 				}
 			}

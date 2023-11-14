@@ -298,7 +298,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="wprus-help-inner">
 				<p>
 					<?php
-					echo sprintf(
+					printf(
 						// translators: %1$s is the WordPress support forum URL, %2$s is the Github URL
 						esc_html__( 'More help can be found on %1$s for general inquiries and on %2$s for advanced troubleshooting.', 'wprus' ),
 						'<a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">' . esc_html__( 'the WordPress support forum', 'wprus' ) . '</a>',

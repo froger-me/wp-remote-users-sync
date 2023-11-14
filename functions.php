@@ -31,7 +31,7 @@ if ( ! function_exists( 'wprus_log' ) ) {
 }
 
 if ( ! function_exists( 'wprus_get_template' ) ) {
-	function wprus_get_template( $template_name, $args = array(), $load = true, $require_once = false ) {
+	function wprus_get_template( $template_name, $args = array(), $load = true, $required_once = false ) {
 		$template_name = apply_filters( 'wprus_get_template_name', $template_name, $args );
 		$template_args = apply_filters( 'wprus_get_template_args', $args, $template_name );
 
@@ -44,12 +44,12 @@ if ( ! function_exists( 'wprus_get_template' ) ) {
 			}
 		}
 
-		return Wprus::locate_template( $template_name, $load, $require_once );
+		return Wprus::locate_template( $template_name, $load, $required_once );
 	}
 }
 
 if ( ! function_exists( 'wprus_get_admin_template' ) ) {
-	function wprus_get_admin_template( $template_name, $args = array(), $load = true, $require_once = false ) {
+	function wprus_get_admin_template( $template_name, $args = array(), $load = true, $required_once = false ) {
 		$template_name = apply_filters( 'wprus_get_admin_template_name', $template_name, $args );
 		$template_args = apply_filters( 'wprus_get_admin_template_args', $args, $template_name );
 
@@ -62,7 +62,7 @@ if ( ! function_exists( 'wprus_get_admin_template' ) ) {
 			}
 		}
 
-		return Wprus::locate_admin_template( $template_name, $load, $require_once );
+		return Wprus::locate_admin_template( $template_name, $load, $required_once );
 	}
 }
 
@@ -196,7 +196,6 @@ if ( ! function_exists( 'wprus_set_auth_cookie' ) ) {
 				);
 			}
 		}
-
 	}
 }
 

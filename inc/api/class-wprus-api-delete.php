@@ -54,44 +54,41 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 					'alert',
 					'db_log'
 				);
+			} elseif ( ! $user_reassign && $data['reassign_username'] ) {
+				Wprus_Logger::log(
+					sprintf(
+						// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username
+						__( 'Delete action - successfully deleted user "%1$s" from %2$s but failed to reassign content to %3$s.', 'wprus' ),
+						$data['username'],
+						$site['url'],
+						$data['reassign_username']
+					),
+					'warning',
+					'db_log'
+				);
+			} elseif ( $user_reassign ) {
+				Wprus_Logger::log(
+					sprintf(
+						// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username
+						__( 'Delete action - successfully deleted user "%1$s" from %2$s and reassigned content to %3$s.', 'wprus' ),
+						$data['username'],
+						$site['url'],
+						$data['reassign_username']
+					),
+					'success',
+					'db_log'
+				);
 			} else {
-
-				if ( ! $user_reassign && $data['reassign_username'] ) {
-					Wprus_Logger::log(
-						sprintf(
-							// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username
-							__( 'Delete action - successfully deleted user "%1$s" from %2$s but failed to reassign content to %3$s.', 'wprus' ),
-							$data['username'],
-							$site['url'],
-							$data['reassign_username']
-						),
-						'warning',
-						'db_log'
-					);
-				} elseif ( $user_reassign ) {
-					Wprus_Logger::log(
-						sprintf(
-							// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username
-							__( 'Delete action - successfully deleted user "%1$s" from %2$s and reassigned content to %3$s.', 'wprus' ),
-							$data['username'],
-							$site['url'],
-							$data['reassign_username']
-						),
-						'success',
-						'db_log'
-					);
-				} else {
-					Wprus_Logger::log(
-						sprintf(
-							// translators: %1$s is the username, %2$s is the caller
-							__( 'Delete action - successfully deleted user "%1$s" from %2$s.', 'wprus' ),
-							$data['username'],
-							$site['url']
-						),
-						'success',
-						'db_log'
-					);
-				}
+				Wprus_Logger::log(
+					sprintf(
+						// translators: %1$s is the username, %2$s is the caller
+						__( 'Delete action - successfully deleted user "%1$s" from %2$s.', 'wprus' ),
+						$data['username'],
+						$site['url']
+					),
+					'success',
+					'db_log'
+				);
 			}
 		} else {
 			Wprus_Logger::log(
@@ -144,5 +141,4 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 
 		return $data;
 	}
-
 }

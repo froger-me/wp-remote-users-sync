@@ -40,7 +40,7 @@ class Wprus_Settings {
 			add_action( 'admin_menu', array( $this, 'plugin_options_menu_main' ), 10, 0 );
 			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 1 );
 
-			add_filter( 'pre_update_option_wprus', array( $this, 'require_flush' ), 10, 2 );
+			add_filter( 'pre_update_option_wprus', array( $this, 'require_flush' ), 10, 1 );
 			add_filter( 'wprus_settings', array( $this, 'sanitize_settings' ), 10, 1 );
 			add_filter( 'plugin_action_links_wp-remote-users-sync/wprus.php', array( $this, 'plugin_action_links' ), 10, 1 );
 		}
@@ -59,14 +59,14 @@ class Wprus_Settings {
 		return self::$settings;
 	}
 
-	public static function get_option( $key, $default = false ) {
+	public static function get_option( $key, $default_val = false ) {
 
-		if ( ! $default && method_exists( get_class(), 'get_default_' . $key . '_option' ) ) {
-			$default = call_user_func( array( get_class(), 'get_default_' . $key . '_option' ) );
+		if ( ! $default_val && method_exists( get_class(), 'get_default_' . $key . '_option' ) ) {
+			$default_val = call_user_func( array( get_class(), 'get_default_' . $key . '_option' ) );
 		}
 
 		$options = self::$settings;
-		$value   = isset( $options[ $key ] ) ? $options[ $key ] : $default;
+		$value   = isset( $options[ $key ] ) ? $options[ $key ] : $default_val;
 
 		return apply_filters( 'wprus_option', $value, $key );
 	}
@@ -77,7 +77,7 @@ class Wprus_Settings {
 		return $links;
 	}
 
-	public function require_flush( $settings, $old_settings ) {
+	public function require_flush( $settings ) {
 		set_transient( 'wprus_flush', 1, 60 );
 		wp_cache_flush();
 
@@ -340,7 +340,7 @@ class Wprus_Settings {
 			$index = 0;
 
 			foreach ( $sites as $key => $site ) {
-				$index++;
+				++$index;
 
 				add_meta_box(
 					'site_' . $index,
@@ -358,7 +358,6 @@ class Wprus_Settings {
 				);
 			}
 		}
-
 	}
 
 	public function get_submit_metabox() {
@@ -806,5 +805,4 @@ class Wprus_Settings {
 
 		return $roles;
 	}
-
 }

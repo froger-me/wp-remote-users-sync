@@ -150,5 +150,4 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 
 		return $data;
 	}
-
 }

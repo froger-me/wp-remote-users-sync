@@ -185,5 +185,4 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 
 		return $valid;
 	}
-
 }
