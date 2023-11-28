@@ -4,7 +4,6 @@ if ( ! defined( 'ABSPATH' ) || ! defined( 'WPINC' ) ) {
 	exit; // Exit if accessed directly
 }
 
-
 if ( ! function_exists( 'wp_hash_password' ) ) {
 
 	function wp_hash_password( $password ) {

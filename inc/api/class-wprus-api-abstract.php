@@ -119,10 +119,10 @@ abstract class Wprus_Api_Abstract {
 		if ( $init_hooks ) {
 
 			if ( $this->doing_remote_action ) {
-				add_action( 'init', array( $this, 'init_remote_hooks_authorization' ), PHP_INT_MIN - 10, 0 );
-				add_action( 'init', array( $this, 'init_remote_hooks' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'init', array( $this, 'init_remote_hooks_authorization' ), PHP_INT_MIN + 100, 0 );
+				add_action( 'init', array( $this, 'init_remote_hooks' ), PHP_INT_MIN + 100, 0 );
 			} else {
-				add_action( 'init', array( $this, 'init_local_hooks' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'init', array( $this, 'init_local_hooks' ), PHP_INT_MIN + 100, 0 );
 				add_action(
 					'wp_ajax_wprus_' . $endpoint . '_notify_ping_remote',
 					array( $this, 'notify_ping_remote' ),
@@ -133,10 +133,10 @@ abstract class Wprus_Api_Abstract {
 				if ( $this->has_async_actions() ) {
 
 					if ( ! has_action( 'init', array( $this, 'set_pending_async_actions_user_id' ) ) ) {
-						add_action( 'init', array( $this, 'set_pending_async_actions_user_id' ), PHP_INT_MIN - 10, 0 );
+						add_action( 'init', array( $this, 'set_pending_async_actions_user_id' ), PHP_INT_MIN + 100, 0 );
 					}
 
-					add_action( 'init', array( $this, 'init_async_hooks' ), PHP_INT_MIN - 10, 0 );
+					add_action( 'init', array( $this, 'init_async_hooks' ), PHP_INT_MIN + 100, 0 );
 				}
 			}
 
@@ -339,7 +339,7 @@ abstract class Wprus_Api_Abstract {
 			if ( $this->needs_redirect() ) {
 				$url = isset( $data['callback_url'] ) ? $data['callback_url'] : home_url();
 
-				wp_redirect( $url, 303 ); //@codingStandardsIgnoreLine
+				wp_redirect( $url, 303 ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 
 				exit();
 			}
@@ -426,7 +426,7 @@ abstract class Wprus_Api_Abstract {
 			} elseif ( $this->needs_redirect() ) {
 				$url = isset( $remote_data['callback_url'] ) ? $remote_data['callback_url'] : home_url();
 
-				wp_redirect( $url, 303 ); //@codingStandardsIgnoreLine
+				wp_redirect( $url, 303 ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 
 				exit();
 			} else {
@@ -468,15 +468,15 @@ abstract class Wprus_Api_Abstract {
 		if ( ! $this->is_silent_async_action_redirect() ) {
 
 			if ( ! has_action( 'wp_head', array( $this, 'fire_async_actions' ) ) ) {
-				add_action( 'wp_head', array( $this, 'fire_async_actions' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'wp_head', array( $this, 'fire_async_actions' ), PHP_INT_MIN + 100, 0 );
 			}
 
 			if ( ! has_action( 'admin_head', array( $this, 'fire_async_actions' ) ) ) {
-				add_action( 'admin_head', array( $this, 'fire_async_actions' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'admin_head', array( $this, 'fire_async_actions' ), PHP_INT_MIN + 100, 0 );
 			}
 
 			if ( ! has_action( 'login_head', array( $this, 'fire_async_actions' ) ) ) {
-				add_action( 'login_head', array( $this, 'fire_async_actions' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'login_head', array( $this, 'fire_async_actions' ), PHP_INT_MIN + 100, 0 );
 			}
 		} else {
 			$this->init_silent_async_redirect_hooks();
@@ -498,15 +498,15 @@ abstract class Wprus_Api_Abstract {
 		if ( ! $this->needs_redirect() ) {
 
 			if ( ! has_action( 'wp_footer', array( $this, 'fire_async_actions' ) ) ) {
-				add_action( 'wp_footer', array( $this, 'fire_async_actions' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'wp_footer', array( $this, 'fire_async_actions' ), PHP_INT_MIN + 100, 0 );
 			}
 
 			if ( ! has_action( 'admin_footer', array( $this, 'fire_async_actions' ) ) ) {
-				add_action( 'admin_footer', array( $this, 'fire_async_actions' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'admin_footer', array( $this, 'fire_async_actions' ), PHP_INT_MIN + 100, 0 );
 			}
 
 			if ( ! has_action( 'login_footer', array( $this, 'fire_async_actions' ) ) ) {
-				add_action( 'login_footer', array( $this, 'fire_async_actions' ), PHP_INT_MIN - 10, 0 );
+				add_action( 'login_footer', array( $this, 'fire_async_actions' ), PHP_INT_MIN + 100, 0 );
 			}
 		} else {
 			$this->init_async_redirect_hooks();
@@ -1093,7 +1093,7 @@ abstract class Wprus_Api_Abstract {
 			}
 		} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			headers_sent( $file, $line );
-			trigger_error(  // @codingStandardsIgnoreLine
+			trigger_error(  // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
 				esc_html( $name . 'cookie cannot be set - headers already sent by ' . $file . 'on line' . $line ),
 				E_USER_NOTICE
 			);
@@ -1233,10 +1233,10 @@ abstract class Wprus_Api_Abstract {
 		);
 
 		if ( $this->is_silent_async_action_redirect() ) {
-			wp_redirect( $async_url, 303 ); // @codingStandardsIgnoreLine
+			wp_redirect( $async_url, 303 ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		}
 
-		echo $output; // @codingStandardsIgnoreLine
+		echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -1274,7 +1274,7 @@ abstract class Wprus_Api_Abstract {
 			);
 		}
 
-		echo $output; // @codingStandardsIgnoreLine
+		echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		do_action( 'wprus_after_firing_async_actions', $this->endpoint, $actions, $user_id );
 		delete_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions' );
 
@@ -1290,7 +1290,7 @@ abstract class Wprus_Api_Abstract {
 	protected function get_async_action_output( $async_url, $redirect = false ) {
 
 		if ( ! $redirect ) {
-			return '<iframe style="display:none" src="' . $async_url . '"></iframe>'; // @codingStandardsIgnoreLine
+			return '<iframe style="display:none" src="' . $async_url . '"></iframe>'; // phpcs:ignor
 		}
 
 		ob_start();

@@ -11,7 +11,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 	 *******************************************************************/
 
 	public function init_notification_hooks() {
-		add_action( 'delete_user', array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
+		add_action( 'delete_user', array( $this, 'notify_remote' ), PHP_INT_MAX - 100, 2 );
 	}
 
 	public function handle_notification() {

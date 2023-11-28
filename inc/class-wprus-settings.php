@@ -35,8 +35,8 @@ class Wprus_Settings {
 		);
 
 		if ( $init_hooks ) {
-			add_action( 'init', array( $this, 'load_textdomain' ), PHP_INT_MIN - 10, 0 );
-			add_action( 'init', array( $this, 'set_cache_policy' ), PHP_INT_MIN - 10, 0 );
+			add_action( 'init', array( $this, 'load_textdomain' ), PHP_INT_MIN + 100, 0 );
+			add_action( 'init', array( $this, 'set_cache_policy' ), PHP_INT_MIN + 100, 0 );
 			add_action( 'admin_menu', array( $this, 'plugin_options_menu_main' ), 10, 0 );
 			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 1 );
 
@@ -117,7 +117,7 @@ class Wprus_Settings {
 		$class   = 'notice notice-error is-dismissible';
 		$message = __( 'WP Remote Users Sync is not ready. ', 'wprus' );
 
-		printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message . $link . $this->error ); // @codingStandardsIgnoreLine
+		printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message . $link . $this->error ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public function plugin_options_menu_main() {
@@ -463,7 +463,7 @@ class Wprus_Settings {
 	public function plugin_main_page() {
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'Sorry, you are not allowed to access this page.', 'wprus' ) ); // @codingStandardsIgnoreLine
+			wp_die( __( 'Sorry, you are not allowed to access this page.', 'wprus' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		global $hook_suffix;
@@ -789,8 +789,8 @@ class Wprus_Settings {
 			;';
 
 			$params    = array_merge( $exclude, $exclude_like );
-			$query     = $wpdb->prepare( $sql, $params ); // @codingStandardsIgnoreLine
-			$meta_keys = $wpdb->get_col( $query ); // @codingStandardsIgnoreLine
+			$query     = $wpdb->prepare( $sql, $params ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$meta_keys = $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			wp_cache_set( 'wprus_meta_keys', $meta_keys, 'wprus' );
 		}

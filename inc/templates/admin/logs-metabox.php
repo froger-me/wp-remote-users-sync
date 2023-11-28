@@ -36,9 +36,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</table>
 	<div class="logs-container">
 		<div id="logs_view">
-			<?php echo $logs; // @codingStandardsIgnoreLine ?>
+			<?php echo $logs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
-		<button class="button" id="wprus_log_refresh"><?php esc_html_e( 'Refresh', 'wprus' ); ?></button>		
+		<button class="button" id="wprus_log_refresh"><?php esc_html_e( 'Refresh', 'wprus' ); ?></button>
 	</div>
 
 </div>

@@ -398,7 +398,7 @@ class Wprus_Import_Export {
 	}
 
 	protected function read_from_imported_file( $file, &$errors ) {
-		$fp = @fopen( $file, 'r' ); // @codingStandardsIgnoreLine
+		$fp = @fopen( $file, 'r' ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 
 		if ( ! $fp ) {
 
@@ -407,13 +407,13 @@ class Wprus_Import_Export {
 			$line        = 0;
 			$num_results = 0;
 
-			while ( ! feof( $fp )  ) { // @codingStandardsIgnoreLine
+			while ( ! feof( $fp )  ) { // phpcs:ignore WordPress.WhiteSpace.ControlStructureSpacing.ExtraSpaceBeforeCloseParenthesis
 				++$line;
 
 				$line_content = fgets( $fp );
 
 				if ( ! empty( $line_content ) ) {
-					$user_data = json_decode( $line_content, true ); // @codingStandardsIgnoreLine
+					$user_data = json_decode( $line_content, true ); // phpcs:ignor
 					$result    = $this->process_user_data( $user_data, $line );
 
 					if ( true !== $result ) {
@@ -424,10 +424,10 @@ class Wprus_Import_Export {
 				}
 			}
 
-			fclose( $fp ); // @codingStandardsIgnoreLine
+			fclose( $fp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		}
 
-		@unlink( $file ); // @codingStandardsIgnoreLine
+		@unlink( $file ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.unlink_unlink
 
 		return $num_results;
 	}
@@ -624,7 +624,7 @@ class Wprus_Import_Export {
 	protected function put_contents( $file, $contents, $mode = false ) {
 		global $wp_filesystem;
 
-		$fp = @fopen( $file, 'ab' ); // @codingStandardsIgnoreLine
+		$fp = @fopen( $file, 'ab' ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 
 		if ( ! $fp ) {
 
@@ -634,11 +634,11 @@ class Wprus_Import_Export {
 		mbstring_binary_safe_encoding();
 
 		$data_length   = strlen( $contents );
-		$bytes_written = fwrite( $fp, $contents ); // @codingStandardsIgnoreLine
+		$bytes_written = fwrite( $fp, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 
 		reset_mbstring_encoding();
 
-		fclose( $fp ); // @codingStandardsIgnoreLine
+		fclose( $fp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
 		if ( $data_length !== $bytes_written ) {
 
@@ -669,11 +669,11 @@ class Wprus_Import_Export {
 		header( 'Content-type: application/octet-stream; charset=UTF-8' );
 		status_header( 200 );
 
-		$file_handle   = fopen( $file, 'r' ); // @codingStandardsIgnoreLine
-		$output_handle = fopen( 'php://output', 'w' ); // @codingStandardsIgnoreLine
+		$file_handle   = fopen( $file, 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		$output_handle = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 
 		stream_copy_to_stream( $file_handle, $output_handle );
-		fclose( $file_handle ); // @codingStandardsIgnoreLine
-		fclose( $output_handle ); // @codingStandardsIgnoreLine
+		fclose( $file_handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+		fclose( $output_handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	}
 }

@@ -62,13 +62,13 @@ class Wprus_Logger {
 		$table  = Wprus::get_table( 'wprus_logs' );
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM $table " // @codingStandardsIgnoreLine
+				"DELETE FROM $table " // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				. "
 				WHERE id <= (
 					SELECT id
 					FROM (
 						SELECT id
-						FROM $table " // @codingStandardsIgnoreLine
+						FROM $table " // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 						. '
 						ORDER BY id DESC
 						LIMIT 1 OFFSET %d
@@ -85,7 +85,7 @@ class Wprus_Logger {
 		global $wpdb;
 
 		$table = Wprus::get_table( 'wprus_logs' );
-		$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE 1 = 1;" ); // @codingStandardsIgnoreLine
+		$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE 1 = 1;" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return absint( $count );
 	}
@@ -97,7 +97,7 @@ class Wprus_Logger {
 		$table = Wprus::get_table( 'wprus_logs' );
 		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM $table ORDER BY timestamp ASC LIMIT %d;", // @codingStandardsIgnoreLine
+				"SELECT * FROM $table ORDER BY timestamp ASC LIMIT %d;", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				self::$log_settings['min_num']
 			)
 		);
@@ -153,7 +153,7 @@ class Wprus_Logger {
 
 		$table = Wprus::get_table( 'wprus_logs' );
 
-		$wpdb->query( "TRUNCATE TABLE $table;" ); // @codingStandardsIgnoreLine
+		$wpdb->query( "TRUNCATE TABLE $table;" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	public function init() {
@@ -252,7 +252,7 @@ class Wprus_Logger {
 		}
 
 		$extend_context      = ( $extend_context ) ? ' - ' . $extend_context : '';
-		$trace               = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 ); // @codingStandardsIgnoreLine
+		$trace               = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 		$caller_line_holder  = $trace[1];
 		$caller_class_holder = $trace[2];
 		$class               = isset( $caller_class_holder['class'] ) ? $caller_class_holder['class'] : '';
@@ -260,6 +260,6 @@ class Wprus_Logger {
 		$function            = isset( $caller_class_holder['function'] ) ? $caller_class_holder['function'] : '';
 		$context             = $class . $type . $function . ' on line ' . $caller_line_holder['line'] . $extend_context . ': ';
 
-		error_log( $context . $expression ); // @codingStandardsIgnoreLine
+		error_log( $context . $expression ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 	}
 }

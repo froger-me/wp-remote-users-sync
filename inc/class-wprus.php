@@ -15,7 +15,7 @@ class Wprus {
 
 		if ( $init_hooks ) {
 			// Add the API endpoints
-			add_action( 'init', array( $this, 'add_endpoints' ), PHP_INT_MIN - 10, 0 );
+			add_action( 'init', array( $this, 'add_endpoints' ), PHP_INT_MIN + 100, 0 );
 			// Parse the endpoint request
 			add_action( 'parse_request', array( $this, 'parse_request' ), 10, 0 );
 
@@ -45,7 +45,7 @@ class Wprus {
 		$prefix = $wpdb->esc_like( '_transient_wprus_' );
 		$sql    = "DELETE FROM $wpdb->options WHERE `option_name` LIKE '%s'";
 
-		$wpdb->query( $wpdb->prepare( $sql, $prefix . '%' ) ); // @codingStandardsIgnoreLine
+		$wpdb->query( $wpdb->prepare( $sql, $prefix . '%' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	}
 
 	public static function uninstall() {
@@ -79,7 +79,7 @@ class Wprus {
 
 		dbDelta( $sql );
 
-		$table = $wpdb->get_var( "SHOW TABLES LIKE '" . self::get_table( 'wprus_nonce' ) . "'" ); // @codingStandardsIgnoreLine
+		$table = $wpdb->get_var( "SHOW TABLES LIKE '" . self::get_table( 'wprus_nonce' ) . "'" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( self::get_table( 'wprus_nonce' ) !== $table ) {
 
@@ -100,7 +100,7 @@ class Wprus {
 
 		dbDelta( $sql );
 
-		$table = $wpdb->get_var( "SHOW TABLES LIKE '" . self::get_table( 'wprus_logs' ) . "'" ); // @codingStandardsIgnoreLine
+		$table = $wpdb->get_var( "SHOW TABLES LIKE '" . self::get_table( 'wprus_logs' ) . "'" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( self::get_table( 'wprus_logs' ) !== $table ) {
 

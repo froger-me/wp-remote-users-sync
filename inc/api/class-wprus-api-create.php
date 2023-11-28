@@ -11,7 +11,7 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 	 *******************************************************************/
 
 	public function init_notification_hooks() {
-		add_action( 'user_register', array( $this, 'notify_remote' ), PHP_INT_MAX, 1 );
+		add_action( 'user_register', array( $this, 'notify_remote' ), PHP_INT_MAX - 100, 1 );
 	}
 
 	public function handle_notification() {

@@ -194,8 +194,8 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 
 		if ( false !== strpos( $url, 'wp-login.php' ) ) {
 
-			if ( isset( $_REQUEST['redirect_to'] ) ) { // @codingStandardsIgnoreLine
-				$redirect_to   = $_REQUEST['redirect_to']; // @codingStandardsIgnoreLine
+			if ( isset( $_REQUEST['redirect_to'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$redirect_to   = $_REQUEST['redirect_to']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$secure_cookie = is_ssl();
 
 				if ( $secure_cookie && false !== strpos( $redirect_to, 'wp-admin' ) ) {
@@ -205,7 +205,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 				$redirect_to = admin_url();
 			}
 
-			$requested_redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';  // @codingStandardsIgnoreLine
+			$requested_redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$url                   = apply_filters( 'login_redirect', $redirect_to, $requested_redirect_to, wp_get_current_user() );
 		}
 

@@ -11,7 +11,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 	 *******************************************************************/
 
 	public function init_notification_hooks() {
-		add_action( 'clear_auth_cookie', array( $this, 'notify_remote' ), PHP_INT_MAX, 0 );
+		add_action( 'clear_auth_cookie', array( $this, 'notify_remote' ), PHP_INT_MAX - 100, 0 );
 	}
 
 	public function has_async_actions() {

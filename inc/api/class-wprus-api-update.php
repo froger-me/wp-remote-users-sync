@@ -5,16 +5,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Wprus_Api_Update extends Wprus_Api_Abstract {
+	protected $user_data = array();
 
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
 
 	public function init_notification_hooks() {
-		add_action( 'profile_update', array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
-		add_action( 'add_user_role', array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
-		add_action( 'remove_user_role', array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
-		add_action( 'set_user_role', array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
+		add_action( 'shutdown', array( $this, 'notify_remote' ), PHP_INT_MAX - 100, 0 );
+		add_action( 'profile_update', array( $this, 'track_updates' ), PHP_INT_MAX - 100, 1 );
+		add_action( 'add_user_role', array( $this, 'track_updates' ), PHP_INT_MAX - 100, 1 );
+		add_action( 'remove_user_role', array( $this, 'track_updates' ), PHP_INT_MAX - 100, 1 );
+		add_action( 'set_user_role', array( $this, 'track_updates' ), PHP_INT_MAX - 100, 1 );
+		add_action( 'wp_update_user', array( $this, 'track_updates' ), PHP_INT_MAX - 100, 1 );
 
 		// There is no 'before_profile_update' action so we do what we need to do in a filter (bad practice but no choice)
 		add_filter( 'pre_user_login', array( $this, 'remove_set_user_role_action' ), 10, 1 );
@@ -137,7 +140,7 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 		return $result;
 	}
 
-	public function notify_remote( $user_id, $old_userdata ) {
+	public function track_updates( $user_id ) {
 		$sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 		$user  = get_user_by( 'ID', $user_id );
 
@@ -163,27 +166,41 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 				'locale'               => $user->locale,
 			);
 
-			Wprus_Logger::log(
-				sprintf(
-					// translators: %s is the username
-					__( 'Update action - firing action for username "%s"', 'wprus' ),
-					$user->user_login
-				),
-				'info',
-				'db_log'
-			);
-
 			foreach ( $sites as $index => $site ) {
 				$data = $this->password_handler->handle_notify_remote_data( $data, $site );
 				$data = $this->role_handler->handle_notify_remote_data( $data, $site, $user );
 
-				$this->fire_action( $site['url'], $data );
+				$this->user_data[ $site['url'] ] = $data;
+			}
+		}
+	}
+
+	public function notify_remote() {
+		$logged = false;
+
+		if ( ! empty( $this->user_data ) ) {
+
+			foreach ( $this->user_data as $site_url => $data ) {
+
+				if ( ! $logged ) {
+					Wprus_Logger::log(
+						sprintf(
+							// translators: %s is the username
+							__( 'Update action - firing action for username "%s"', 'wprus' ),
+							$data['user_login']
+						),
+						'info',
+						'db_log'
+					);
+				}
+
+				$this->fire_action( $site_url, $data );
 			}
 		}
 	}
 
 	public function remove_set_user_role_action( $user_login ) {
-		remove_action( 'set_user_role', array( $this, 'notify_remote' ), PHP_INT_MAX );
+		remove_action( 'set_user_role', array( $this, 'notify_remote' ), PHP_INT_MAX - 100 );
 
 		return $user_login;
 	}

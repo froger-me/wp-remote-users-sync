@@ -61,8 +61,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<ul>
 					<li>
 						<?php
+						printf(
 							// translators: %1$s is the bold englisg word "exactly" ; %2$s is 'http'; %3$s is 'https'; %4$s is 'home' option key in the database ; %5$s is 'wp_options' table name
-							printf( __( 'The URLs used in settings of WP Remote Users Sync %1$s match the URL in your WordPress settings: the protocol (%2$s vs. %3$s) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the %4$s option in the %5$s table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.', 'wprus' ), '<strong>' . esc_html__( 'exactly', 'wprus' ) . '</strong>', '<code>http</code>', '<code>https</code>', '<code>home</code>', '<code>wp_options</code>' ); // @codingStandardsIgnoreLine
+							esc_html__( 'The URLs used in settings of WP Remote Users Sync %1$s match the URL in your WordPress settings: the protocol (%2$s vs. %3$s) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the %4$s option in the %5$s table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.', 'wprus' ),
+							'<strong>' . esc_html__( 'exactly', 'wprus' ) . '</strong>',
+							'<code>http</code>',
+							'<code>https</code>',
+							'<code>home</code>',
+							'<code>wp_options</code>'
+						);
 						?>
 					</li>
 					<li><?php esc_html_e( 'Visit the permalinks page of each connected site (Settings > Permalinks)', 'wprus' ); ?></li>

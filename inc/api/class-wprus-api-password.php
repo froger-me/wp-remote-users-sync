@@ -6,18 +6,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Wprus_Api_Password extends Wprus_Api_Abstract {
 	protected $user_pass;
+	protected $user;
 
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
 
 	public function init_notification_hooks() {
-		add_action( 'after_password_reset', array( $this, 'notify_remote' ), PHP_INT_MAX, 2 );
+		add_action( 'password_reset', array( $this, 'schedule_shutdown' ), PHP_INT_MAX - 100, 2 );
 		add_action( 'wprus_password', array( $this, 'handle_password_creation' ), 10, 1 );
+		add_action( 'wp_set_password', array( $this, 'handle_password_creation' ), PHP_INT_MAX - 100, 1 );
+		add_action( 'wp_update_user', array( $this, 'handle_password_update' ), PHP_INT_MAX - 100, 3 );
 	}
 
 	public function handle_password_creation( $password ) {
 		$this->user_pass = $password;
+	}
+
+	public function handle_password_update( $user_id, $user_data, $userdata_raw ) {
+
+		if ( isset( $userdata_raw['user_pass'] ) ) {
+			$this->user_pass = $userdata_raw['user_pass'];
+		}
 	}
 
 	public function handle_notification_password_data( $data, $site, $user = false ) {
@@ -111,20 +121,27 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 		return $result;
 	}
 
-	public function notify_remote( $user, $new_pass ) {
+	public function schedule_shutdown( $user, $new_pass ) {
+		$this->user_pass = $new_pass;
+		$this->user      = $user;
+
+		add_action( 'shutdown', array( $this, 'notify_remote' ), PHP_INT_MAX - 100 );
+	}
+
+	public function notify_remote() {
 		$sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 
 		if ( ! empty( $sites ) ) {
 			$data = array(
-				'username'  => $user->user_login,
-				'user_pass' => $new_pass,
+				'username'  => $this->user->user_login,
+				'user_pass' => $this->user_pass,
 			);
 
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the username
 					__( 'Password action - firing action reset for username "%s"', 'wprus' ),
-					$user->user_login
+					$this->user->user_login
 				),
 				'info',
 				'db_log'

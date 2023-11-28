@@ -12,11 +12,11 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	 *******************************************************************/
 
 	public function init_notification_hooks() {
-		add_action( 'shutdown', array( $this, 'notify_remote' ), PHP_INT_MAX, 0 );
+		add_action( 'shutdown', array( $this, 'notify_remote' ), PHP_INT_MAX - 100, 0 );
 
-		add_filter( 'update_user_metadata', array( $this, 'track_user_meta_update' ), PHP_INT_MAX, 5 );
-		add_filter( 'add_user_metadata', array( $this, 'track_user_meta_add' ), PHP_INT_MAX, 5 );
-		add_filter( 'delete_user_metadata', array( $this, 'track_user_meta_delete' ), PHP_INT_MAX, 5 );
+		add_filter( 'update_user_metadata', array( $this, 'track_user_meta_update' ), PHP_INT_MAX - 100, 5 );
+		add_filter( 'add_user_metadata', array( $this, 'track_user_meta_add' ), PHP_INT_MAX - 100, 5 );
+		add_filter( 'delete_user_metadata', array( $this, 'track_user_meta_delete' ), PHP_INT_MAX - 100, 5 );
 	}
 
 	public function track_user_meta_update( $check, $user_id, $meta_key, $meta_value, $prev_value = '' ) {
@@ -297,7 +297,6 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	}
 
 	public function notify_remote() {
-		$sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 
 		if ( ! empty( $this->meta_values ) ) {
 			Wprus_Logger::log(

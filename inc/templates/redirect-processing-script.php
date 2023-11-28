@@ -12,6 +12,6 @@
 		window.location.replace(`<?php echo esc_url_raw( $async_url ); ?>`);
 	}, 1);
 	document.open();
-	document.write(`<?php echo $output; // @codingStandardsIgnoreLine ?>`);
+	document.write(`<?php echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>`);
 	document.close();
 </script>
