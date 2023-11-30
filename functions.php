@@ -4,6 +4,20 @@ if ( ! defined( 'ABSPATH' ) || ! defined( 'WPINC' ) ) {
 	exit; // Exit if accessed directly
 }
 
+if ( ! function_exists( 'php_log' ) ) {
+	function php_log( $message = '', $prefix = '' ) {
+		$prefix   = $prefix ? ' ' . $prefix . ' => ' : ' => ';
+		$trace    = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
+		$caller   = end( $trace );
+		$class    = isset( $caller['class'] ) ? $caller['class'] : '';
+		$type     = isset( $caller['type'] ) ? $caller['type'] : '';
+		$function = isset( $caller['function'] ) ? $caller['function'] : '';
+		$context  = $class . $type . $function . $prefix;
+
+		error_log( $context . print_r( $message, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r, WordPress.PHP.DevelopmentFunctions.error_log_error_log
+	}
+}
+
 if ( ! function_exists( 'wp_hash_password' ) ) {
 
 	function wp_hash_password( $password ) {

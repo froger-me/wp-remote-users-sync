@@ -4,7 +4,7 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 6.4.1
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -172,6 +172,9 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for previously unanswered general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 2.0.3 =
+* Password handling third-party compatibility improvements - leverage per-request cache (non-persistent)
 
 = 2.0.2 =
 * Better password handling (update, reset)

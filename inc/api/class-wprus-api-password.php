@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Wprus_Api_Password extends Wprus_Api_Abstract {
-	protected $user_pass;
-	protected $user;
 
 	/*******************************************************************
 	 * Public methods
@@ -20,13 +18,13 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 	}
 
 	public function handle_password_creation( $password ) {
-		$this->user_pass = $password;
+		wp_cache_set( 'wprus_api_password_plain_text_pwd', $password, 'wprus' );
 	}
 
 	public function handle_password_update( $user_id, $user_data, $userdata_raw ) {
 
 		if ( isset( $userdata_raw['user_pass'] ) ) {
-			$this->user_pass = $userdata_raw['user_pass'];
+			wp_cache_set( 'wprus_api_password_plain_text_pwd', $userdata_raw['user_pass'], 'wprus' );
 		}
 	}
 
@@ -54,7 +52,11 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 	public function handle_notify_remote_data( $data, $site ) {
 
 		if ( $site['outgoing_actions']['password'] ) {
-			$data['user_pass'] = $this->user_pass;
+			$pass = wp_cache_get( 'wprus_api_password_plain_text_pwd', 'wprus' );
+
+			if ( $pass ) {
+				$data['user_pass'] = $pass;
+			}
 		}
 
 		return $data;
@@ -122,26 +124,27 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 	}
 
 	public function schedule_shutdown( $user, $new_pass ) {
-		$this->user_pass = $new_pass;
-		$this->user      = $user;
-
+		wp_cache_set( 'wprus_api_password_plain_text_pwd', $new_pass, 'wprus' );
+		wp_cache_set( 'wprus_api_password_user', $user, 'wprus' );
 		add_action( 'shutdown', array( $this, 'notify_remote' ), PHP_INT_MAX - 100 );
 	}
 
 	public function notify_remote() {
 		$sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
+		$pass  = wp_cache_get( 'wprus_api_password_plain_text_pwd', 'wprus' );
+		$user  = wp_cache_get( 'wprus_api_password_user', 'wprus' );
 
 		if ( ! empty( $sites ) ) {
 			$data = array(
-				'username'  => $this->user->user_login,
-				'user_pass' => $this->user_pass,
+				'username'  => $user->user_login,
+				'user_pass' => $pass,
 			);
 
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the username
 					__( 'Password action - firing action reset for username "%s"', 'wprus' ),
-					$this->user->user_login
+					$user->user_login
 				),
 				'info',
 				'db_log'
