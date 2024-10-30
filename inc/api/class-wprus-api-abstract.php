@@ -797,7 +797,7 @@ abstract class Wprus_Api_Abstract {
 
 			$this->setcookie(
 				'wprus_user_pending_async_actions',
-				$this->encrypt_data( get_current_user_id() )
+				bin2hex( $this->encrypt_data( get_current_user_id() ) )
 			);
 		}
 	}
@@ -849,7 +849,7 @@ abstract class Wprus_Api_Abstract {
 				$user_id = get_current_user_id();
 			} else {
 				$cookie  = filter_input( INPUT_COOKIE, 'wprus_user_pending_async_actions' );
-				$user_id = ( $cookie ) ? $this->decrypt_data( $cookie ) : false;
+				$user_id = ( $cookie ) ? $this->decrypt_data( hex2bin( $cookie ) ) : false;
 			}
 
 			$user    = ( $user_id ) ? get_user_by( 'ID', $user_id ) : false;
@@ -1073,7 +1073,7 @@ abstract class Wprus_Api_Abstract {
 	 */
 	protected function setcookie( $name, $value, $expire = 0 ) {
 
-		if ( ! headers_sent() ) {
+		if ( ! headers_sent( $file, $line ) ) {
 
 			if ( PHP_VERSION_ID < 70300 ) {
 				setcookie( $name, $value, $expire, COOKIEPATH ? COOKIEPATH . '; SameSite=None' : '/; SameSite=None', COOKIE_DOMAIN, true, false );
@@ -1092,7 +1092,6 @@ abstract class Wprus_Api_Abstract {
 				);
 			}
 		} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			headers_sent( $file, $line );
 			trigger_error(  // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
 				esc_html( $name . 'cookie cannot be set - headers already sent by ' . $file . 'on line' . $line ),
 				E_USER_NOTICE

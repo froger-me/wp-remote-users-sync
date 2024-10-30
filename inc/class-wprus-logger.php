@@ -93,6 +93,12 @@ class Wprus_Logger {
 	public static function get_logs() {
 		global $wpdb;
 
+		if ( ! isset( self::$log_settings ) ) {
+			$instance = new self( new Wprus_Settings() );
+
+			$instance->init();
+		}
+
 		$logs  = '';
 		$table = Wprus::get_table( 'wprus_logs' );
 		$rows  = $wpdb->get_results(
