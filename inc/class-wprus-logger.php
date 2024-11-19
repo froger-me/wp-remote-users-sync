@@ -23,8 +23,8 @@ class Wprus_Logger {
 		);
 
 		if ( $init_hooks ) {
-			add_action( 'wp', array( get_class(), 'register_logs_cleanup' ) );
-			add_action( 'wprus_logs_cleanup', array( get_class(), 'clear_logs' ) );
+			add_action( 'wp', array( self::class, 'register_logs_cleanup' ) );
+			add_action( 'wprus_logs_cleanup', array( self::class, 'clear_logs' ) );
 			add_action( 'wp_ajax_wprus_refresh_logs', array( $this, 'refresh_logs_async' ), 10, 0 );
 			add_action( 'wp_ajax_wprus_clear_logs', array( $this, 'clear_logs_async' ), 10, 0 );
 		}
@@ -45,8 +45,8 @@ class Wprus_Logger {
 
 	public static function log( $expression, $extend = '', $destination = 'error_log' ) {
 
-		if ( method_exists( get_class(), $destination ) ) {
-			call_user_func_array( array( get_class(), $destination ), array( $expression, $extend ) );
+		if ( method_exists( self::class, $destination ) ) {
+			call_user_func_array( array( self::class, $destination ), array( $expression, $extend ) );
 		}
 	}
 

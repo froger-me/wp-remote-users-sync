@@ -262,10 +262,12 @@ abstract class Wprus_Api_Abstract {
 		}
 
 		if ( $token_info ) {
-			$action_label = isset( $data['action'] ) ? $data['action'] : __( 'Token', 'wprus' );
+			$action_label   = isset( $data['action'] ) ? $data['action'] : __( 'Token', 'wprus' );
+			$settings_class = self::$settings_class;
+			$class_vars     = get_class_vars( $settings_class );
 
-			if ( isset( self::$settings_class::$actions[ $action_label ] ) ) {
-				$action_label = self::$settings_class::$actions[ $action_label ];
+			if ( isset( $class_vars['actions'][ $action_label ] ) ) {
+				$action_label = $class_vars['actions'][ $action_label ];
 			}
 
 			Wprus_Logger::log(
@@ -622,9 +624,11 @@ abstract class Wprus_Api_Abstract {
 		$action_label    = $this->endpoint;
 		$direction_label = ( 'incoming' === $data['direction'] ) ? __( 'incoming', 'wprus' ) : __( 'outgoing', 'wprus' );
 		$remote_addr     = $_SERVER['REMOTE_ADDR'];
+		$settings_class  = self::$settings_class;
+		$class_vars      = get_class_vars( $settings_class );
 
-		if ( isset( self::$settings_class::$actions[ $action_label ] ) ) {
-			$action_label = self::$settings_class::$actions[ $action_label ];
+		if ( isset( $class_vars['actions'][ $action_label ] ) ) {
+			$action_label = $class_vars['actions'][ $action_label ];
 		}
 
 		if ( $site ) {

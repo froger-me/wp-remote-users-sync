@@ -11,8 +11,8 @@ class Wprus_Import_Export {
 
 		if ( $init_hooks ) {
 			add_action( 'parse_request', array( $this, 'parse_request' ), 10, 0 );
-			add_action( 'wp', array( get_class(), 'register_files_cleanup' ) );
-			add_action( 'wprus_files_cleanup', array( get_class(), 'wprus_files_cleanup' ) );
+			add_action( 'wp', array( self::class, 'register_files_cleanup' ) );
+			add_action( 'wprus_files_cleanup', array( self::class, 'wprus_files_cleanup' ) );
 			add_action( 'wp_ajax_wprus_import_users', array( $this, 'import' ), 10, 0 );
 			add_action( 'wp_ajax_wprus_export_users', array( $this, 'export' ), 10, 0 );
 			add_action( 'wp_ajax_wprus_get_usernames', array( $this, 'get_usernames_json' ), 10, 0 );

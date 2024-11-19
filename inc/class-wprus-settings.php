@@ -61,8 +61,8 @@ class Wprus_Settings {
 
 	public static function get_option( $key, $default_val = false ) {
 
-		if ( ! $default_val && method_exists( get_class(), 'get_default_' . $key . '_option' ) ) {
-			$default_val = call_user_func( array( get_class(), 'get_default_' . $key . '_option' ) );
+		if ( ! $default_val && method_exists( self::class, 'get_default_' . $key . '_option' ) ) {
+			$default_val = call_user_func( array( self::class, 'get_default_' . $key . '_option' ) );
 		}
 
 		$options = self::$settings;

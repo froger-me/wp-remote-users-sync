@@ -15,8 +15,8 @@ class Wprus_Nonce {
 		self::$expiry_length = $expiry_length;
 
 		if ( $init_hooks ) {
-			add_action( 'wp', array( get_class(), 'register_nonce_cleanup' ) );
-			add_action( 'wprus_nonce_cleanup', array( get_class(), 'clear_nonces' ) );
+			add_action( 'wp', array( self::class, 'register_nonce_cleanup' ) );
+			add_action( 'wprus_nonce_cleanup', array( self::class, 'clear_nonces' ) );
 		}
 	}
 
