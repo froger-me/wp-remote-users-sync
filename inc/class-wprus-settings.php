@@ -8,8 +8,8 @@ class Wprus_Settings {
 	const DEFAULT_TOKEN_EXPIRY_LENGTH = HOUR_IN_SECONDS / 2;
 	const DEFAULT_MIN_LOG             = 100;
 
-	public static $actions;
-
+	protected static $actions;
+	protected static $endpoints;
 	protected static $settings;
 	protected static $settings_page_id = 'settings_page_wprus';
 
@@ -18,25 +18,12 @@ class Wprus_Settings {
 	protected $sites;
 	protected $error;
 
-	public function __construct( $init_hooks = false ) {
-		$this->load_textdomain();
-		self::$actions = apply_filters(
-			'wprus_actions',
-			array(
-				'login'    => __( 'Login', 'wprus' ),
-				'logout'   => __( 'Logout', 'wprus' ),
-				'create'   => __( 'Create', 'wprus' ),
-				'update'   => __( 'Update', 'wprus' ),
-				'delete'   => __( 'Delete', 'wprus' ),
-				'password' => __( 'Password', 'wprus' ),
-				'role'     => __( 'Roles', 'wprus' ),
-				'meta'     => __( 'Metadata', 'wprus' ),
-			)
-		);
+	public function __construct( $endpoints, $init_hooks = false ) {
 
 		if ( $init_hooks ) {
 			add_action( 'init', array( $this, 'load_textdomain' ), PHP_INT_MIN + 100, 0 );
 			add_action( 'init', array( $this, 'set_cache_policy' ), PHP_INT_MIN + 100, 0 );
+			add_action( 'init', array( $this, 'init' ), PHP_INT_MIN + 150, 0 );
 			add_action( 'admin_menu', array( $this, 'plugin_options_menu_main' ), 10, 0 );
 			add_action( 'add_meta_boxes', array( $this, 'add_settings_meta_boxes' ), 10, 1 );
 
@@ -45,7 +32,8 @@ class Wprus_Settings {
 			add_filter( 'plugin_action_links_wp-remote-users-sync/wprus.php', array( $this, 'plugin_action_links' ), 10, 1 );
 		}
 
-		self::$settings = self::get_options();
+		self::$endpoints = $endpoints;
+		self::$settings  = self::get_options();
 	}
 
 	/*******************************************************************
@@ -90,6 +78,22 @@ class Wprus_Settings {
 
 	public function load_textdomain() {
 		load_plugin_textdomain( 'wprus', false, 'wp-remote-users-sync/languages' );
+	}
+
+	public function init() {
+		self::$actions = apply_filters(
+			'wprus_actions',
+			array(
+				'login'    => __( 'Login', 'wprus' ),
+				'logout'   => __( 'Logout', 'wprus' ),
+				'create'   => __( 'Create', 'wprus' ),
+				'update'   => __( 'Update', 'wprus' ),
+				'delete'   => __( 'Delete', 'wprus' ),
+				'password' => __( 'Password', 'wprus' ),
+				'role'     => __( 'Roles', 'wprus' ),
+				'meta'     => __( 'Metadata', 'wprus' ),
+			)
+		);
 	}
 
 	public function validate() {
@@ -655,10 +659,7 @@ class Wprus_Settings {
 					$settings['sites'][ $site_id ]['outgoing_roles'] = array();
 				}
 
-				$default_actions                                   = array_fill_keys(
-					array_keys( self::$actions ),
-					''
-				);
+				$default_actions                                   = array_fill_keys( self::$endpoints, '' );
 				$settings['sites'][ $site_id ]['incoming_actions'] = array_merge(
 					$default_actions,
 					$settings['sites'][ $site_id ]['incoming_actions']

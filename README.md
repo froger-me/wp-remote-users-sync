@@ -282,16 +282,16 @@ do_action( 'wprus_ready', (mixed) $wprus, (mixed) $api, (mixed) $settings, (mixe
 Fired when the plugin apis have been fully instantiated, plugin settings are valid, and the plugin is ready to run.  
 
 **Parameters**  
-$wprus
+`$wprus`
 > (mixed) An instance of the Wprus class.  
 
-$api
+`$api`
 > (mixed) Array of API handlers.  
 
-$settings
+`$settings`
 > (mixed) Array of settings.  
 
-$wprus_logger
+`$wprus_logger`
 > (mixed) An instance of the Wprus_Logger class.  
 ___
 
@@ -305,16 +305,16 @@ do_action( 'wprus_unauthorized_access', (string) $endpoint, (mixed) $remote_data
 Fired when an action is received and the token could not be validated.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint receiving the action.  
 
-$remote_data
+`$remote_data`
 > (mixed) Decrypted data received from the remote site. Should not be trusted.  
 
-$token
+`$token`
 > (string) The token used to attempt to authorise the request. May contain encrypted data in the case of an asynchronous request.  
 
-$wprus_api_object
+`$wprus_api_object`
 > (mixed) The `Wprus_Api_Abstract` object used to handle the request.  
 ___
 
@@ -328,16 +328,16 @@ do_action( 'wprus_authorized_access', (string) $endpoint, (mixed) $remote_data, 
 Fired when an action is received and the token was successfully validated.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint receiving the action.  
 
-$remote_data
+`$remote_data`
 > (mixed) Decrypted data received from the remote site.  
 
-$token
+`$token`
 > (string) The token used to authorise the request. Contains encrypted data in the case of an asynchronous request.  
 
-$wprus_api_object
+`$wprus_api_object`
 > (mixed) The `Wprus_Api_Abstract` object used to handle the request.  
 ___
 
@@ -351,13 +351,13 @@ do_action( 'wprus_ping_fired', (string) $endpoint, (mixed) $ping_data, (mixed) $
 Fired when a test ping was sent to a remote site.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint the test ping was sent to.  
 
-$ping_data
+`$ping_data`
 > (mixed) The data sent to perform the ping.  
 
-$response
+`$response`
 > (mixed) The response received from the remote site.  
 ___
 
@@ -371,13 +371,13 @@ do_action( 'wprus_ping_success', (string) $endpoint, (mixed) $ping_remote_data, 
 Fired when a test ping was received from a remote site and was successful.   
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint receiving the test ping.  
 
-$ping_remote_data
+`$ping_remote_data`
 > (mixed) The data received from the remote site to perform the ping.  
 
-$remote_addr
+`$remote_addr`
 > (string) The IP address of the remote site.  
 ___
 
@@ -391,13 +391,13 @@ do_action( 'wprus_ping_failure', (string) $endpoint, (mixed) $ping_remote_data, 
 Fired when a test ping was received from a remote site and failed.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint receiving the test ping.  
 
-$ping_remote_data
+`$ping_remote_data`
 > (mixed) The data received from the remote site to perform the ping.  
 
-$remote_addr
+`$remote_addr`
 > (string) The IP address of the remote site.  
 
 ___
@@ -412,10 +412,10 @@ do_action( 'wprus_before_firing_async_actions', (string) $endpoint, (mixed) $act
 Fired before outputting the asynchronous scripts sending requests to remote sites in the front end.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint the requests will be sent to.  
 
-$actions
+`$actions`
 > (mixed) An array of request data to send to the remote sites. Structure:  
 ```php
 array (
@@ -429,7 +429,7 @@ array (
 );
 ```
 
-$user_id
+`$user_id`
 > (int) The ID of the user for which the actions are to be performed.  
 ___
 
@@ -443,10 +443,10 @@ do_action( 'wprus_after_firing_async_actions', (string) $endpoint, (mixed) $acti
 Fired after outputting the asynchronous scripts sending requests to remote sites in the front end.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint the requests were sent to.  
 
-$actions
+`$actions`
 > (mixed) An array of request data to send to the remote sites. Structure:  
 ```php
 array (
@@ -460,7 +460,7 @@ array (
 );
 ``` 
 
-$user_id
+`$user_id`
 > (int) The ID of the user for which the actions were performed.  
 ___
 
@@ -474,13 +474,13 @@ do_action( 'wprus_before_firing_action', (string) $endpoint, (string) $url, (mix
 Fired before sending a synchronous request to a remote site.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint the request will be sent to.  
 
-$url
+`$url`
 > (string) The URL to send the request to.  
 
-$data
+`$data`
 > (mixed) The data sent to the remote site. Structure:
 ```php
 array(
@@ -500,13 +500,13 @@ do_action( 'wprus_after_firing_action', (string) $endpoint, (string) $url, (mixe
 **Description**  
 Fired after sending a synchronous request to a remote site.  
 
-$endpoint
+`$endpoint`
 > (string) The API endpoint the request will be sent to.  
 
-$url
+`$url`
 > (string) The URL to send the request to.  
 
-$data
+`$data`
 > (mixed) The data sent to the remote site. Structure:
 ```php
 array(
@@ -516,7 +516,7 @@ array(
 );
 ```
 
-$response
+`$response`
 > (mixed) Array containing `headers`, `body`, `response`, `cookies`, `filename`. A `WP_Error` instance upon error.  
 ___
 
@@ -530,10 +530,10 @@ do_action( 'wprus_before_handle_action_notification', (string) $endpoint, (mixed
 Fired before handling a notification received from a remote site.   
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint receiving the notification request.  
 
-$data
+`$data`
 > (mixed) The data received from the remote site. Structure:
 ```php
 array(
@@ -554,10 +554,10 @@ do_action( 'wprus_after_handle_action_notification', (string) $endpoint, (mixed)
 Fired after handling a notification received from a remote site.   
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint receiving the notification request.  
 
-$data
+`$data`
 > (mixed) The data received from the remote site. Structure:
 ```php
 array(
@@ -567,7 +567,7 @@ array(
 );
 ``` 
 
-$result
+`$result`
 > (bool) Wether handling the notification was successful or failed ; any change to user data is considered successful even if warnings were raised (for example, if the Update action was received and a user was created instead of updated).  
 ___
 
@@ -582,10 +582,10 @@ do_action( 'wprus_before_init_notification_hooks', (string) $endpoint, (mixed) $
 Fired before adding hooks used to notify remote sites.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint name of the object adding the notification hooks.  
 
-$wprus_api_object
+`$wprus_api_object`
 > (mixed) The `Wprus_Api_Abstract` object adding the notification hooks.  
 ___
 
@@ -599,10 +599,10 @@ do_action( 'wprus_after_init_notification_hooks', (string) $endpoint, (mixed) $w
 Fired after adding hooks used to notify remote sites.  
 
 **Parameters**  
-$endpoint
+`$endpoint`
 > (string) The API endpoint name of the object adding the notification hooks.  
 
-$wprus_api_object
+`$wprus_api_object`
 > (mixed) The `Wprus_Api_Abstract` object adding the notification hooks.  
 ___
 
@@ -615,10 +615,10 @@ do_action( 'wprus_require_integration_file', (string) $plugin_slug, (string) $cl
 Fired when an integration with a third-party plugin needs to load a class file inheriting `Wprus_Integration`.  
 
 **Parameters**  
-$plugin_slug
+`$plugin_slug`
 > (string) The slug of the plugin integrated.  
 
-$class_name
+`$class_name`
 > (string) The name of the integration class - must inherit `Wprus_Integration`.
 
 ___
@@ -632,10 +632,10 @@ do_action( 'wprus_integration', (mixed) $wprus_integration_obj, (string) $plugin
 Fired when an integration with a third-party plugin is active and loaded.  
 
 **Parameters**  
-$wprus_integration_obj
+`$wprus_integration_obj`
 > (mixed) The `Wprus_Integration` object used to provide features integration.  
 
-$plugin_slug
+`$plugin_slug`
 > (string) The slug of the plugin integrated.
 
 ___
@@ -649,7 +649,7 @@ do_action( 'wprus_integration_run', (mixed) $wprus_integration_obj );
 Fired when an integration with a third-party plugin hooks is fully initialized.  
 
 **Parameters**  
-$wprus_integration_obj
+`$wprus_integration_obj`
 > (mixed) The `Wprus_Integration` object used to provide features integration.  
 
 ___
@@ -658,32 +658,61 @@ ___
 
 Filters index:
 
-* [wprus_enabled_api_endpoints](#user-content-wprus_enabled_api_endpoints)
-* [wprus_api_endpoint](#user-content-wprus_api_endpoint)
-* [wprus_api](#user-content-wprus_api)
-* [wprus_wp_endpoints](#user-content-wprus_wp_endpoints)
-* [wprus_actions](#user-content-wprus_actions)
-* [wprus_settings](#user-content-wprus_settings)
-* [wprus_option](#user-content-wprus_option)
-* [wprus_settings_valid](#user-content-wprus_settings_valid)
-* [wprus_settings_metaboxes](#user-content-wprus_settings_metaboxes)
-* [wprus_sanitize_settings](#user-content-wprus_sanitize_settings)
-* [wprus_excluded_meta_keys](#user-content-wprus_excluded_meta_keys)
-* [wprus_excluded_meta_keys_like](#user-content-wprus_excluded_meta_keys_like)
-* [wprus_init_notification_hooks](#user-content-wprus_init_notification_hooks)
-* [wprus_fire_action_timeout](#user-content-wprus_fire_action_timeout)
-* [wprus_request_token_timeout](#user-content-wprus_request_token_timeout)
-* [wprus_request_token_retry_timeout](#user-content-wprus_request_token_retry_timeout)
-* [wprus_is_authorized_remote](#user-content-wprus_is_authorized_remote)
-* [wprus_debug](#user-content-wprus_debug)
-* [wprus_action_data](#user-content-wprus_action_data)
-* [wprus_registered_integration](#user-content-wprus_registered_integration)
-* [wprus_get_admin_template_name](#user-content-wprus_get_admin_template_name)
-* [wprus_get_admin_template_args](#user-content-wprus_get_admin_template_args)
-* [wprus_get_template_name](#user-content-wprus_get_template_name)
-* [wprus_get_template_args](#user-content-wprus_get_template_args)
-* [wprus_locate_template](#user-content-wprus_locate_template)
-* [wprus_locate_template_paths](#user-content-wprus_locate_template_paths)
+* [WP Remote Users Sync - Synchronise WordPress Users across Multiple Sites](#wp-remote-users-sync---synchronise-wordpress-users-across-multiple-sites)
+    * [General Description](#general-description)
+        * [Overview](#overview)
+    * [Adding User Actions](#adding-user-actions)
+        * [Implementing filter and actions hooks and including a custom User Action API class - example](#implementing-filter-and-actions-hooks-and-including-a-custom-user-action-api-class---example)
+        * [Implementing a custom User Action class - example](#implementing-a-custom-user-action-class---example)
+    * [Hooks - actions \& filters](#hooks---actions--filters)
+        * [Actions](#actions)
+            * [wprus\_loaded](#wprus_loaded)
+            * [wprus\_loaded](#wprus_loaded-1)
+            * [wprus\_ready](#wprus_ready)
+            * [wprus\_unauthorized\_access](#wprus_unauthorized_access)
+            * [wprus\_authorized\_access](#wprus_authorized_access)
+            * [wprus\_ping\_fired](#wprus_ping_fired)
+            * [wprus\_ping\_success](#wprus_ping_success)
+            * [wprus\_ping\_failure](#wprus_ping_failure)
+            * [wprus\_before\_firing\_async\_actions](#wprus_before_firing_async_actions)
+            * [wprus\_after\_firing\_async\_actions](#wprus_after_firing_async_actions)
+            * [wprus\_before\_firing\_action](#wprus_before_firing_action)
+            * [wprus\_after\_firing\_action](#wprus_after_firing_action)
+            * [wprus\_before\_handle\_action\_notification](#wprus_before_handle_action_notification)
+            * [wprus\_after\_handle\_action\_notification](#wprus_after_handle_action_notification)
+            * [wprus\_before\_init\_notification\_hooks](#wprus_before_init_notification_hooks)
+            * [wprus\_after\_init\_notification\_hooks](#wprus_after_init_notification_hooks)
+            * [wprus\_require\_integration\_file](#wprus_require_integration_file)
+            * [wprus\_integration](#wprus_integration)
+            * [wprus\_integration\_run](#wprus_integration_run)
+        * [Filters](#filters)
+            * [wprus\_enabled\_api\_endpoints](#wprus_enabled_api_endpoints)
+            * [wprus\_api\_endpoint](#wprus_api_endpoint)
+            * [wprus\_api](#wprus_api)
+            * [wprus\_wp\_endpoints](#wprus_wp_endpoints)
+            * [wprus\_actions](#wprus_actions)
+            * [wprus\_settings](#wprus_settings)
+            * [wprus\_option](#wprus_option)
+            * [wprus\_settings\_valid](#wprus_settings_valid)
+            * [wprus\_settings\_metaboxes](#wprus_settings_metaboxes)
+            * [wprus\_sanitize\_settings](#wprus_sanitize_settings)
+            * [wprus\_excluded\_meta\_keys](#wprus_excluded_meta_keys)
+            * [wprus\_excluded\_meta\_keys\_like](#wprus_excluded_meta_keys_like)
+            * [wprus\_init\_notification\_hooks](#wprus_init_notification_hooks)
+            * [wprus\_fire\_action\_timeout](#wprus_fire_action_timeout)
+            * [wprus\_request\_token\_timeout](#wprus_request_token_timeout)
+            * [wprus\_request\_token\_retry\_timeout](#wprus_request_token_retry_timeout)
+            * [wprus\_is\_authorized\_remote](#wprus_is_authorized_remote)
+            * [wprus\_debug](#wprus_debug)
+            * [wprus\_action\_data](#wprus_action_data)
+            * [wprus\_registered\_integration](#wprus_registered_integration)
+            * [wprus\_get\_admin\_template\_name](#wprus_get_admin_template_name)
+            * [wprus\_get\_admin\_template\_args](#wprus_get_admin_template_args)
+            * [wprus\_get\_template\_name](#wprus_get_template_name)
+            * [wprus\_get\_template\_args](#wprus_get_template_args)
+            * [wprus\_locate\_template](#wprus_locate_template)
+            * [wprus\_locate\_admin\_template](#wprus_locate_admin_template)
+            * [wprus\_locate\_template\_paths](#wprus_locate_template_paths)
 
 ___
 
@@ -696,7 +725,7 @@ apply_filters( 'wprus_enabled_api_endpoints', (mixed) $endpoints );
 Filter the enabled endpoints.  
 
 **Parameters**  
-$endpoints
+`$endpoints`
 > (array) Array of enabled API endpoints. Default: 
 ```php
 array(
@@ -721,13 +750,13 @@ apply_filters( 'wprus_api_endpoint', (mixed) $endpoint_handler, (string) $api_en
 Filter the handler object for a custom endpoint.  
 
 **Parameters**  
-$endpoint_handler
+`$endpoint_handler`
 > (mixed) The object instance of a class inherhiting the `Wprus_Api_Abstract` API class. Default `false`.    
 
-$api_endpoint
+`$api_endpoint`
 > (string) The custom API endpoint.
 
-$settings
+`$settings`
 > (mixed) Array of all the settings.  
 ___
 
@@ -740,7 +769,7 @@ apply_filters( 'wprus_api', (mixed) $api );
 Filter the collection of API handlers.  
 
 **Parameters**  
-$api
+`$api`
 > (mixed) Array of API handlers. Default:
 ```php
 array(
@@ -766,7 +795,7 @@ Filter the endpoints to add to WordPress.
 Documented here for the sake of completeness and in case some developers find it useful in very specific cases - adding endpoints to the list should be handled automatically by a class inheriting the `Wprus_Api_Abstract` class instead of using this filter.
 
 **Parameters**  
-$wprus_endpoints
+`$wprus_endpoints`
 > (mixed) Array of endpoints to add. Default:  
 ```php
 array(
@@ -792,7 +821,7 @@ apply_filters( 'wprus_actions', (mixed) $actions );
 Filter the supported actions.  
 
 **Parameters**  
-$actions
+`$actions`
 > (mixed) Array of actions - key is the action key, value is the action display value. Default:
 ```php
 array(
@@ -817,7 +846,7 @@ apply_filters( 'wprus_settings', (mixed) $settings );
 Filter the settings' values.  
 
 **Parameters**  
-$settings
+`$settings`
 > (mixed) Array of all the settings.  
 ___
 
@@ -830,9 +859,9 @@ apply_filters( 'wprus_option', (mixed) $value, (string) $key );
 Filter a single setting's option value.  
 
 **Parameters**  
-$value
+`$value`
 > (mixed) the value of the option  
-$key
+`$key`
 > (string) the key used to retrieve the option value
 ___
 
@@ -845,10 +874,10 @@ apply_filters( 'wprus_settings_valid', (bool) $valid, (mixed) $settings );
 Filter wether the settings are valid ; called before running any other part of the plugin.  
 
 **Parameters**  
-$valid
+`$valid`
 > (bool) Wether the settings are valid.  
 
-$settings
+`$settings`
 > (mixed ) Array of all the settings.  
 ___
 
@@ -861,7 +890,7 @@ apply_filters( 'wprus_settings_metaboxes', (mixed) $metaboxes );
 Filter the setting's metaboxes of the plugin's screen.  
 
 **Parameters**  
-$metaboxes
+`$metaboxes`
 > (mixed) Array representing the metaboxes. Structure:
 ```php
 array(
@@ -886,7 +915,7 @@ apply_filters( 'wprus_sanitize_settings', (mixed) $sanitized_settings );
 Filter the settings after sanitatization.  
 
 **Parameters**  
-$sanitized_settings
+`$sanitized_settings`
 > (mixed) Array of all the settings after sanitatization.  
 ___
 
@@ -899,7 +928,7 @@ apply_filters( 'wprus_excluded_meta_keys', (mixed) $excluded_meta_keys );
 Filter the meta keys excluded from selection for synchronization (by default, keys referring to redundant or site-specific data).  
 
 **Parameters**  
-$excluded_meta_keys
+`$excluded_meta_keys`
 > (mixed) Array of exluded meta keys. Default:
 ```php
 array(
@@ -940,7 +969,7 @@ apply_filters( 'wprus_excluded_meta_keys_like', (mixed) $excluded_meta_keys_like
 Filter the meta keys `LIKE` clauses used to exclude groups of meta keys from selection for synchronization (by default, keys referring to redundant or site-specific data).    
 
 **Parameters**  
-$excluded_meta_keys_like_expressions
+`$excluded_meta_keys_like_expressions`
 > (mixed) Array of meta keys `LIKE` expressions. Default:
 ```php
 array(
@@ -965,7 +994,7 @@ Filter wether to initialise the notification hooks for the current request.
 **Warning:** Must be added **before** WordPress runs the `init` action.  
 
 **Parameters**  
-$init_notification_hooks
+`$init_notification_hooks`
 > (bool) If truthy, hooks will be initialised and notifications will be sent to remote sites upon user changes. Set to a falsy value to prevent notifications from being sent. Default `true` except in the case of user import.  
 ___
 
@@ -978,16 +1007,16 @@ apply_filters( 'wprus_fire_action_timeout', (int) $timeout, (string) $endpoint, 
 Filter the timeout for a synchronous action request.  
 
 **Parameters**  
-$timeout
+`$timeout`
 > (int) The timeout for a synchronous action request expressed in seconds. Default `1`.  
 
-$endpoint
+`$endpoint`
 > (string) The destination endpoint.  
 
-$url
+`$url`
 > (string) The destination website's URL.  
 
-$blocking
+`$blocking`
 > (bool) Whether the request needs to wait for a response.  
 ___
 
@@ -1000,7 +1029,7 @@ apply_filters( 'wprus_request_token_timeout', (int) $token_timeout );
 Filter the timeout for an authentication token request.  
 
 **Parameters**  
-$token_timeout
+`$token_timeout`
 > (int) The timeout for a token request expressed in seconds. Default `1`.  
 ___
 
@@ -1013,7 +1042,7 @@ apply_filters( 'wprus_request_token_retry_timeout', (int) $token_retry_timeout )
 Filter the retry timeout for an authentication token request, in case the first request failed.  
 
 **Parameters**  
-$token_retry_timeout
+`$token_retry_timeout`
 > (int) The retry timeout for token request expressed in seconds. Default `5`.  
 
 ___
@@ -1027,16 +1056,16 @@ apply_filters( 'wprus_is_authorized_remote', (bool) $is_authorized_remote, (stri
 Filter wether the received request should be authorised.  
 
 **Parameters**  
-$is_authorized_remote
+`$is_authorized_remote`
 > (bool) Whether the request is authorised.  
 
 $method
 > (string) The request's method - `post` or `get`.
 
-$remote_addr
+`$remote_addr`
 > (string) The IP address received in the `REMOTE_ADDR` header.  
 
-$ip_whitelist
+`$ip_whitelist`
 > (mixed) An array of strings as defined in the "IP Whitelist" settings.
 
 ___
@@ -1051,7 +1080,7 @@ apply_filters( 'wprus_debug', bool $debug );
 Filter wether to activate debug mode (PHP error logs, JavaScript console messages, JavaScript alerts if any).  
 
 **Parameters**  
-$debug
+`$debug`
 > (bool) Wether debug mode is activated - default `WP_DEBUG` constant value.  
 ___
 
@@ -1064,13 +1093,13 @@ apply_filters( 'wprus_action_data', array $data, string $endpoint, string $url )
 Filter the data sent to a remote site.  
 
 **Parameters**  
-$data
+`$data`
 > (array) The data sent to the remote site.  
 
-$endpoint
+`$endpoint`
 > (string) The API endpoint receiving the action.  
 
-$url
+`$url`
 > (string) The URL of the remote site.  
 
 ___
@@ -1084,7 +1113,7 @@ apply_filters( 'wprus_registered_integration', array $integrations );
 Filter integrations. See `inc/integration/class-wprus-integration.php`.  
 
 **Parameters**  
-$integrations
+`$integrations`
 > (array) The integrations info. Structure:  
 ```php
 array (
@@ -1106,10 +1135,10 @@ apply_filters( 'wprus_get_admin_template_name', string $template_name, array $ar
 Filter the file name of the template to include.  
 
 **Parameters**  
-$template_name
+`$template_name`
 > (string) The file name of the template to include.  
 
-$args
+`$args`
 > (array) The variables passed to the template.  
 
 ___
@@ -1123,10 +1152,10 @@ apply_filters( 'wprus_get_admin_template_args', array $args, string $template_na
 Filter the variables passed to the template.  
 
 **Parameters**  
-$args
+`$args`
 > (array) The variables passed to the template.  
 
-$template_name
+`$template_name`
 > (string) The file name of the template.   
 
 ___
@@ -1140,10 +1169,10 @@ apply_filters( 'wprus_get_template_name', string $template_name, array $args );
 Filter the file name of the template to include.  
 
 **Parameters**  
-$template_name
+`$template_name`
 > (string) The file name of the template to include.  
 
-$args
+`$args`
 > (array) The variables passed to the template.  
 
 ___
@@ -1157,10 +1186,10 @@ apply_filters( 'wprus_get_template_args', array $args, string $template_name );
 Filter the variables passed to the template.  
 
 **Parameters**  
-$args
+`$args`
 > (array) The variables passed to the template.  
 
-$template_name
+`$template_name`
 > (string) The file name of the template.  
 
 ___
@@ -1174,13 +1203,13 @@ apply_filters( 'wprus_locate_template', string $template_file, string $template_
 Filter the fully qualified path of the template file.  
 
 **Parameters**  
-$template_file
+`$template_file`
 > (string) The fully qualified path of the template file.  
 
-$template_name
+`$template_name`
 > (string) The file name.  
 
-$template_path
+`$template_path`
 > (string) The file path.  
 
 ___
@@ -1194,13 +1223,13 @@ apply_filters( 'wprus_locate_admin_template', string $template_file, string $tem
 Filter the fully qualified path of the admin template file.  
 
 **Parameters**  
-$template_file
+`$template_file`
 > (string) The fully qualified path of the admin template file.  
 
-$template_name
+`$template_name`
 > (string) The file name.  
 
-$template_path
+`$template_path`
 > (string) The file path.  
 
 ___
@@ -1214,7 +1243,7 @@ apply_filters( 'wprus_locate_template_paths', array $paths );
 Filter the list of possible theme paths for the template file.  
 
 **Parameters**  
-$paths 
+`$paths`
 > (array) The list of possible theme paths for the template file. Structure:  
 ```php
 // Paths relative to WordPress theme's folder ; $name is the template's file name
