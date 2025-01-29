@@ -18,7 +18,7 @@ class Wprus_Settings {
 	protected $sites;
 	protected $error;
 
-	public function __construct( $endpoints, $init_hooks = false ) {
+	public function __construct( $endpoints = null, $init_hooks = false ) {
 
 		if ( $init_hooks ) {
 			add_action( 'init', array( $this, 'load_textdomain' ), PHP_INT_MIN + 100, 0 );
@@ -32,7 +32,7 @@ class Wprus_Settings {
 			add_filter( 'plugin_action_links_wp-remote-users-sync/wprus.php', array( $this, 'plugin_action_links' ), 10, 1 );
 		}
 
-		self::$endpoints = $endpoints;
+		self::$endpoints = $endpoints ? $endpoints : self::$endpoints;
 		self::$settings  = self::get_options();
 	}
 

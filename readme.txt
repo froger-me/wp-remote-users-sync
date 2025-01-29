@@ -4,7 +4,7 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 6.7
-Stable tag: 2.0.6
+Stable tag: 2.0.7
 Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -173,8 +173,11 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 
 == Changelog ==
 
+= 2.0.7 =
+* Fix `Uncaught Error`
+
 = 2.0.6 =
-* Fix ` _load_textdomain_just_in_time was called incorrectly` warnings
+* Fix `_load_textdomain_just_in_time was called incorrectly` warnings
 
 = 2.0.5 =
 * Fix PHP 8.3 warnings thanks to @cmhello
