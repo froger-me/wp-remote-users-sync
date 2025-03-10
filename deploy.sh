@@ -297,8 +297,7 @@ fi
 
 # Clear SVN repo trunk only if it is not empty
 if [ -n "$(ls -A "$SVNPATH"/trunk/ 2>/dev/null)" ]; then
-    execute_or_echo rm -r "$SVNPATH"/trunk/*
-    svn rm "$SVNPATH"/trunk/*
+    execute_or_echo svn rm "$SVNPATH"/trunk/*
 else
     echo "Trunk is already empty. Skipping removal."
 fi
@@ -306,7 +305,7 @@ fi
 # Export HEAD of branch from git to SVN trunk
 execute_or_echo git checkout-index -a -f --prefix="$SVNPATH"/trunk/
 
-# Ignore GitHub-specific files
+# Ignore files
 execute_or_echo svn propset svn:ignore "deploy.sh
 .DS_Store
 .vscode
@@ -319,7 +318,23 @@ execute_or_echo svn add readme.txt
 
 # Create new SVN tag
 execute_or_echo cd "$SVNPATH"
-execute_or_echo svn copy trunk/ tags/"$NEWVERSION1"/
+
+# Check if the tag already exists
+if svn list "$SVNURL"/tags/ | grep -q "$NEWVERSION1"; then
+
+    # Switch back to the original branch
+    execute_or_echo cd "$GITPATH"
+    execute_or_echo git checkout "$CURRENTBRANCH"
+
+    echo "Tag $NEWVERSION1 already exists. Exiting."
+
+    # Clean up temporary directory
+    execute_or_echo rm -fr "${SVNPATH:?}/"
+
+    exit 1
+fi
+
+execute_or_echo svn copy trunk tags/"$NEWVERSION1"
 
 # Add all new files in the tag folder
 execute_or_echo cd "$SVNPATH"/tags/"$NEWVERSION1"
