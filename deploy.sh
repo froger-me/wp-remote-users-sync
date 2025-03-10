@@ -124,7 +124,7 @@ execute_or_echo() {
                 if $VERBOSE; then
                     echo "$command ${args[*]}"
                 fi
-                "$command" "${args[@]}"
+                "$command" "${args[@]}" || { echo "Error: $command command failed"; exit 1; }
             fi
             ;;
         svn)
@@ -135,7 +135,7 @@ execute_or_echo() {
                 if $VERBOSE; then
                     echo "$command ${args[*]}"
                 fi
-                "$command" "${args[@]}"
+                "$command" "${args[@]}" || { echo "Error: $command command failed"; exit 1; }
             fi
             ;;
         gh)
@@ -146,7 +146,7 @@ execute_or_echo() {
                 if $VERBOSE; then
                     echo "gh ${args[*]}"
                 fi
-                "$command" "${args[@]}"
+                "$command" "${args[@]}" || { echo "Error: $command command failed"; exit 1; }
             fi
             ;;
         *)
@@ -154,7 +154,7 @@ execute_or_echo() {
             if $VERBOSE; then
                 echo "$command ${args[*]}"
             fi
-            "$command" "${args[@]}"
+            "$command" "${args[@]}" || { echo "Error: $command command failed"; exit 1; }
         ;;
     esac
 }
@@ -297,7 +297,8 @@ fi
 
 # Clear SVN repo trunk only if it is not empty
 if [ -n "$(ls -A "$SVNPATH"/trunk/ 2>/dev/null)" ]; then
-    execute_or_echo svn rm "$SVNPATH"/trunk/*
+    execute_or_echo rm -r "$SVNPATH"/trunk/*
+    svn rm "$SVNPATH"/trunk/*
 else
     echo "Trunk is already empty. Skipping removal."
 fi
