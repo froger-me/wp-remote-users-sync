@@ -16,13 +16,14 @@ class Wprus_Logger {
 	public function __construct( $settings, $init_hooks = false ) {
 		$this->settings  = $settings;
 		self::$log_types = array(
-			'info'    => __( 'Info', 'wprus' ),
-			'success' => __( 'Success', 'wprus' ),
-			'warning' => __( 'Warning', 'wprus' ),
-			'alert'   => __( 'Alert', 'wprus' ),
+			'info'    => 'Info',
+			'success' => 'Success',
+			'warning' => 'Warning',
+			'alert'   => 'Alert',
 		);
 
 		if ( $init_hooks ) {
+			add_action( 'init', array( self::class, 'register_log_types' ) );
 			add_action( 'wp', array( self::class, 'register_logs_cleanup' ) );
 			add_action( 'wprus_logs_cleanup', array( self::class, 'clear_logs' ) );
 			add_action( 'wp_ajax_wprus_refresh_logs', array( $this, 'refresh_logs_async' ), 10, 0 );
@@ -35,6 +36,15 @@ class Wprus_Logger {
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
+
+	public static function register_log_types() {
+		self::$log_types = array(
+			'info'    => __( 'Info', 'wprus' ),
+			'success' => __( 'Success', 'wprus' ),
+			'warning' => __( 'Warning', 'wprus' ),
+			'alert'   => __( 'Alert', 'wprus' ),
+		);
+	}
 
 	public static function register_logs_cleanup() {
 

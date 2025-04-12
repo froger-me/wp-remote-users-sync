@@ -18,6 +18,22 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 	}
 
 	public function handle_password_creation( $password ) {
+		$plain_text_pwd = wp_cache_get( 'wprus_api_password_plain_text_pwd', 'wprus' );
+		$handled        = (
+			'*' === $password ||
+			(
+				$plain_text_pwd &&
+				(
+					0 === strpos( $password, '$P$' ) ||
+					0 === strpos( $password, '$wp' )
+				)
+			)
+		);
+
+		if ( apply_filters( 'wprus_password_handled', $handled, $password, $plain_text_pwd ) ) {
+			return;
+		}
+
 		wp_cache_set( 'wprus_api_password_plain_text_pwd', $password, 'wprus' );
 	}
 

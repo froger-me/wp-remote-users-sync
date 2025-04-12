@@ -19,19 +19,36 @@ if ( ! function_exists( 'php_log' ) ) {
 }
 
 if ( ! function_exists( 'wp_hash_password' ) ) {
-
-	function wp_hash_password( $password ) {
+	function wp_hash_password(
+		#[\SensitiveParameter]
+		$password
+	) {
 		global $wp_hasher;
 
-		if ( empty( $wp_hasher ) ) {
-			require_once ABSPATH . WPINC . '/class-phpass.php';
+		if ( ! empty( $wp_hasher ) ) {
+			do_action( 'wprus_password', $password );
 
-			$wp_hasher = new PasswordHash( 8, true ); // @codingStandardsIgnoreLine
+			return $wp_hasher->HashPassword( trim( $password ) );
 		}
+
+		if ( strlen( $password ) > 4096 ) {
+			do_action( 'wprus_password', '*' );
+
+			return '*';
+		}
+
+		$algorithm = apply_filters( 'wp_hash_password_algorithm', PASSWORD_BCRYPT );
+		$options   = apply_filters( 'wp_hash_password_options', array(), $algorithm );
 
 		do_action( 'wprus_password', $password );
 
-		return $wp_hasher->HashPassword( trim( $password ) );
+		if ( PASSWORD_BCRYPT !== $algorithm ) {
+			return password_hash( $password, $algorithm, $options );
+		}
+
+		$password_to_hash = base64_encode( hash_hmac( 'sha384', trim( $password ), 'wp-sha384', true ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+
+		return '$wp' . password_hash( $password_to_hash, $algorithm, $options );
 	}
 }
 
