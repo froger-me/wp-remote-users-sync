@@ -179,6 +179,9 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 
 == Changelog ==
 
+= 2.1.1 =
+* Force distinction for password handling between WordPress 6.8 and older versions
+
 = 2.1.0 =
 * Require PHP 8.0 minimum
 * WordPress 6.8 compatibility
