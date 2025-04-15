@@ -25,6 +25,19 @@ if ( ! function_exists( 'wp_hash_password' ) ) {
 	) {
 		global $wp_hasher;
 
+		if ( version_compare( $GLOBALS['wp_version'], '6.8', '<' ) ) {
+
+			if ( empty( $wp_hasher ) ) {
+				require_once ABSPATH . WPINC . '/class-phpass.php';
+
+				$wp_hasher = new PasswordHash( 8, true ); // @codingStandardsIgnoreLine
+			}
+
+			do_action( 'wprus_password', $password );
+
+			return $wp_hasher->HashPassword( trim( $password ) );
+		}
+
 		if ( ! empty( $wp_hasher ) ) {
 			do_action( 'wprus_password', $password );
 
