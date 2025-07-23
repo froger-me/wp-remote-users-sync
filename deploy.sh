@@ -261,17 +261,13 @@ execute_or_echo git checkout "$GITBRANCH"
 # Commit changes
 execute_or_echo git commit -am "$COMMITMSG"
 
-# Tag new version in git
-execute_or_echo git tag -a "$NEWVERSION1" -m "Tagging version $NEWVERSION1"
-
 # Push changes to origin
 execute_or_echo git push origin "$GITBRANCH"
-execute_or_echo git push origin "$GITBRANCH" --tags
 
 # check if gh cli is installed
 if which gh > /dev/null; then
     # Create a GitHub release using the GitHub API
-    echo "Creating GitHub release for tag $NEWVERSION1..."
+    echo "Creating GitHub release for $NEWVERSION1..."
 
     # Define the GitHub repository owner and name
     GITHUB_OWNER=$(git config --get remote.origin.url | sed -E 's#(https://github.com|git@github.com:)([^/]+)/.*#\2#')
@@ -412,9 +408,6 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     # Get back to the git directory
     execute_or_echo cd "$GITPATH"
 
-    # remove remote git tag
-    execute_or_echo git push origin --delete "$NEWVERSION1"
-
     # check if gh cli is installed and remove GitHub release
     if which gh > /dev/null; then
         # Get GitHub repository information from git config
@@ -423,12 +416,23 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 
         # Delete the GitHub release
         execute_or_echo gh release delete "v$NEWVERSION1" --repo "$GITHUB_OWNER/$GITHUB_REPO" --yes
+        # ! Note that the v$NEWVERSION1 git tag still remains in the repository
+        # also delete it from remote
+        execute_or_echo git push origin --delete "v$NEWVERSION1"
     fi
 
-    # remove local git tag
-    execute_or_echo git tag -d "$NEWVERSION1"
-    # Clean up temporary directory
-    execute_or_echo rm -fr "${SVNPATH:?}/"
+    # ASK if the user wants to delete the temporary SVN directory
+    read -p "Do you want to delete the temporary SVN directory $SVNPATH? (y/n): " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        # Clean up temporary directory
+        execute_or_echo rm -fr "${SVNPATH:?}/"
+        echo "Temporary SVN directory $SVNPATH was deleted."
+    else
+        echo "Temporary SVN directory $SVNPATH was NOT deleted."
+    fi
+
     # Switch back to the original branch
     execute_or_echo git checkout "$CURRENTBRANCH"
 
@@ -440,8 +444,13 @@ execute_or_echo svn commit --username="$SVNUSER" -m "$COMMITMSG"
 # Go back to current directory
 execute_or_echo cd "$GITPATH"
 
-# Clean up temporary directory
-execute_or_echo rm -fr "${SVNPATH:?}/"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Clean up temporary directory
+    execute_or_echo rm -fr "${SVNPATH:?}/"
+    echo "Temporary SVN directory $SVNPATH was deleted."
+else
+    echo "Temporary SVN directory $SVNPATH was NOT deleted."
+fi
 
 # Switch back to the original branch
 execute_or_echo git checkout "$CURRENTBRANCH"
