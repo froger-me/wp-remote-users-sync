@@ -4,7 +4,7 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 6.8
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 Requires PHP: 8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -179,6 +179,9 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 
 == Changelog ==
 
+= 2.1.2 =
+* Add `user_activation_key` to the user data sent during the Update action - thanks to @andreu
+
 = 2.1.1 =
 * Force distinction for password handling between WordPress 6.8 and older versions
 
@@ -225,175 +228,3 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 * Attempt at solving `‘); document.close();` issue on Safari browser - use of backticks, better error handling in browser console
 * Minor fixes - cron
 * Documentation update
-
-= 1.2.14 =
-* Minor fixes with true nonces
-* WordPress tested up to: 6.4
-
-= 1.2.13 =
-* Use `wp_safe_remote_post` instead of `wp_remote_post`
-
-= 1.2.12 =
-* WordPress tested up to: 6.3
-* Optimise settings page - thx to @foloed on Github
-* Update variable filter IDs - php 8.x compat
-* Ping & log refresh ajax check - thx to István Márton from Wordfence
-* Drop paid custom code support from `readme.txt`
-* Refactor integration class & documentation
-* Minor fixes
-
-= 1.2.11 =
-* Make sure the `HTTP_USER_AGENT` is set before testing it
-
-= 1.2.9 =
-* WordPress tested up to: 5.8
-* Add support for IP range (CIDR) - thx to @honggyu420 on Github
-
-= 1.2.8 =
-* WordPress tested up to: 5.8
-* Fix conflicts - change `'wp-includes/pluggable.php'` load order
-
-= 1.2.7 =
-* Fix settings cache issues - for real...
-* Fix log output
-* Fix permalinks patterns
-* Add `wprus_fire_action_timeout` filter hook
-* Login Action: optimise compatibility with third-pary plugins and themes
-* Delete Action: fix log output
-* Add silent redirection for async actions, with opt-in in Miscellaneous settings tab
-* IMPORTANT - DEVELOPERS: Replace all instances of `remote_async_action` with `async_action`, affecting method names ; action and filter hooks not affected, classes inheriting `Wprus_Api_Abstract` need refactor.
-* Refactor `fire_async_actions` method of `Wprus_Api_Abstract` (formerly `fire_remote_async_actions`)
-* Add `wprus_action_data` filter hook
-* Update documentation
-
-= 1.2.6 =
-* Fix Object Cache compatibility
-* Optimize compatibility with Safari and iOS devices: use 303 redirects when reaching the login endpoint
-* Optimize compatibility with Safari and iOS devices: better logout
-* Refactor asynchroneous User Actions firing
-* Remove outdated Query Monitor integration
-* Remove `wait.css`, `wait.min.css`, `wait.js`, `wait.min.js`, `wprus-wait.php`
-* Add `wprus-async-processing.php` and `wprus-async-processing-script.php`
-* Update documentation
-
-= 1.2.5 =
-* Add compatibility with Safari and iOS devices: do not rely on cross-domain third-party cookies manipulation, but use explicit redirections for Login, and destroy all sessions for Logout
-* Add template for explicit redirection processing screen
-* Add Miscellaneous settings with a section for Browser Support
-* Query Monitor integration
-* Update documentation
-
-= 1.2.4 =
-* Fix "SameSite" cookie attribute when doing cross-site login
-* Fix settings cache issues
-* Minor refactor of `Wprus_Api_Abstract`
-
-= 1.2.3 =
-* Include logger class earlier
-* Fix save button text
-* Fix duplicate "Settings save." notice
-* Minor UI fixes
-
-= 1.2.2 =
-* Move settings page under "Settings > WP Remote Users Sync"
-* Add link to settings on installed plugins page
-* Add `$key` parameter to `wprus_option` filter
-* Change template name from `main-setting-page.php` to `main-settings-page.php`
-* Fix minified scripts inclusion
-* Removed unused URL parameter from the API
-* Fix flushing of rewrite rules
-* Set priority of all `init` action hooks to `PHP_INT_MIN - 10` to maximize compatibility with third-party plugins
-* Refactor integrations
-* Remove `wprus_integration` filter ; add `wprus_integration` action instead.
-* Add `wprus_init` action.
-* Update FAQ and help
-* WordPress Tested up to: 5.5
-
-= 1.2.1 =
-* Even more verbose log in case of communication error
-* Fix minor typos
-* Update help page
-* Update `readme.txt`
-* WordPress Tested up to: 5.4.2
-
-= 1.2 =
-* Trigger Update action on role add, set, and remove instead of only user update
-* Add `wprus_before_init_notification_hooks` and `wprus_after_init_notification_hooks` action hooks
-* Fix Delete action log message
-* Fix `Wprus_Crypto` class inclusion (no direct access)
-* Add integration logic ; future additions to integrations made upon donation
-* Add integration - WooCommerce ; login on remote sites as well when creating an account at checkout time (depending on User Actions settings). Many thanks to the generous patron who decided to remain anonymous.
-* Add `wprus_integration` filter
-* Data is encoded with `JSON_UNESCAPED_UNICODE` flag to support a wider range of characters (Chinese, Greek, etc)
-* Better error message handling in case of syntax error in payload
-* Full documentation of the `Wprus_Api_Abstract` class for developers of custom User Actions
-* Update documentation
-
-= 1.1.12 =
-* Add `wprus_is_authorized_remote` filter
-
-= 1.1.11 =
-* WordPress tested up to: 5.4.1
-* Update FAQ
-
-= 1.1.10 =
-* Add full Chinese translation (Thank you @倡萌 from https://www.wpdaxue.com/)
-
-= 1.1.9 =
-* Adjust hook calls
-
-= 1.1.8 =
-* Adjust language domain path to take into account `plugins/wp-remote-users-sync/languages`
-
-= 1.1.7 =
-* Fix: make all interface strings translatable (hopefully for real)
-
-= 1.1.6 =
-* Fix: make all interface strings translatable
-* Fix: various language domains issues
-* Adjust log messages
-
-= 1.1.5 =
-* Integration - make sure third-party plugins calling `wp_redirect()` or `wp_safe_redirect()` without calling `exit` afterwards do not interfere with asynchronous actions ; `exit` should be called after these 2 functions unless there is a documented good reason not to, but some plugins (like Gravity Forms User Registration Add-On) or themes may not follow the WordPress best practices.
-* Add missing Logout action logs
-* Update Async actions logs
-* Refactor resetting Async actions
-
-= 1.1.4 =
-* Bugfix - do not save the token for async actions: these tokens are invalidated immediately after use (nonce) and saving them triggers an Unauthorized access (invalid token) error for subsequent sync actions.
-
-= 1.1.3 =
-* Integration - rely on `get_option( 'home' )` instead of `home_url` to get the homepage URL to avoid conflicts with plugins (in particular translation plugins) and themes filtering the value.
-* Order meta by meta_key
-* WordPress Tested up to: 5.4
-
-= 1.1.2 =
-* IP whitelist: sanitize the option by trimming each line of whitespaces (improve configuration error tolerance)
-* Refactor IP check
-
-= 1.1.1 =
-* Fix metabox compatibility on plugin main settings page
-* Fix minor warning and cosmetic issues
-* Improve log entries and alert error messages
-
-= 1.1 =
-* Fix plugin settings link in admin notice (for real -_-')
-* Fallback to single-use token (true nonce) instead of IP address validation for asynchronous actions (login & logout by default): REMOTE_ADDR from the client cannot be trusted to match if the websites to link are on 2 different networks, but a single-use token is as secure as it gets, with a slight performance trade off ; REMOTE_ADDR validation is kept for synchronous actions
-* Add missing Logout success log trace
-* Update documentation
-
-= 1.0.3 =
-* Fix plugin settings link in admin notice
-
-= 1.0.2 =
-* Fix css lib path
-
-= 1.0.1 =
-* Make sure all options are deleted upon plugin uninstall
-* Adjust template names
-* Minor fixes and refactor
-* Add 14 action and 16 filter hooks
-* Add developers documentation
-
-= 1.0 =
-* First version

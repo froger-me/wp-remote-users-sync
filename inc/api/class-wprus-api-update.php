@@ -164,6 +164,8 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 				'user_registered'      => $user->user_registered,
 				'show_admin_bar_front' => get_user_meta( $user_id, 'show_admin_bar_front', true ),
 				'locale'               => $user->locale,
+				'user_activation_key'  => empty( $user->user_activation_key ) ?
+					'' : $user->user_activation_key,
 			);
 
 			foreach ( $sites as $index => $site ) {
