@@ -364,6 +364,38 @@ fi
 
 # Commit trunk, tag and assets changes in one step
 execute_or_echo cd "$SVNPATH"
+
+# Wait for user comfirmation before committing
+read -p "Are you sure you want to commit these changes? (y/n): " -n 1 -r
+echo
+
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Commit cancelled."
+
+    # Clean up temporary directory
+    execute_or_echo rm -fr "${SVNPATH:?}/"
+    # remove remote git tag
+    execute_or_echo git push origin --delete "$NEWVERSION1"
+
+    # check if gh cli is installed and remove GitHub release
+    if which gh > /dev/null; then
+        # Get GitHub repository information from git config
+        GITHUB_OWNER=$(git config --get remote.origin.url | sed -E 's#(https://github.com|git@github.com:)([^/]+)/.*#\2#')
+        GITHUB_REPO=$(git config --get remote.origin.url | sed -E 's#(https://github.com|git@github.com:)[^/]+/([^/]+).git#\2#')
+
+        # Delete the GitHub release
+        execute_or_echo gh release delete "v$NEWVERSION1" --repo "$GITHUB_OWNER/$GITHUB_REPO" --yes
+    fi
+
+    # remove local git tag
+    execute_or_echo git tag -d "$NEWVERSION1"
+    # Switch back to the original branch
+    execute_or_echo cd "$GITPATH"
+    execute_or_echo git checkout "$CURRENTBRANCH"
+
+    exit 0
+fi
+
 execute_or_echo svn commit --username="$SVNUSER" -m "$COMMITMSG"
 
 # Go back to current directory
