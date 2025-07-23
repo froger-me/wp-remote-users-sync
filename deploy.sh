@@ -409,8 +409,6 @@ echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo "Commit cancelled."
 
-    # Clean up temporary directory
-    execute_or_echo rm -fr "${SVNPATH:?}/"
     # remove remote git tag
     execute_or_echo git push origin --delete "$NEWVERSION1"
 
@@ -426,6 +424,8 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 
     # remove local git tag
     execute_or_echo git tag -d "$NEWVERSION1"
+    # Clean up temporary directory
+    execute_or_echo rm -fr "${SVNPATH:?}/"
     # Switch back to the original branch
     execute_or_echo cd "$GITPATH"
     execute_or_echo git checkout "$CURRENTBRANCH"
