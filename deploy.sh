@@ -407,7 +407,10 @@ read -p "Are you sure you want to commit these changes? (y/n): " -n 1 -r
 echo
 
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Commit cancelled."
+    echo "SVN Commit cancelled."
+
+    # Get back to the git directory
+    execute_or_echo cd "$GITPATH"
 
     # remove remote git tag
     execute_or_echo git push origin --delete "$NEWVERSION1"
@@ -427,7 +430,6 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     # Clean up temporary directory
     execute_or_echo rm -fr "${SVNPATH:?}/"
     # Switch back to the original branch
-    execute_or_echo cd "$GITPATH"
     execute_or_echo git checkout "$CURRENTBRANCH"
 
     exit 0
