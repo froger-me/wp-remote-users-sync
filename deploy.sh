@@ -108,7 +108,19 @@ GITPATH="$DIR/"
 SVNPATH="/tmp/$PLUGINSLUG" # path to a temp SVN repo. No trailing slash required and don't add trunk.
 SVNURL="http://plugins.svn.wordpress.org/$PLUGINSLUG/" # Remote SVN repo on wordpress.org, with no trailing slash
 
-# Function to execute or echo commands based on deploy mode
+# Function to handle command errors
+handle_error() {
+    local cmd="$1"
+    local exit_code="$2"
+    echo "Error: $cmd command failed with exit code $exit_code"
+    cd "$GITPATH" || {
+        echo "Error: Unable to change directory to $GITPATH"
+        exit 1
+    }
+    git checkout "$CURRENTBRANCH"
+    exit 1
+}
+
 # Function to execute or echo commands based on deploy mode
 execute_or_echo() {
     local command="$1"
