@@ -12,6 +12,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 
 	public function init_notification_hooks() {
 		add_action( 'clear_auth_cookie', array( $this, 'notify_remote' ), PHP_INT_MAX - 100, 0 );
+		add_action( 'wp_ajax_destroy-sessions', array( $this, 'notify_remote' ), PHP_INT_MIN + 100, 0 );
 	}
 
 	public function has_async_actions() {
@@ -23,7 +24,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 
 		$result  = false;
 		$proceed = true;
-		$data    = $this->get_data_get();
+		$data    = $this->get_data();
 
 		if ( ! $this->validate( $data ) ) {
 			Wprus_Logger::log(
@@ -148,29 +149,46 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 			return;
 		}
 
-		$user  = wp_get_current_user();
+		$user  = $this->get_user();
 		$sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 
-		if ( ! empty( $sites ) ) {
+		if ( empty( $sites ) ) {
+			return;
+		}
 
-			Wprus_Logger::log(
-				sprintf(
-					// translators: %s is the username
-					__( 'Logout action - enqueueing asynchronous actions for username "%s"', 'wprus' ),
-					$user->user_login
-				),
-				'info',
-				'db_log'
+		$message = $this->use_async() ?
+			sprintf(
+				// translators: %s is the username
+				__( 'Logout action - enqueueing asynchronous actions for username "%s"', 'wprus' ),
+				$user->user_login
+			) :
+			sprintf(
+				// translators: %s is the username
+				__( 'Logout action - immediately firing actions for username "%s"', 'wprus' ),
+				$user->user_login
 			);
 
-			foreach ( $sites as $index => $site ) {
+		Wprus_Logger::log( $message, 'info', 'db_log' );
+
+		foreach ( $sites as $site ) {
+
+			if ( $this->use_async() ) {
 				$this->add_async_action(
 					$site['url'],
 					array(
 						'username' => $user->user_login,
 					)
 				);
+
+				continue;
 			}
+
+			$this->fire_action(
+				$site['url'],
+				array(
+					'username' => $user->user_login,
+				)
+			);
 		}
 	}
 
@@ -184,5 +202,38 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 			username_exists( $data['username'] );
 
 		return $valid;
+	}
+
+	protected function use_async() {
+		return doing_action( 'clear_auth_cookie' );
+	}
+
+	protected function get_user() {
+
+		if ( doing_action( 'wp_ajax_destroy-sessions' ) ) {
+			$user_id = filter_input( INPUT_POST, 'user_id', FILTER_VALIDATE_INT );
+			$user    = $user_id ? get_userdata( $user_id ) : false;
+
+			if ( $user ) {
+
+				if ( ! current_user_can( 'edit_user', $user->ID ) ) {
+					$user = false;
+				} elseif ( ! wp_verify_nonce( $_POST['nonce'], 'update-user_' . $user->ID ) ) {
+					$user = false;
+				}
+			}
+
+			if ( ! $user ) {
+				Wprus_Logger::log(
+					__( 'Logout action failed - user not found, WPRUS connected sites were not notified for logout action.', 'wprus' ),
+					'warning',
+					'db_log'
+				);
+			}
+
+			return $user;
+		}
+
+		return wp_get_current_user();
 	}
 }
