@@ -315,6 +315,8 @@ fi
 # Create local copy of SVN repo
 execute_or_echo svn co "$SVNURL" "$SVNPATH"
 
+echo "SVN repository checked out to $SVNPATH"
+
 #Init directories assets, tags, trunk if they do not exist
 if [ ! -d "$SVNPATH"/assets ]; then
     execute_or_echo mkdir "$SVNPATH"/assets
@@ -349,6 +351,8 @@ execute_or_echo svn propset svn:ignore "deploy.sh
 execute_or_echo cd "$SVNPATH"/trunk/
 execute_or_echo svn add readme.txt
 
+echo "Added readme.txt to SVN trunk."
+
 # Create new SVN tag
 execute_or_echo cd "$SVNPATH"
 
@@ -378,6 +382,8 @@ execute_or_echo bash -c "
     xargs -I {} svn add {}
 "
 
+echo "Added new files to SVN tag $NEWVERSION1."
+
 if ! $SKIP_ASSETS; then
     # Change to the assets folder
     execute_or_echo cd "$SVNPATH"/assets/
@@ -397,6 +403,10 @@ fi
 
 # Commit trunk, tag and assets changes in one step
 execute_or_echo cd "$SVNPATH"
+
+echo "Changed path to $SVNPATH - svn status is:"
+# show the svn status
+execute_or_echo svn status
 
 # Wait for user comfirmation before committing
 read -p "Are you sure you want to commit these changes? (y/n): " -n 1 -r
