@@ -525,11 +525,11 @@ class Wprus_Settings {
 		$sites = $this->get_sites( $action, $direction );
 
 		if ( ! empty( $sites ) ) {
+			$url_parse_url = wp_parse_url( $url );
+			$url_host      = isset( $url_parse_url['host'] ) ? $url_parse_url['host'] : false;
+			$url_path      = isset( $url_parse_url['path'] ) ? rtrim( $url_parse_url['path'], '/' ) : '';
 
 			foreach ( $sites as $site ) {
-				$url_parse_url  = wp_parse_url( $url );
-				$url_host       = isset( $url_parse_url['host'] ) ? $url_parse_url['host'] : false;
-				$url_path       = isset( $url_parse_url['path'] ) ? rtrim( $url_parse_url['path'], '/' ) : '';
 				$site_parse_url = wp_parse_url( $site['url'] );
 				$site_host      = isset( $site_parse_url['host'] ) ? $site_parse_url['host'] : false;
 				$site_path      = isset( $site_parse_url['path'] ) ? rtrim( $site_parse_url['path'], '/' ) : '';
