@@ -532,9 +532,13 @@ class Wprus_Settings {
 				$site_url = untrailingslashit( $site['url'] );
 				$test_url = untrailingslashit( $url );
 
-				// Check if the site URL is a substring of the test URL
-				if ( false !== strpos( $test_url, $site_url ) ) {
-					$match_length = strlen( $site_url );
+				// Normalize URLs to handle protocol differences
+				$site_url_normalized = preg_replace( '/^https?:\/\//', '', $site_url );
+				$test_url_normalized = preg_replace( '/^https?:\/\//', '', $test_url );
+
+				// Check if the site URL is at the beginning of the test URL
+				if ( 0 === strpos( $test_url_normalized, $site_url_normalized ) ) {
+					$match_length = strlen( $site_url_normalized );
 
 					if ( $match_length > $longest_match ) {
 						$longest_match = $match_length;
