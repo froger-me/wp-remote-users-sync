@@ -525,21 +525,33 @@ class Wprus_Settings {
 		$sites = $this->get_sites( $action, $direction );
 
 		if ( empty( $sites ) ) {
-
 			return false;
 		}
 
-		$match    = false;
-		$test_url = untrailingslashit( $url );
+		$match          = false;
+		$best_match_len = 0;
+		$url_parts      = wp_parse_url( untrailingslashit( $url ) );
+		$url_host       = $url_parts['host'] ?? false;
+		$url_path       = $url_parts['path'] ?? '';
 
 		foreach ( $sites as $site ) {
-			$site_url = untrailingslashit( $site['url'] );
+			$site_parts = wp_parse_url( untrailingslashit( $site['url'] ) );
+			$site_host  = $site_parts['host'] ?? false;
+			$site_path  = $site_parts['path'] ?? '';
 
-			if ( 0 === strpos( $test_url, $site_url ) ) {
-				$match_length = strlen( $site_url );
+			if ( ! $site_host || ! $url_host || $site_host !== $url_host ) {
+				continue;
+			}
 
-				if ( ! $match || $match_length > strlen( untrailingslashit( $match['url'] ) ) ) {
-					$match = $site;
+			$normalized_site_path = untrailingslashit( $site_path );
+			$normalized_url_path  = untrailingslashit( $url_path );
+
+			if ( 0 === strpos( $normalized_url_path, $normalized_site_path ) ) {
+				$len = strlen( $normalized_site_path );
+
+				if ( $len >= $best_match_len ) {
+					$best_match_len = $len;
+					$match          = $site;
 				}
 			}
 		}
