@@ -4,7 +4,7 @@ jQuery(document).ready(function($) {
 	if ( WPRUS.debug ) {
 		$('body').addClass('wprus-debug');
 	}
-	
+
 	var toggleUI        = function() {
 			$('.wprus-togglable').hide();
 			$('.' + $('.nav-tab-active').data('toggle')).show();
@@ -84,7 +84,7 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 
 		var r = window.confirm(WPRUS.delete_site_confirm);
-			
+
 		if (r) {
 			$(this).closest('.wprus-site').remove();
 		}
@@ -321,7 +321,7 @@ jQuery(document).ready(function($) {
 
 	$('#wprus_import_file').on('change', function() {
 		var fileinput = $(this);
-		
+
 		if (0 < fileinput.prop('files').length) {
 			$('#wprus_import_file_filename').val(fileinput.prop('files')[0].name);
 			$('#wprus_import_file_trigger').removeAttr('disabled');
@@ -369,7 +369,7 @@ jQuery(document).ready(function($) {
 
 				valid = false;
 			}
-			
+
 		} else {
 			window.alert(WPRUS.invalid_file);
 
@@ -390,7 +390,7 @@ jQuery(document).ready(function($) {
 				contentType: false,
 				processData: false,
 				success: function(response) {
-					
+
 					if (response.data) {
 
 						if (response.data.message) {
@@ -495,6 +495,25 @@ jQuery(document).ready(function($) {
 	}
 
 	updateBrowserSupportUI();
+
+	// Toggle all actions functionality
+	$('#normal-sortables').on('click', '.wprus-site-footer .toggle', function(e) {
+		e.preventDefault();
+
+		var toggle = $(this),
+			container = toggle.closest('.wprus-site'),
+			checkboxes = container.find('.wprus-actions .action-checkbox input');
+
+		if (toggle.hasClass('uncheck')) {
+			// Uncheck all checkboxes
+			checkboxes.prop('checked', false).trigger('change');
+			toggle.removeClass('uncheck').addClass('check');
+		} else if (toggle.hasClass('check')) {
+			// Check all checkboxes
+			checkboxes.prop('checked', true).trigger('change');
+			toggle.removeClass('check').addClass('uncheck');
+		}
+	});
 
 	$('.wprus-ui-wait').show();
 });

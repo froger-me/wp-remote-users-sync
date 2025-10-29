@@ -4,7 +4,7 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 6.8
-Stable tag: 2.1.3
+Stable tag: 2.1.4
 Requires PHP: 8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -178,6 +178,10 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for previously unanswered general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 2.1.4 =
+* Fix Bug: Sync fails for remote sites hosted in subdirectory. #95
+* Add "Toggle All Actions" link for convenience in Remote Sites tab
 
 = 2.1.3 =
 * Add support for "Logout Everywhere"

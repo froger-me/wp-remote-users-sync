@@ -524,22 +524,27 @@ class Wprus_Settings {
 	public function get_site( $url, $action = false, $direction = false ) {
 		$sites = $this->get_sites( $action, $direction );
 
-		if ( ! empty( $sites ) ) {
+		if ( empty( $sites ) ) {
 
-			foreach ( $sites as $site ) {
-				$url_parse_url  = wp_parse_url( $url );
-				$url_host       = isset( $url_parse_url['host'] ) ? $url_parse_url['host'] : false;
-				$site_parse_url = wp_parse_url( $site['url'] );
-				$site_host      = isset( $site_parse_url['host'] ) ? $site_parse_url['host'] : false;
+			return false;
+		}
 
-				if ( $site_host && $url_host && $site_host === $url_host ) {
+		$match    = false;
+		$test_url = untrailingslashit( $url );
 
-					return $site;
+		foreach ( $sites as $site ) {
+			$site_url = untrailingslashit( $site['url'] );
+
+			if ( 0 === strpos( $test_url, $site_url ) ) {
+				$match_length = strlen( $site_url );
+
+				if ( ! $match || $match_length > strlen( untrailingslashit( $match['url'] ) ) ) {
+					$match = $site;
 				}
 			}
 		}
 
-		return false;
+		return $match;
 	}
 
 	/*******************************************************************

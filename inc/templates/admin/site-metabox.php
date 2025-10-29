@@ -104,6 +104,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<div class="wprus-site-footer">
+		<a class="toggle check" href="#"><?php esc_html_e( 'Toggle all actions', 'wprus' ); ?></a>
 		<a class="deletion" href="#"><?php esc_html_e( 'Remove site configuration', 'wprus' ); ?></a>
 	</div>
 </div>
