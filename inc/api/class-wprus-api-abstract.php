@@ -1220,7 +1220,7 @@ abstract class Wprus_Api_Abstract {
 			'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
 			'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
 		);
-		$async_url = add_query_arg( $args, $async_url );
+		$async_url = apply_filters( 'wprus_async_url', add_query_arg( $args, $async_url ), $this->endpoint ) ;
 		$output    = $this->get_async_action_output( $async_url, true );
 
 		update_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions', $actions );
@@ -1262,7 +1262,7 @@ abstract class Wprus_Api_Abstract {
 				'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
 				'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
 			);
-			$async_url = add_query_arg( $args, $async_url );
+			$async_url = apply_filters( 'wprus_async_url', add_query_arg( $args, $async_url ), $this->endpoint ) ;
 			$output   .= $this->get_async_action_output( $async_url );
 
 			Wprus_Logger::log(
