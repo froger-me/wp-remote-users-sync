@@ -15,10 +15,10 @@ If you run multiple websites and want to keep users separated, but synchronise t
 
 This plugin adds the following major features to WordPress:
 
-* **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, import/export users, and view activity logs.
+* **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, and activity logs.
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing User Actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
-* **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
+* **Existing Users:** administrators can use a third-party user import and export tool to transfer existing users between sites before automatic synchronisation begins.
 * **Activity Logs:** when enabled, all communications between connected sites is logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
 * **Customizable:** developers can add their own User Actions using action and filter hooks, and more.
@@ -705,6 +705,7 @@ Filters index:
             * [wprus\_is\_authorized\_remote](#wprus_is_authorized_remote)
             * [wprus\_debug](#wprus_debug)
             * [wprus\_action\_data](#wprus_action_data)
+            * [wprus\_async\_url](#wprus_async_url)
             * [wprus\_registered\_integration](#wprus_registered_integration)
             * [wprus\_get\_admin\_template\_name](#wprus_get_admin_template_name)
             * [wprus\_get\_admin\_template\_args](#wprus_get_admin_template_args)
@@ -1101,6 +1102,23 @@ Filter the data sent to a remote site.
 
 `$url`
 > (string) The URL of the remote site.  
+
+___
+
+#### wprus_async_url
+
+```php
+apply_filters( 'wprus_async_url', (string) $async_url, (string) $endpoint );
+```
+**Description**
+Filter the full URL used to send an asynchronous action to a remote site.
+
+**Parameters**
+`$async_url`
+> (string) The full URL used to send the action, including the encrypted action data and authentication token.
+
+`$endpoint`
+> (string) The API endpoint receiving the action.
 
 ___
 

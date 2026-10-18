@@ -892,10 +892,33 @@ abstract class Wprus_Api_Abstract {
 
 		do_action( 'wprus_before_firing_action', $endpoint, $url, $data );
 
-		$data     = apply_filters( 'wprus_action_data', $data, $endpoint, $url );
+		$data  = apply_filters( 'wprus_action_data', $data, $endpoint, $url );
+		$token = $this->get_token( $url, $data['username'], 'post' );
+
+		if ( false === $token ) {
+			Wprus_Logger::log(
+				sprintf(
+					// translators: %1$s is the username; %2$s is the action; %3$s is the remote site URL
+					__( 'Could not obtain a token for username "%1$s"; action "%2$s" was not sent to %3$s.', 'wprus' ),
+					$data['username'],
+					$endpoint,
+					$url
+				),
+				'warning',
+				'db_log'
+			);
+
+			return array(
+				'headers'          => array(),
+				'response_code'    => 0,
+				'response_message' => __( 'Action not sent because a security token could not be obtained.', 'wprus' ),
+				'body'             => '',
+			);
+		}
+
 		$body     = array(
 			'wprusdata' => $this->encrypt_data( $data ),
-			'token'     => $this->get_token( $url, $data['username'], 'post' ),
+			'token'     => $token,
 		);
 		$response = wp_safe_remote_post(
 			trailingslashit( $url ) . 'wprus/' . trailingslashit( $endpoint ),
@@ -950,7 +973,7 @@ abstract class Wprus_Api_Abstract {
 
 		if (
 			! isset( $tokens_info[ $url ] ) ||
-			$tokens_info[ $url ]['expiry'] <= time() - self::TOKEN_EXPIRY_BUFFER
+			$tokens_info[ $url ]['expiry'] <= time() + self::TOKEN_EXPIRY_BUFFER
 		) {
 			$payload    = array(
 				'action'   => $this->endpoint,
@@ -1150,7 +1173,7 @@ abstract class Wprus_Api_Abstract {
 
 	/**
 	 * Check whether the data received from remote site is valid
-	 * @param array The data to validate
+	 * @param array $data The data to validate
 	 * @return bool Whether the data is valid
 	 */
 	protected function validate( $data ) {
@@ -1165,7 +1188,7 @@ abstract class Wprus_Api_Abstract {
 
 	/**
 	 * Sanitize data received from remote site
-	 * @param array The data to sanitize
+	 * @param array $data The data to sanitize
 	 * @return bool The sanitized data
 	 */
 	protected function sanitize( $data ) {
@@ -1220,7 +1243,7 @@ abstract class Wprus_Api_Abstract {
 			'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
 			'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
 		);
-		$async_url = add_query_arg( $args, $async_url );
+		$async_url = apply_filters( 'wprus_async_url', add_query_arg( $args, $async_url ), $this->endpoint );
 		$output    = $this->get_async_action_output( $async_url, true );
 
 		update_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions', $actions );
@@ -1262,7 +1285,7 @@ abstract class Wprus_Api_Abstract {
 				'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
 				'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
 			);
-			$async_url = add_query_arg( $args, $async_url );
+			$async_url = apply_filters( 'wprus_async_url', add_query_arg( $args, $async_url ), $this->endpoint );
 			$output   .= $this->get_async_action_output( $async_url );
 
 			Wprus_Logger::log(

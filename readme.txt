@@ -4,7 +4,7 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 6.8
-Stable tag: 2.1.5
+Stable tag: 2.2.0
 Requires PHP: 8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -19,10 +19,9 @@ If you run multiple websites and want to keep users separated, but synchronise t
 
 This plugin adds the following major features to WordPress:
 
-* **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, import/export users, and view activity logs.
+* **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, and activity logs.
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing User Actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
-* **Import and Export Users:** connected websites' existing user base can be synchronised manually first thanks to the provided import/export tool.
 * **Activity Logs:** when enabled, all communications between connected sites are logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
 * **Customizable:** developers can add their own User Actions using action and filter hooks, and more - see the [developers documentation](https://github.com/froger-me/wp-remote-users-sync).
@@ -54,6 +53,10 @@ If such need for plugin integration arises, website administrators **MUST** cont
 
 == Upgrade Notice ==
 
+= 2.2.0 =
+
+The user import and export feature has been removed. Administrators should use a third-party user import and export tool instead.
+
 = 2.1.1 =
 
 All your site must be using WordPress with a version superior or equal to 6.8, **OR** all your sites must be using WordPress with a version inferior or equal to 6.8. If one site is using, for example, WordPress 6.8 and another site is using WordPress 6.7, the password handling will not work properly.
@@ -72,9 +75,8 @@ This section describes how to install the plugin and get it working.
 2. Remote Sites tab with remote sites collapsed
 3. Remote Sites tab with a remote site actions settings opened
 4. Security tab - token, encryption, signature and IP settings
-5. User Import/Export tab
-6. Activity Logs tabs with example of communication activity to and from a remote site
-7. Help tab
+5. Activity Logs tabs with example of communication activity to and from a remote site
+6. Help tab
 
 == Frequently Asked Questions ==
 
@@ -110,7 +112,7 @@ Please also note that unless "Force Login Redirects & Logout Everywhere" is acti
 = What happens to existing users after activating WP Remote Users Sync? =
 Existing users remain untouched, until an enabled incoming action is received from a remote site.
 Users existing on one site and not the other will not be synchronised unless the user is actually updated AND both Create and Update actions are enabled on the site where the user does not exist.
-For existing user databases in need of immediate synchronisation, WP Remote Users Sync provides its own user import/export tool.
+For existing user databases in need of immediate synchronisation, administrators should use a third-party user import and export tool to transfer users between sites.
 
 = What security measures are in place? =
 Multiple layers of security are in place to protect the privacy, integrity and authenticity of communications between connected sites:
@@ -156,21 +158,6 @@ If other actions for this user are fired before that (Login, Logout, Delete, Pas
 Yes - as long as the websites can reach each other, WP Remote User Sync will work.
 This means that two websites in localhost (behind virtual hosts, for example) can communicate. However, if one of the websites is on localhost and the other is not, token exchange cannot happen and the websites will not be able to communicate.
 
-= How to export users from this site and import them into a remote site? =
-WP Remote Users Sync provides its own user import/export tool.
-With it, administrators can:
-
-* Export all users
-* Export users with specified roles
-* Export users with or without their roles
-* Export users with or without specified metadata
-* Export batches of users - for example, to export 500 users at a time, Max # is set to 500 and Offset to 0, 500, 1,000, 1,500, 2,000... and the export operation is repeated until there are no more users to export.
-* Import users into the remote site using the file(s) previously exported
-
-Once downloaded, the files are automatically deleted. In case some files were not downloaded and remained on the server, the containing directory is also cleaned daily.
-Exported files are not directly accessible by URL: only administrators can access them.
-User passwords cannot be and are NOT exported.
-
 = Where to find more help? =
 
 More help can be found on <a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">the WordPress support forum</a> for general inquiries and on <a href="https://github.com/froger-me/wp-remote-users-sync">Github</a> for advanced troubleshooting.
@@ -178,6 +165,14 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for previously unanswered general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 2.2.0 =
+* Remove the user import and export feature (fixing low severity security issue) (thanks to Muni Nitish Kumar Yaddala)
+* Add the `wprus_async_url` filter, allowing the full URL for an asynchronous action to be changed before it is used (thanks to @wittyapps on Github)
+* Correct PHP code documentation
+* Correct the authentication token expiry check to add `self::TOKEN_EXPIRY_BUFFER` to the current time instead of subtracting it (thanks to @phil24classroom on Github)
+* Prevent synchronous actions from being sent when a security token cannot be obtained, and log a clear local warning instead (thanks to @phil24classroom on Github)
+* Translation updates
 
 = 2.1.5 =
 * Better `get_site` handling

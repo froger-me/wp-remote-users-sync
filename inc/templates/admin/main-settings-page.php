@@ -14,9 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<a href="#" data-toggle="wprus-security" class="nav-tab">
 			<span class='dashicons dashicons-shield'></span> <?php esc_html_e( 'Security', 'wprus' ); ?>
 		</a>
-		<a href="#" data-toggle="wprus-users" class="nav-tab">
-			<span class="dashicons dashicons-groups"></span> <?php esc_html_e( 'Import / Export', 'wprus' ); ?>
-		</a>
 		<a href="#" data-toggle="wprus-logs" class="nav-tab">
 			<span class='dashicons dashicons-visibility'></span> <?php esc_html_e( 'Activity Logs', 'wprus' ); ?>
 		</a>

@@ -112,7 +112,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<p>
 					<?php esc_html_e( 'Existing users remain untouched, until an enabled incoming action is received from a remote site.', 'wprus' ); ?><br>
 					<?php esc_html_e( 'Users existing on one site and not the other will not be synchronised unless the user is actually updated AND both Create and Update actions are enabled on the site where the user does not exist.', 'wprus' ); ?><br>
-					<?php esc_html_e( 'For existing user databases in need of immediate synchronisation, WP Remote Users Sync provides its own user import/export tool.', 'wprus' ); ?>
+					<?php esc_html_e( 'For existing user databases in need of immediate synchronisation, administrators should use a third-party user import and export tool to transfer users between sites.', 'wprus' ); ?>
 				</p>
 			</div>
 		</div>
@@ -270,33 +270,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h2 class="wprus-help-title"><?php esc_html_e( 'How to export users from this site and import them into a remote site?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
-					<?php esc_html_e( 'WP Remote Users Sync provides its own user import/export tool.', 'wprus' ); ?><br/>
-					<?php esc_html_e( 'With it, administrators can:', 'wprus' ); ?>
-				</p>
-				<ul>
-					<li>
-						<?php esc_html_e( 'Export all users', 'wprus' ); ?>
-					</li>
-					<li>
-						<?php esc_html_e( 'Export users with specified roles', 'wprus' ); ?>
-					</li>
-					<li>
-						<?php esc_html_e( 'Export users with or without their roles', 'wprus' ); ?>
-					</li>
-					<li>
-						<?php esc_html_e( 'Export users with or without specified metadata', 'wprus' ); ?>
-					</li>
-					<li>
-						<?php esc_html_e( 'Export batches of users - for example, to export 500 users at a time, Max # is set to 500 and Offset to 0, 500, 1,000, 1,500, 2,000... and the export operation is repeated until there are no more users to export.', 'wprus' ); ?>
-					</li>
-					<li>
-						<?php esc_html_e( 'Import users into the remote site using the file(s) previously exported', 'wprus' ); ?>
-					</li>
-				</ul>
-				<p>
-					<?php esc_html_e( 'Once downloaded, the files are automatically deleted. In case some files were not downloaded and remained on the server, the containing directory is also cleaned daily.', 'wprus' ); ?><br/>
-					<?php esc_html_e( 'Exported files are not directly accessible by URL: only administrators can access them.', 'wprus' ); ?><br/>
-					<?php esc_html_e( 'User passwords cannot be and are NOT exported.', 'wprus' ); ?>
+					<?php esc_html_e( 'For existing user databases in need of immediate synchronisation, administrators should use a third-party user import and export tool to transfer users between sites.', 'wprus' ); ?>
 				</p>
 			</div>
 		</div>
