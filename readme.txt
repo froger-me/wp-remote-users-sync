@@ -3,7 +3,7 @@ Contributors: frogerme
 Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
-Tested up to: 6.8
+Tested up to: 7.1
 Stable tag: 2.2.0
 Requires PHP: 8.0
 License: GPLv3
