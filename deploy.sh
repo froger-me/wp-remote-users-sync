@@ -288,8 +288,9 @@ if which gh > /dev/null; then
     # Create a zip file of the plugin, excluding development files.
     execute_or_echo rsync -r --exclude=".*" --exclude="*.sh" --exclude="tests" "$GITPATH" "$RELEASEPATH"
 
-    # Use tar to create the zip file
-    execute_or_echo tar -czf "/tmp/$ZIPFILE" -C "$RELEASEPATH" .
+    # Create the zip file from the prepared release directory.
+    execute_or_echo rm -f "/tmp/$ZIPFILE"
+    execute_or_echo bash -c 'cd "$1" && zip -qr "$2" .' _ "$RELEASEPATH" "/tmp/$ZIPFILE"
 
     # Delete the release path
     execute_or_echo rm -fr "$RELEASEPATH"

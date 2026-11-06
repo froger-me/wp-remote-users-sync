@@ -1,0 +1,6 @@
+{
+    "message": "{\"username\":\"测试-user\",\"value\":0}",
+    "aes_key": "wprus-test-encryption-key",
+    "hmac_key": "wprus-test-signature-key",
+    "bundle": "AAECAwQFBgcICQoLDA0OD9D8e+GQUXhsUoUaRPHpUic56eFEJrFZVaqi5YhAPr2NIPW2oZNa9DtyTJYa0i6IP7Z+NyuIKhJmPnVYafj598hPX87qFleQEU+D3iAzOnEz"
+}
