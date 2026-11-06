@@ -232,7 +232,7 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			url: WPRUS.ajax_url,
 			type: 'POST',
-			data: { action: 'wprus_clear_logs' },
+			data: { action: 'wprus_clear_logs', nonce: $('#wprus_logs_nonce').val() },
 			error: function(jqXHR, textStatus) {
 				WPRUS.debug && console.log(textStatus);
 			},

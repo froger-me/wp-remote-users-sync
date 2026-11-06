@@ -1,8 +1,19 @@
 <?php
+/**
+ * Display permitted IP address settings.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Permitted IP addresses.
+ *
+ * @var string $ips
+ */
 
 ?>
 <div class="wprus-container" data-postbox_class="wprus-security wprus-togglable">

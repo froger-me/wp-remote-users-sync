@@ -1,14 +1,29 @@
 <?php
+/**
+ * Encrypt and verify messages exchanged with connected sites.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/** Encrypt, decrypt, and sign messages. */
 class Wprus_Crypto {
 
 	const METHOD        = 'aes-256-cbc';
 	const SLASH_REPLACE = '_';
 
+	/**
+	 * Encrypt and sign a message for a connected site.
+	 *
+	 * @param string $message Message to encrypt.
+	 * @param string $crypt_key Encryption key.
+	 * @param string $sign_key Authentication key.
+	 * @return string|false Encrypted message, or false on failure.
+	 * @throws Exception When the encryption key has an invalid length.
+	 */
 	public static function encrypt( $message, $crypt_key, $sign_key ) {
 		$cipher    = false;
 		$crypt_key = hex2bin( hash( 'sha256', $crypt_key ) );
@@ -36,6 +51,15 @@ class Wprus_Crypto {
 		return $cipher;
 	}
 
+	/**
+	 * Verify and decrypt a message from a connected site.
+	 *
+	 * @param string $cipher Encrypted message.
+	 * @param string $crypt_key Encryption key.
+	 * @param string $sign_key Authentication key.
+	 * @return string|false Decrypted message, or false on failure.
+	 * @throws Exception When the encryption key has an invalid length.
+	 */
 	public static function decrypt( $cipher, $crypt_key, $sign_key ) {
 		$message   = false;
 		$crypt_key = hex2bin( hash( 'sha256', $crypt_key ) );
@@ -65,12 +89,26 @@ class Wprus_Crypto {
 		return $message;
 	}
 
+	/**
+	 * Calculate the authentication signature for a message.
+	 *
+	 * @param string $message Message to sign.
+	 * @param string $sign_key Authentication key.
+	 * @return string Message signature.
+	 */
 	public static function hmac_sign( $message, $sign_key ) {
 		$signature = hash_hmac( 'sha256', $message, $sign_key, true );
 
 		return $signature;
 	}
 
+	/**
+	 * Compare two authentication signatures safely.
+	 *
+	 * @param string $original First signature.
+	 * @param string $new_val Second signature.
+	 * @return bool Whether the signatures match.
+	 */
 	public static function hmac_verify( $original, $new_val ) {
 
 		if ( function_exists( 'hash_equals' ) ) {
@@ -99,11 +137,23 @@ class Wprus_Crypto {
 		return 0 === $result;
 	}
 
+	/**
+	 * Encode bytes for use in a URL.
+	 *
+	 * @param string $s Bytes to encode or decode.
+	 * @return string Encoded bytes.
+	 */
 	public static function base64url_encode( $s ) {
 
 		return str_replace( '/', self::SLASH_REPLACE, base64_encode( $s ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	}
 
+	/**
+	 * Decode bytes received in a URL.
+	 *
+	 * @param string $s Bytes to encode or decode.
+	 * @return string|false Decoded bytes, or false on failure.
+	 */
 	public static function base64url_decode( $s ) {
 
 		return base64_decode( str_replace( self::SLASH_REPLACE, '/', $s ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode

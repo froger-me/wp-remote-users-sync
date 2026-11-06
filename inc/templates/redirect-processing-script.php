@@ -1,6 +1,24 @@
-<?php if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+<?php
+/**
+ * Print the script that completes an asynchronous redirect.
+ *
+ * @package Wprus
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Destination for the redirected action.
+ *
+ * @var string $async_url
+ */
+/**
+ * Page content displayed before redirecting.
+ *
+ * @var string $output
+ */
 
 ?>
 <script type="text/javascript">

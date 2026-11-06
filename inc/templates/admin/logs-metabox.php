@@ -1,8 +1,29 @@
 <?php
+/**
+ * Display activity log settings and entries.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Saved activity log options.
+ *
+ * @var array $logs_settings
+ */
+/**
+ * Number of stored activity log entries.
+ *
+ * @var int $num_logs
+ */
+/**
+ * Rendered activity log rows.
+ *
+ * @var string $logs
+ */
 
 ?>
 <div class="wprus-container" data-postbox_class="wprus-logs wprus-togglable">
@@ -23,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<input class="regular-text" type="number" id="wprus_logs_min_num" name="wprus[logs][min_num]" value="<?php echo esc_attr( $logs_settings['min_num'] ); ?>"> <input type="button" value="
 				<?php
 				echo esc_html(
-					// translators: %d is the current number of log entries
+					// translators: %d is the current number of log entries.
 					sprintf( __( 'Clear All (%d entries)', 'wprus' ), $num_logs )
 				);
 				?>

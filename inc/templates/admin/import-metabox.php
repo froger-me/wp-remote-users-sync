@@ -1,7 +1,12 @@
 <?php
+/**
+ * Display user import controls.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 ?>

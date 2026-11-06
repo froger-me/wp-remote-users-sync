@@ -1,19 +1,35 @@
 <?php
+/**
+ * Send and receive user deletion requests.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/** Handle the Delete action for connected sites. */
 class Wprus_Api_Delete extends Wprus_Api_Abstract {
 
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
 
+	/**
+	 * Register the hook that sends local user deletions.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function init_notification_hooks() {
 		add_action( 'delete_user', array( $this, 'notify_remote' ), PHP_INT_MAX - 100, 2 );
 	}
 
+	/**
+	 * Receive a user deletion allowed by this site's settings.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function handle_notification() {
 		$data = $this->get_data_post();
 
@@ -46,7 +62,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 			if ( ! $user ) {
 				Wprus_Logger::log(
 					sprintf(
-						// translators: %1$s is the username ; %2$s is the caller
+						// translators: %1$s is the username ; %2$s is the caller.
 						__( 'Delete action failed - user "%1$s" from %2$s was not found locally.', 'wprus' ),
 						$data['username'],
 						$site['url']
@@ -57,7 +73,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 			} elseif ( ! $user_reassign && $data['reassign_username'] ) {
 				Wprus_Logger::log(
 					sprintf(
-						// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username
+						// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username.
 						__( 'Delete action - successfully deleted user "%1$s" from %2$s but failed to reassign content to %3$s.', 'wprus' ),
 						$data['username'],
 						$site['url'],
@@ -69,7 +85,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 			} elseif ( $user_reassign ) {
 				Wprus_Logger::log(
 					sprintf(
-						// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username
+						// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username.
 						__( 'Delete action - successfully deleted user "%1$s" from %2$s and reassigned content to %3$s.', 'wprus' ),
 						$data['username'],
 						$site['url'],
@@ -81,7 +97,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 			} else {
 				Wprus_Logger::log(
 					sprintf(
-						// translators: %1$s is the username, %2$s is the caller
+						// translators: %1$s is the username, %2$s is the caller.
 						__( 'Delete action - successfully deleted user "%1$s" from %2$s.', 'wprus' ),
 						$data['username'],
 						$site['url']
@@ -93,7 +109,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 		} else {
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %s is the url of the caller
+					// translators: %s is the url of the caller.
 					__( 'Delete action failed - incoming delete action not enabled for %s', 'wprus' ),
 					$data['base_url']
 				),
@@ -103,6 +119,13 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Send a local user deletion to connected sites.
+	 *
+	 * @param int      $user_id  ID of the deleted user.
+	 * @param int|null $reassign ID of the user receiving that user's content.
+	 * @return void No value is returned.
+	 */
 	public function notify_remote( $user_id, $reassign ) {
 		$sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 
@@ -112,7 +135,7 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %s is the username
+					// translators: %s is the username.
 					__( 'Delete action - firing action for username "%s"', 'wprus' ),
 					$user->user_login
 				),
@@ -136,6 +159,12 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 	 * Protected methods
 	 *******************************************************************/
 
+	/**
+	 * Supply the optional content reassignment name.
+	 *
+	 * @param array $data Received request data.
+	 * @return array Request data with a reassignment name or false.
+	 */
 	protected function sanitize( $data ) {
 		$data['reassign_username'] = isset( $data['reassign_username'] ) ? $data['reassign_username'] : false;
 

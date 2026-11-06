@@ -1,9 +1,15 @@
 <?php
+/**
+ * Shared request handling for the plugin's remote user actions.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/** Provide the transport and authorization used by remote action handlers. */
 abstract class Wprus_Api_Abstract {
 	const TOKEN_EXPIRY_BUFFER = MINUTE_IN_SECONDS / 2;
 
@@ -103,9 +109,9 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Constructor
 	 *
-	 * @param string $endpoint The endpoint key of the current instance.
+	 * @param string               $endpoint The endpoint key of the current instance.
 	 * @param Wprus_Settings|mixed $settings The settings object.
-	 * @param bool $init_hooks Whether to add WordPress action and filter hooks on object creation ; default `false`.
+	 * @param bool                 $init_hooks Whether to add WordPress action and filter hooks on object creation ; default `false`.
 	 */
 	public function __construct( $endpoint, $settings, $init_hooks = false ) {
 		$this->endpoint            = $endpoint;
@@ -154,14 +160,16 @@ abstract class Wprus_Api_Abstract {
 	 * @return bool whether the current request comes from a remote site
 	 */
 	public static function is_doing_remote_action() {
-		return strpos( $_SERVER['REQUEST_URI'], '/wprus/' ) !== false;
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+
+		return strpos( $request_uri, '/wprus/' ) !== false;
 	}
 
 	/**
 	 * Encrypt data to be sent to remote sites
 	 *
 	 * @param mixed $data The data to encrypt.
-	 * @return string the encrypted bundle
+	 * @return string|false Encrypted bundle, or false on failure.
 	 */
 	public function encrypt_data( $data ) {
 		$bundle = Wprus_Crypto::encrypt(
@@ -205,6 +213,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Initialise the current API endpoint with its configuration
 	 *
+	 * @return void No value is returned.
 	 */
 	public function init() {
 		self::$settings_class = get_class( $this->settings );
@@ -238,7 +247,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Handle notifications from remote websites when an action is triggered
 	 *
-	 * @return $result whether the operation was successful
+	 * @return null No action in the base implementation.
 	 */
 	public function handle_notification() {
 		return null;
@@ -246,12 +255,15 @@ abstract class Wprus_Api_Abstract {
 
 	/**
 	 * Initialize the hooks to trigger when the action is triggered
+	 *
+	 * @return void No value is returned.
 	 */
 	public function init_notification_hooks() { }
 
 	/**
 	 * Handle request for security tokens and reply with JSON data
 	 *
+	 * @return void No value is returned.
 	 */
 	public function handle_token_request() {
 		$data       = $this->get_data_post();
@@ -271,7 +283,7 @@ abstract class Wprus_Api_Abstract {
 			}
 
 			Wprus_Logger::log(
-				// translators: %1$s is the remote site ; %2$s is the action
+				// translators: %1$s is the remote site ; %2$s is the action.
 				sprintf( __( 'Token created: site %1$s - action "%2$s"', 'wprus' ), $data['base_url'], $action_label ),
 				'info',
 				'db_log'
@@ -287,6 +299,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise WordPress action hooks to process remote sites requests
 	 *
+	 * @return void No value is returned.
 	 */
 	public function init_remote_hooks() {
 		$data = $this->get_data();
@@ -303,6 +316,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise WordPress action hooks to authorise remote sites requests
 	 *
+	 * @return void No value is returned.
 	 */
 	public function init_remote_hooks_authorization() {
 		add_action( 'wprus_api_' . $this->endpoint, array( $this, 'authorize_notification' ), 5, 0 );
@@ -311,6 +325,8 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise the endpoint's role handler object
 	 *
+	 * @param Wprus_Api_Role $role_api Handler for incoming role changes.
+	 * @return void No value is returned.
 	 */
 	public function init_role_handler( $role_api ) {
 		$this->role_handler = $role_api;
@@ -319,6 +335,8 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise the endpoint's password handler object
 	 *
+	 * @param Wprus_Api_Password $password_api Handler for incoming passwords.
+	 * @return void No value is returned.
 	 */
 	public function init_password_handler( $password_api ) {
 		$this->password_handler = $password_api;
@@ -327,6 +345,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Process a remote site request
 	 *
+	 * @return void No value is returned.
 	 */
 	public function handle_request() {
 		$data = $this->get_data();
@@ -353,6 +372,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Authorise or deny a remote site request
 	 *
+	 * @return void No value is returned.
 	 */
 	public function authorize_notification() {
 		$token_filter         = FILTER_UNSAFE_RAW;
@@ -361,6 +381,7 @@ abstract class Wprus_Api_Abstract {
 		$is_authorized_remote = false;
 		$origin               = false;
 		$remote_data          = $this->get_data();
+		$remote_addr          = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 
 		if ( isset( $remote_data['base_url'] ) ) {
 			$origin = $remote_data['base_url'];
@@ -380,7 +401,7 @@ abstract class Wprus_Api_Abstract {
 
 				if ( self::$ip_whitelist ) {
 					foreach ( self::$ip_whitelist as $range ) {
-						if ( $this->cidr_match( $_SERVER['REMOTE_ADDR'], $range ) ) {
+						if ( $this->cidr_match( $remote_addr, $range ) ) {
 							$is_authorized_remote = true;
 							break;
 						}
@@ -394,15 +415,15 @@ abstract class Wprus_Api_Abstract {
 				'wprus_is_authorized_remote',
 				$is_authorized_remote,
 				$this->method,
-				$_SERVER['REMOTE_ADDR'],
+				$remote_addr,
 				self::$ip_whitelist
 			);
 
 			if ( $is_authorized_remote ) {
 				$message = __( 'Access granted', 'wprus' );
 			} elseif ( 'post' === $this->method && self::$ip_whitelist ) {
-				// translators: %s is the remote IP address
-				$message = sprintf( __( 'Unauthorized access (invalid remote IP address %s)', 'wprus' ), $_SERVER['REMOTE_ADDR'] );
+				// translators: %s is the remote IP address.
+				$message = sprintf( __( 'Unauthorized access (invalid remote IP address %s)', 'wprus' ), $remote_addr );
 			} else {
 				$message = __( 'Unauthorized access (invalid method)', 'wprus' );
 			}
@@ -443,6 +464,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise WordPress action hooks to send requests to remote sites
 	 *
+	 * @return void No value is returned.
 	 */
 	public function init_local_hooks() {
 		$init_notification_hooks = apply_filters( 'wprus_init_notification_hooks', true );
@@ -464,6 +486,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise WordPress action hooks used to process redirected async actions
 	 *
+	 * @return void No value is returned.
 	 */
 	public function init_async_redirect_hooks() {
 
@@ -488,6 +511,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise WordPress action hooks used to process async actions
 	 *
+	 * @return void No value is returned.
 	 */
 	public function init_async_hooks() {
 		$init_notification_hooks = apply_filters( 'wprus_init_notification_hooks', true );
@@ -522,6 +546,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise WordPress action hooks used to process silent redirected async actions
 	 *
+	 * @return void No value is returned.
 	 */
 	public function init_silent_async_redirect_hooks() {}
 
@@ -555,6 +580,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Inititialise data received from remote sites
 	 *
+	 * @return void No value is returned.
 	 */
 	public function init_data() {
 		$data_get     = filter_input( INPUT_GET, 'wprusdata', FILTER_UNSAFE_RAW );
@@ -569,7 +595,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Add endpoint entries to a list of endpoints
 	 *
-	 * @param array $endpoints The list of endpoints
+	 * @param array $endpoints The list of endpoints.
 	 * @return array The list of endpoints
 	 */
 	public function add_action_endpoints( $endpoints ) {
@@ -584,9 +610,9 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Get the site information where the specified endpoint is active for the specify direction
 	 *
-	 * @param string $endpoint The endpoints key
-	 * @param string $site_url The URL of the site ; `false` will use the URL of the local site
-	 * @param string $direction The direction for which the endpoint is active - 'incoming' or 'outgoing' ; 'incoming by default'
+	 * @param string $endpoint The endpoints key.
+	 * @param string $site_url The URL of the site ; `false` will use the URL of the local site.
+	 * @param string $direction The direction for which the endpoint is active - 'incoming' or 'outgoing' ; 'incoming by default'.
 	 * @return array|bool The site information ; `false` if no corresponding site information
 	 */
 	public function get_active_site_for_action( $endpoint, $site_url = false, $direction = 'incoming' ) {
@@ -599,6 +625,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Handle requests for test pings and reply with JSON data
 	 *
+	 * @return void No value is returned.
 	 */
 	public function handle_ping_notification() {
 		$data = $this->get_data_post();
@@ -623,7 +650,7 @@ abstract class Wprus_Api_Abstract {
 		$site            = $this->get_active_site_for_action( $this->endpoint, $data['base_url'], $data['direction'] );
 		$action_label    = $this->endpoint;
 		$direction_label = ( 'incoming' === $data['direction'] ) ? __( 'incoming', 'wprus' ) : __( 'outgoing', 'wprus' );
-		$remote_addr     = $_SERVER['REMOTE_ADDR'];
+		$remote_addr     = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 		$settings_class  = self::$settings_class;
 		$class_vars      = get_class_vars( $settings_class );
 
@@ -634,7 +661,7 @@ abstract class Wprus_Api_Abstract {
 		if ( $site ) {
 			do_action( 'wprus_ping_success', $this->endpoint, $data, $remote_addr );
 
-			// translators: %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
+			// translators: %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction.
 			$message = __( 'Ping received for activated action "%1$s" from %2$s with remote IP %3$s (%4$s)', 'wprus' );
 
 			Wprus_Logger::log(
@@ -649,7 +676,7 @@ abstract class Wprus_Api_Abstract {
 				'db_log'
 			);
 
-			// translators: %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
+			// translators: %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction.
 			$message = __( 'Ping success for action "%1$s" from %2$s with remote IP %3$s (%4$s)', 'wprus' );
 
 			wp_send_json_success(
@@ -665,7 +692,7 @@ abstract class Wprus_Api_Abstract {
 
 		do_action( 'wprus_ping_failure', $this->endpoint, $data, $remote_addr );
 
-		// translators: %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
+		// translators: %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction.
 		$message = __( 'Ping received for deactivated action "%1$s" from %2$s with remote IP %3$s (%4$s)', 'wprus' );
 
 		Wprus_Logger::log(
@@ -680,7 +707,7 @@ abstract class Wprus_Api_Abstract {
 			'db_log'
 		);
 
-		// translators: %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
+		// translators: %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction.
 		$message = __( '"%1$s" action is not activated on %2$s with remote IP %3$s (%4$s).', 'wprus' );
 		$message = sprintf(
 			$message,
@@ -696,8 +723,13 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Send a test ping request to a remote website and send the response to the user interface
 	 *
+	 * @return void No value is returned.
 	 */
 	public function notify_ping_remote() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ), 403 );
+		}
+
 		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
 
 		if ( ! wp_verify_nonce( $nonce, 'wprus_ping_nonce' ) ) {
@@ -755,7 +787,7 @@ abstract class Wprus_Api_Abstract {
 			) {
 				$payload .= $response['response_code'] . ' - ' . $response['response_message'];
 			} else {
-				// translators: %s is the error code
+				// translators: %s is the error code.
 				$payload .= ( ! empty( $response['response_code'] ) ) ? sprintf( __( ' - code: %s - ', 'wprus' ), $response['response_code'] ) : '';
 				$payload .= __( 'an undefined error occured. Please make sure the address is correct and try again.', 'wprus' );
 				$payload .= "\n";
@@ -793,6 +825,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Persist the user ID used to save and fire async actions.
 	 *
+	 * @return void No value is returned.
 	 */
 	public function set_pending_async_actions_user_id() {
 
@@ -809,6 +842,9 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Add async action to the list of async actions to add to the footer
 	 *
+	 * @param string $url  Remote site URL.
+	 * @param array  $data Action data to send.
+	 * @return void No value is returned.
 	 */
 	public function add_async_action( $url, $data ) {
 		$data['base_url'] = get_option( 'home' );
@@ -820,6 +856,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Persist the list of async actions to add to the footer
 	 *
+	 * @return void No value is returned.
 	 */
 	public function save_async_actions() {
 
@@ -835,6 +872,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Fire the async actions
 	 *
+	 * @return void No value is returned.
 	 */
 	public function fire_async_actions() {
 		$location_headers = preg_grep( '/^Location:/i', headers_list() );
@@ -878,11 +916,11 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Fire a sync action
 	 *
-	 * @param string $url The remote website's URL
-	 * @param mixed $data The data to send
-	 * @param bool $blocking whether the request needs to wait for a response - default `false`
-	 * @param int $timeout the maximum time to wait for a response in seconds - default `1`
-	 * @param string $endpoint the endpoint to send the request to - default `null` ; will use the $endpoint attribute value of the instance
+	 * @param string $url The remote website's URL.
+	 * @param mixed  $data The data to send.
+	 * @param bool   $blocking whether the request needs to wait for a response - default `false`.
+	 * @param int    $timeout the maximum time to wait for a response in seconds - default `1`.
+	 * @param string $endpoint the endpoint to send the request to - default `null` ; will use the $endpoint attribute value of the instance.
 	 * @return array Response data
 	 */
 	public function fire_action( $url, $data, $blocking = false, $timeout = 1, $endpoint = null ) {
@@ -898,7 +936,7 @@ abstract class Wprus_Api_Abstract {
 		if ( false === $token ) {
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %1$s is the username; %2$s is the action; %3$s is the remote site URL
+					// translators: %1$s is the username; %2$s is the action; %3$s is the remote site URL.
 					__( 'Could not obtain a token for username "%1$s"; action "%2$s" was not sent to %3$s.', 'wprus' ),
 					$data['username'],
 					$endpoint,
@@ -952,9 +990,9 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Get security token for the specified remote site URL and username
 	 *
-	 * @param string $url The remote website's URL
-	 * @param string $username The WordPress user login name
-	 * @param string $method The request method - `'get'` or `'post'` ; if `'get'`, the token will not be stored ; default `'post'`
+	 * @param string $url The remote website's URL.
+	 * @param string $username The WordPress user login name.
+	 * @param string $method The request method - `'get'` or `'post'` ; if `'get'`, the token will not be stored ; default `'post'`.
 	 * @return string|bool The security token
 	 */
 	protected function get_token( $url, $username, $method = 'post' ) {
@@ -972,7 +1010,10 @@ abstract class Wprus_Api_Abstract {
 		}
 
 		if (
-			! isset( $tokens_info[ $url ] ) ||
+			! isset( $tokens_info[ $url ]['nonce'], $tokens_info[ $url ]['expiry'] ) ||
+			! is_string( $tokens_info[ $url ]['nonce'] ) ||
+			'' === $tokens_info[ $url ]['nonce'] ||
+			! is_numeric( $tokens_info[ $url ]['expiry'] ) ||
 			$tokens_info[ $url ]['expiry'] <= time() + self::TOKEN_EXPIRY_BUFFER
 		) {
 			$payload    = array(
@@ -999,7 +1040,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Renew the security token for a specific payload
 	 *
-	 * @param array $payload The payload to send to the remote site
+	 * @param array $payload The payload to send to the remote site.
 	 * @return array|bool The security token information on success - `false` on failure
 	 */
 	protected function get_remote_token( $payload ) {
@@ -1007,7 +1048,7 @@ abstract class Wprus_Api_Abstract {
 		if ( self::$can_request_token ) {
 			$timeout = apply_filters( 'wprus_request_token_timeout', 1 );
 
-			// translators: %s is the url of the caller
+			// translators: %s is the url of the caller.
 			Wprus_Logger::log( sprintf( __( 'Renewing token for %s', 'wprus' ), $payload['base_url'] ), 'info', 'db_log' );
 		} else {
 			$timeout = apply_filters( 'wprus_request_token_retry_timeout', 5 );
@@ -1029,10 +1070,13 @@ abstract class Wprus_Api_Abstract {
 
 		if ( $body && 200 === wp_remote_retrieve_response_code( $response ) ) {
 			$token_info = json_decode( $body, true );
+			if ( ! is_array( $token_info ) || empty( $token_info['nonce'] ) || ! is_string( $token_info['nonce'] ) || ! isset( $token_info['expiry'] ) || ! is_numeric( $token_info['expiry'] ) || $token_info['expiry'] <= time() ) {
+				$token_info = false;
+			}
 		} elseif ( self::$can_request_token ) {
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %s is the url of the caller
+					// translators: %s is the url of the caller.
 					__( 'Failed to renew token for %s - retrying...', 'wprus' ),
 					$payload['base_url']
 				),
@@ -1047,7 +1091,7 @@ abstract class Wprus_Api_Abstract {
 		if ( ! $token_info && ! self::$can_request_token ) {
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %s is the url of the caller
+					// translators: %s is the url of the caller.
 					__( 'Failed to renew token for %s', 'wprus' ),
 					$payload['base_url']
 				),
@@ -1093,10 +1137,10 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Set cookie helper
 	 *
-	 * @param string $name The name of the cookie
-	 * @param mixed $value The cookie value
-	 * @param int $expire The time the cookie expires ; this is a Unix timestamp so is in number of seconds since the epoch - default `0`
-	 * @return array|bool The security token information on success - `false` on failure
+	 * @param string $name The name of the cookie.
+	 * @param mixed  $value The cookie value.
+	 * @param int    $expire The time the cookie expires ; this is a Unix timestamp so is in number of seconds since the epoch - default `0`.
+	 * @return void No value is returned.
 	 */
 	protected function setcookie( $name, $value, $expire = 0 ) {
 
@@ -1173,7 +1217,8 @@ abstract class Wprus_Api_Abstract {
 
 	/**
 	 * Check whether the data received from remote site is valid
-	 * @param array $data The data to validate
+	 *
+	 * @param array $data The data to validate.
 	 * @return bool Whether the data is valid
 	 */
 	protected function validate( $data ) {
@@ -1188,8 +1233,9 @@ abstract class Wprus_Api_Abstract {
 
 	/**
 	 * Sanitize data received from remote site
-	 * @param array $data The data to sanitize
-	 * @return bool The sanitized data
+	 *
+	 * @param array $data The data to sanitize.
+	 * @return array The sanitized data
 	 */
 	protected function sanitize( $data ) {
 		return $data;
@@ -1209,7 +1255,7 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Get the URL to redirect to when performing async actions requiring redirections
 	 *
-	 * @param string $ajax_fallback The URL to fallback to in case we're in an ajax request ; default false, which will result to home_url()
+	 * @param string $ajax_fallback The URL to fallback to in case we're in an ajax request ; default false, which will result to home_url().
 	 * @return string the current URL
 	 */
 	protected function get_redirect_url( $ajax_fallback = false ) {
@@ -1227,8 +1273,9 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Redirect the page to perform asyn actions with fallback output for javascript redirection
 	 *
-	 * @param array $actions The async actions to fire
-	 * @param int $user_id The ID of the user for which the actions are to be fired
+	 * @param array $actions The async actions to fire.
+	 * @param int   $user_id The ID of the user for which the actions are to be fired.
+	 * @return void No value is returned.
 	 */
 	protected function do_async_actions_redirect( $actions, $user_id ) {
 		$data                 = array_pop( $actions );
@@ -1239,9 +1286,17 @@ abstract class Wprus_Api_Abstract {
 		unset( $data['url'] );
 
 		$data      = apply_filters( 'wprus_action_data', $data, $this->endpoint, $url );
+		$token     = $this->get_token( $url, $data['username'], 'get' );
+		if ( false === $token ) {
+			update_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions', $actions );
+			if ( $actions ) {
+				$this->do_async_actions_redirect( $actions, $user_id );
+			}
+			return;
+		}
 		$args      = array(
 			'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
-			'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
+			'token'     => rawurlencode( $token ),
 		);
 		$async_url = apply_filters( 'wprus_async_url', add_query_arg( $args, $async_url ), $this->endpoint );
 		$output    = $this->get_async_action_output( $async_url, true );
@@ -1249,7 +1304,7 @@ abstract class Wprus_Api_Abstract {
 		update_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions', $actions );
 		Wprus_Logger::log(
 			sprintf(
-				// translators: %1$s is the url of the endpoint ; %2$s is the action called
+				// translators: %1$s is the url of the endpoint ; %2$s is the action called.
 				__( 'Ready to redirect to %1$s async URL in %2$s', 'wprus' ),
 				$async_url,
 				current_filter()
@@ -1268,8 +1323,9 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Print the markup used by async actions
 	 *
-	 * @param array $actions The async actions to fire
-	 * @param int $user_id The ID of the user for which the actions are to be fired
+	 * @param array $actions The async actions to fire.
+	 * @param int   $user_id The ID of the user for which the actions are to be fired.
+	 * @return void No value is returned.
 	 */
 	protected function print_async_actions_markup( $actions, $user_id ) {
 		$output = '';
@@ -1281,16 +1337,20 @@ abstract class Wprus_Api_Abstract {
 			unset( $data['url'] );
 
 			$data      = apply_filters( 'wprus_action_data', $data, $this->endpoint, $url );
+			$token     = $this->get_token( $url, $data['username'], 'get' );
+			if ( false === $token ) {
+				continue;
+			}
 			$args      = array(
 				'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
-				'token'     => rawurlencode( $this->get_token( $url, $data['username'], 'get' ) ),
+				'token'     => rawurlencode( $token ),
 			);
 			$async_url = apply_filters( 'wprus_async_url', add_query_arg( $args, $async_url ), $this->endpoint );
 			$output   .= $this->get_async_action_output( $async_url );
 
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %1$s is the url of the script ; %2$s is the action called
+					// translators: %1$s is the url of the script ; %2$s is the action called.
 					__( 'Added %1$s async URL in %2$s', 'wprus' ),
 					$async_url,
 					current_filter()
@@ -1310,13 +1370,14 @@ abstract class Wprus_Api_Abstract {
 	/**
 	 * Get the output needed to perform an async action
 	 *
-	 * @param string $async_url The URL of an action
-	 * @param bool $redirect Whether the page needs to be redirected - if true, gets the fallback output for javascript redirection ; if false, gets the iframe used to perform the action ; default false
+	 * @param string $async_url The URL of an action.
+	 * @param bool   $redirect Whether the page needs to be redirected - if true, gets the fallback output for javascript redirection ; if false, gets the iframe used to perform the action ; default false.
+	 * @return string HTML used for the asynchronous action.
 	 */
 	protected function get_async_action_output( $async_url, $redirect = false ) {
 
 		if ( ! $redirect ) {
-			return '<iframe style="display:none" src="' . $async_url . '"></iframe>'; // phpcs:ignor
+			return '<iframe style="display:none" src="' . $async_url . '"></iframe>'; // phpcs:ignor.
 		}
 
 		ob_start();
@@ -1354,24 +1415,29 @@ abstract class Wprus_Api_Abstract {
 	}
 
 	/**
-	 * check if ip is in range
+	 * Check if an IP address is in a range.
 	 *
-	 * @param string $ip The ip address to check against the range
-	 * @param string $range The CIDR
+	 * @param string $ip The ip address to check against the range.
+	 * @param string $range The CIDR.
 	 * @return bool True if the ip is in range, false otherwise
 	 */
 	protected function cidr_match( $ip, $range ) {
-		list ( $subnet, $bits ) = explode( '/', $range );
-		$ip                     = ip2long( $ip );
-		$subnet                 = ip2long( $subnet );
-
-		if ( ! $ip || ! $subnet || ! $bits ) {
-
+		$parts = explode( '/', $range );
+		if ( 2 !== count( $parts ) || ! ctype_digit( $parts[1] ) || (int) $parts[1] > 32 ) {
 			return false;
+		}
+		$ip     = ip2long( $ip );
+		$subnet = ip2long( $parts[0] );
+		$bits   = (int) $parts[1];
+		if ( false === $ip || false === $subnet ) {
+			return false;
+		}
+		if ( 0 === $bits ) {
+			return true;
 		}
 
 		$mask    = -1 << ( 32 - $bits );
-		$subnet &= $mask; // in case the supplied subnet was not correctly aligned
+		$subnet &= $mask; // in case the supplied subnet was not correctly aligned.
 
 		return ( $ip & $mask ) === $subnet;
 	}

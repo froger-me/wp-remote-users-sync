@@ -1,23 +1,75 @@
 <?php
+/**
+ * Manage settings and render the plugin settings page.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/** Read, validate, and display plugin settings. */
 class Wprus_Settings {
 	const DEFAULT_TOKEN_EXPIRY_LENGTH = HOUR_IN_SECONDS / 2;
 	const DEFAULT_MIN_LOG             = 100;
 
+	/**
+	 * Labels for user actions.
+	 *
+	 * @var array
+	 */
 	protected static $actions;
+	/**
+	 * Names of available action endpoints.
+	 *
+	 * @var array
+	 */
 	protected static $endpoints;
+	/**
+	 * Saved settings or false when none exist.
+	 *
+	 * @var array|false
+	 */
 	protected static $settings;
+	/**
+	 * Identifier for the settings page.
+	 *
+	 * @var string
+	 */
 	protected static $settings_page_id = 'settings_page_wprus';
 
+	/**
+	 * Encryption key.
+	 *
+	 * @var string
+	 */
 	protected $aes_key;
+	/**
+	 * Authentication key.
+	 *
+	 * @var string
+	 */
 	protected $hmac_key;
+	/**
+	 * Connected site settings.
+	 *
+	 * @var array
+	 */
 	protected $sites;
+	/**
+	 * Administrator notice for missing settings.
+	 *
+	 * @var string
+	 */
 	protected $error;
 
+	/**
+	 * Load settings and optionally register WordPress hooks.
+	 *
+	 * @param array|null $endpoints Available request endpoints.
+	 * @param bool       $init_hooks Whether to register WordPress hooks.
+	 */
 	public function __construct( $endpoints = null, $init_hooks = false ) {
 
 		if ( $init_hooks ) {
@@ -40,6 +92,11 @@ class Wprus_Settings {
 	 * Public methods
 	 *******************************************************************/
 
+	/**
+	 * Load all saved plugin settings.
+	 *
+	 * @return array|false Saved settings or false when none exist.
+	 */
 	public static function get_options() {
 		self::$settings = get_option( 'wprus' );
 		self::$settings = apply_filters( 'wprus_settings', self::$settings );
@@ -47,6 +104,13 @@ class Wprus_Settings {
 		return self::$settings;
 	}
 
+	/**
+	 * Read one setting or its default value.
+	 *
+	 * @param string $key Setting name.
+	 * @param mixed  $default_val Value used when the setting is absent.
+	 * @return mixed Setting value or its default.
+	 */
 	public static function get_option( $key, $default_val = false ) {
 
 		if ( ! $default_val && method_exists( self::class, 'get_default_' . $key . '_option' ) ) {
@@ -59,12 +123,24 @@ class Wprus_Settings {
 		return apply_filters( 'wprus_option', $value, $key );
 	}
 
+	/**
+	 * Add a settings link to the plugin list.
+	 *
+	 * @param array $links Plugin action links.
+	 * @return array Plugin action links.
+	 */
 	public function plugin_action_links( $links ) {
 		$links[] = '<a href="' . admin_url( 'options-general.php?page=wprus' ) . '">' . __( 'Settings' ) . '</a>';
 
 		return $links;
 	}
 
+	/**
+	 * Clear cached settings and request a rewrite rule refresh.
+	 *
+	 * @param array $settings Settings being saved.
+	 * @return mixed Unchanged settings value.
+	 */
 	public function require_flush( $settings ) {
 		set_transient( 'wprus_flush', 1, 60 );
 		wp_cache_flush();
@@ -72,14 +148,29 @@ class Wprus_Settings {
 		return $settings;
 	}
 
+	/**
+	 * Keep this plugin's cache group out of persistent storage.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function set_cache_policy() {
 		wp_cache_add_non_persistent_groups( 'wprus' );
 	}
 
+	/**
+	 * Load translations for the plugin.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function load_textdomain() {
 		load_plugin_textdomain( 'wprus', false, 'wp-remote-users-sync/languages' );
 	}
 
+	/**
+	 * Load labels for the available user actions.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function init() {
 		self::$actions = apply_filters(
 			'wprus_actions',
@@ -96,6 +187,11 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Check that the required encryption keys are configured.
+	 *
+	 * @return bool Whether the required settings are present.
+	 */
 	public function validate() {
 		$encryption = self::get_option( 'encryption' );
 
@@ -115,6 +211,11 @@ class Wprus_Settings {
 		return apply_filters( 'wprus_settings_valid', true, self::$settings );
 	}
 
+	/**
+	 * Display an administrator notice for missing encryption keys.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function missing_config() {
 		$href    = admin_url( 'options-general.php?page=wprus' );
 		$link    = ' <a href="' . $href . '">' . __( 'Edit configuration', 'wprus' ) . '</a>';
@@ -124,6 +225,11 @@ class Wprus_Settings {
 		printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message . $link . $this->error ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
+	/**
+	 * Register the settings page and its hooks.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function plugin_options_menu_main() {
 		register_setting(
 			'wprus',
@@ -147,6 +253,12 @@ class Wprus_Settings {
 		}
 	}
 
+	/**
+	 * Load scripts and styles for the settings page.
+	 *
+	 * @param string $hook_suffix Current administrator page identifier.
+	 * @return void No value is returned.
+	 */
 	public function admin_enqueue_scripts( $hook_suffix ) {
 		$page_hook_id = self::$settings_page_id;
 
@@ -231,6 +343,13 @@ class Wprus_Settings {
 		}
 	}
 
+	/**
+	 * Allow two columns on the settings page.
+	 *
+	 * @param array  $columns Screen column counts.
+	 * @param string $screen Current screen identifier.
+	 * @return array Screen column counts.
+	 */
 	public function screen_layout_column( $columns, $screen ) {
 		$page_hook_id = self::$settings_page_id;
 
@@ -241,6 +360,12 @@ class Wprus_Settings {
 		return $columns;
 	}
 
+	/**
+	 * Register the settings page panels.
+	 *
+	 * @param string $post_type Current screen identifier.
+	 * @return void No value is returned.
+	 */
 	public function add_settings_meta_boxes( $post_type ) {
 
 		if ( $post_type !== self::$settings_page_id ) {
@@ -364,14 +489,29 @@ class Wprus_Settings {
 		}
 	}
 
+	/**
+	 * Display the save settings panel.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function get_submit_metabox() {
 		wprus_get_admin_template( 'submit-settings-metabox.php' );
 	}
 
+	/**
+	 * Display the add site panel.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function get_add_site_metabox() {
 		wprus_get_admin_template( 'add-site-metabox.php' );
 	}
 
+	/**
+	 * Display the encryption settings panel.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function get_encryption_metabox() {
 		$encryption_settings = self::get_option( 'encryption' );
 
@@ -381,6 +521,11 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Display the browser support panel.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function get_browser_support_metabox() {
 		$browser_support_settings = self::get_option( 'browser_support' );
 
@@ -390,6 +535,11 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Display the permitted IP address panel.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function get_ip_whitelist_metabox() {
 		$ips = self::get_option( 'ip_whitelist' );
 
@@ -399,6 +549,11 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Display the activity log panel.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function get_logs_metabox() {
 		$num_logs      = Wprus_Logger::get_logs_count();
 		$logs          = Wprus_Logger::get_logs();
@@ -420,6 +575,13 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Display settings for one connected site.
+	 *
+	 * @param string $page_hook_id Settings page identifier.
+	 * @param array  $data Panel data or request values.
+	 * @return void No value is returned.
+	 */
 	public function get_site_metabox( $page_hook_id, $data ) {
 		wprus_get_admin_template(
 			'site-metabox.php',
@@ -433,6 +595,13 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Display the template for a connected site panel.
+	 *
+	 * @param string $page_hook_id Settings page identifier.
+	 * @param array  $data Panel data or request values.
+	 * @return void No value is returned.
+	 */
 	public function get_site_metabox_template( $page_hook_id, $data ) {
 		wprus_get_admin_template(
 			'site-metabox-template.php',
@@ -444,6 +613,13 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Display the export panel.
+	 *
+	 * @param string $page_hook_id Settings page identifier.
+	 * @param array  $data Panel data or request values.
+	 * @return void No value is returned.
+	 */
 	public function get_export_metabox_template( $page_hook_id, $data ) {
 		wprus_get_admin_template(
 			'export-metabox.php',
@@ -454,6 +630,13 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Display the import panel.
+	 *
+	 * @param string $page_hook_id Settings page identifier.
+	 * @param array  $data Panel data or request values.
+	 * @return void No value is returned.
+	 */
 	public function get_import_metabox_template( $page_hook_id, $data ) {
 		wprus_get_admin_template(
 			'import-metabox.php',
@@ -464,6 +647,11 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Display the settings page for an administrator.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function plugin_main_page() {
 
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -481,6 +669,12 @@ class Wprus_Settings {
 		);
 	}
 
+	/**
+	 * Fill missing settings with their default values.
+	 *
+	 * @param mixed $settings Submitted settings.
+	 * @return array Settings with missing values filled.
+	 */
 	public function sanitize_settings( $settings ) {
 		$settings = ( is_array( $settings ) ) ? $settings : array();
 		$settings = $this->sanitize_encryption_settings( $settings );
@@ -491,6 +685,13 @@ class Wprus_Settings {
 		return apply_filters( 'wprus_sanitize_settings', $settings );
 	}
 
+	/**
+	 * Find connected sites enabled for an action and direction.
+	 *
+	 * @param string|false $action Action to match, or false for all actions.
+	 * @param string|false $direction Incoming or outgoing direction, or false for all.
+	 * @return array Matching connected sites.
+	 */
 	public function get_sites( $action = false, $direction = false ) {
 
 		if ( $direction && ! in_array( $direction, array( 'incoming', 'outgoing' ), true ) ) {
@@ -521,6 +722,14 @@ class Wprus_Settings {
 		return $sites;
 	}
 
+	/**
+	 * Find the connected site that best matches a URL.
+	 *
+	 * @param string       $url Connected site URL.
+	 * @param string|false $action Action to match, or false for all actions.
+	 * @param string|false $direction Incoming or outgoing direction, or false for all.
+	 * @return array|false Matching site or false when none matches.
+	 */
 	public function get_site( $url, $action = false, $direction = false ) {
 		$sites = $this->get_sites( $action, $direction );
 
@@ -559,10 +768,36 @@ class Wprus_Settings {
 		return $match;
 	}
 
+	/**
+	 * Get exact keys and regular expressions excluded from incoming metadata.
+	 *
+	 * @return array Exact keys and regular expressions from the settings page exclusions.
+	 */
+	public function get_excluded_meta_request_rules() {
+		$patterns = $this->get_excluded_meta_like();
+		$regexes  = array();
+
+		foreach ( $patterns as $pattern ) {
+			if ( is_string( $pattern ) ) {
+				$regexes[] = $this->meta_like_to_regex( $pattern );
+			}
+		}
+
+		return array(
+			'keys'  => $this->get_excluded_meta(),
+			'regex' => $regexes,
+		);
+	}
+
 	/*******************************************************************
 	 * Protected methods
 	 *******************************************************************/
 
+	/**
+	 * Get default encryption settings.
+	 *
+	 * @return array Default encryption settings.
+	 */
 	protected static function get_default_encryption_option() {
 		$default = array(
 			'token_expiry' => self::DEFAULT_TOKEN_EXPIRY_LENGTH,
@@ -573,6 +808,11 @@ class Wprus_Settings {
 		return $default;
 	}
 
+	/**
+	 * Get default activity log settings.
+	 *
+	 * @return array Default activity log settings.
+	 */
 	protected static function get_default_logs_option() {
 		$default = array(
 			'enable'  => false,
@@ -582,12 +822,22 @@ class Wprus_Settings {
 		return $default;
 	}
 
+	/**
+	 * Get the default list of connected sites.
+	 *
+	 * @return array Empty connected site list.
+	 */
 	protected static function get_default_sites_option() {
 		$default = array();
 
 		return $default;
 	}
 
+	/**
+	 * Get default browser support settings.
+	 *
+	 * @return array Default browser support settings.
+	 */
 	protected static function get_default_browser_support_option() {
 		$default = array(
 			'force_login_logout_strict'         => false,
@@ -598,6 +848,12 @@ class Wprus_Settings {
 		return $default;
 	}
 
+	/**
+	 * Fill missing encryption settings with defaults.
+	 *
+	 * @param array $settings Current settings.
+	 * @return array Settings with encryption defaults.
+	 */
 	protected function sanitize_encryption_settings( $settings ) {
 
 		if ( ! isset( $settings['encryption'] ) ) {
@@ -632,6 +888,12 @@ class Wprus_Settings {
 		return $settings;
 	}
 
+	/**
+	 * Fill missing connected site settings with defaults.
+	 *
+	 * @param array $settings Current settings.
+	 * @return array Settings with connected site defaults.
+	 */
 	protected function sanitize_sites_settings( $settings ) {
 
 		if ( ! isset( $settings['sites'] ) ) {
@@ -691,6 +953,12 @@ class Wprus_Settings {
 		return $settings;
 	}
 
+	/**
+	 * Fill missing activity log settings with defaults.
+	 *
+	 * @param array $settings Current settings.
+	 * @return array Settings with activity log defaults.
+	 */
 	protected function sanitize_logs_settings( $settings ) {
 
 		if ( isset( $settings['logs'] ) ) {
@@ -714,6 +982,12 @@ class Wprus_Settings {
 		return $settings;
 	}
 
+	/**
+	 * Fill missing browser support settings with defaults.
+	 *
+	 * @param array $settings Current settings.
+	 * @return array Settings with browser support defaults.
+	 */
 	protected function sanitize_browser_support_settings( $settings ) {
 
 		if ( isset( $settings['browser_support'] ) ) {
@@ -742,6 +1016,11 @@ class Wprus_Settings {
 		return $settings;
 	}
 
+	/**
+	 * Get user metadata keys omitted from the settings page.
+	 *
+	 * @return array Exact metadata keys to omit.
+	 */
 	protected function get_excluded_meta() {
 		$excluded = array(
 			'user_url',
@@ -773,6 +1052,11 @@ class Wprus_Settings {
 		return apply_filters( 'wprus_excluded_meta_keys', $excluded );
 	}
 
+	/**
+	 * Get patterns for metadata keys omitted from the settings page.
+	 *
+	 * @return array Metadata key patterns to omit.
+	 */
 	protected function get_excluded_meta_like() {
 		$excluded = array(
 			'%capabilities',
@@ -787,6 +1071,43 @@ class Wprus_Settings {
 		return apply_filters( 'wprus_excluded_meta_keys_like', $excluded );
 	}
 
+	/**
+	 * Convert a settings page pattern to a regular expression for request checks.
+	 *
+	 * @param string $pattern Pattern used by the settings page.
+	 * @return string Regular expression matching the same metadata keys.
+	 */
+	protected function meta_like_to_regex( $pattern ) {
+		$expression = '';
+		$escaped    = false;
+
+		foreach ( str_split( $pattern ) as $character ) {
+			if ( $escaped ) {
+				$expression .= preg_quote( $character, '/' );
+				$escaped     = false;
+			} elseif ( '\\' === $character ) {
+				$escaped = true;
+			} elseif ( '%' === $character ) {
+				$expression .= '.*';
+			} elseif ( '_' === $character ) {
+				$expression .= '.';
+			} else {
+				$expression .= preg_quote( $character, '/' );
+			}
+		}
+
+		if ( $escaped ) {
+			$expression .= preg_quote( '\\', '/' );
+		}
+
+		return '/\A' . $expression . '\z/sui';
+	}
+
+	/**
+	 * Get available user metadata keys for the settings page.
+	 *
+	 * @return array Available metadata keys.
+	 */
 	protected function get_user_meta_keys() {
 		global $wpdb;
 
@@ -808,7 +1129,7 @@ class Wprus_Settings {
 
 			$params    = array_merge( $exclude, $exclude_like );
 			$query     = $wpdb->prepare( $sql, $params ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$meta_keys = $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$meta_keys = $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- Read distinct keys once and cache them below.
 
 			wp_cache_set( 'wprus_meta_keys', $meta_keys, 'wprus' );
 		}
@@ -816,6 +1137,11 @@ class Wprus_Settings {
 		return $meta_keys;
 	}
 
+	/**
+	 * Get the WordPress role names for the settings page.
+	 *
+	 * @return array WordPress role names.
+	 */
 	protected function get_roles() {
 		global $wp_roles;
 

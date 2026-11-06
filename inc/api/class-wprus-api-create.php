@@ -1,19 +1,35 @@
 <?php
+/**
+ * Receive user creation requests and send local creations to connected sites.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/** Handle the Create action for a connected site. */
 class Wprus_Api_Create extends Wprus_Api_Abstract {
 
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
 
+	/**
+	 * Register the hooks that send local user changes.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function init_notification_hooks() {
 		add_action( 'user_register', array( $this, 'notify_remote' ), PHP_INT_MAX - 100, 1 );
 	}
 
+	/**
+	 * Receive a Create request after checking the sending site's settings.
+	 *
+	 * @return bool Whether the user was created.
+	 */
 	public function handle_notification() {
 		$data   = $this->get_data_post();
 		$result = false;
@@ -37,6 +53,7 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 
 			unset( $data['username'] );
 			unset( $data['base_url'] );
+			unset( $data['roles'] );
 
 			$data          = $this->password_handler->handle_notification_password_data( $data, $site );
 			$maybe_user_id = wp_insert_user( $data );
@@ -48,7 +65,7 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 			if ( is_wp_error( $maybe_user_id ) ) {
 				Wprus_Logger::log(
 					sprintf(
-						// translators: %1$s is the error ; %2$s is the username ; %3$s is the caller
+						// translators: %1$s is the error; %2$s is the username; %3$s is the caller.
 						__( 'Create action failed - "%1$s" for user "%2$s" from %3$s.', 'wprus' ),
 						$maybe_user_id->get_error_message(),
 						$incoming_username,
@@ -63,7 +80,7 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 				Wprus_Logger::log(
 					array(
 						'message' => sprintf(
-							// translators: %1$s is the username, %2$s is the caller
+							// translators: %1$s is the username, %2$s is the caller.
 							__( 'Create action - successfully created user "%1$s" from %2$s.', 'wprus' ),
 							$incoming_username,
 							$site['url']
@@ -78,12 +95,12 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 			if ( ! is_wp_error( $maybe_user_id ) && $incoming_roles ) {
 				$user = get_user_by( 'ID', $maybe_user_id );
 
-				$this->role_handler->handle_notification_roles( $site, $user, $incoming_roles, true );
+				$this->role_handler->handle_notification_roles( $site, $user, $incoming_roles );
 			}
 		} else {
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %s is the url of the caller
+					// translators: %s is the URL of the caller.
 					__( 'Create action failed - incoming create action not enabled for %s', 'wprus' ),
 					$data['base_url']
 				),
@@ -95,6 +112,12 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 		return $result;
 	}
 
+	/**
+	 * Send a newly registered user to connected sites.
+	 *
+	 * @param int $user_id ID of the new user.
+	 * @return void No value is returned.
+	 */
 	public function notify_remote( $user_id ) {
 		$sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 		$user  = get_user_by( 'ID', $user_id );
@@ -123,7 +146,7 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %s is the username
+					// translators: %s is the username.
 					__( 'Create action - firing action for username "%s"', 'wprus' ),
 					$user->user_login
 				),
@@ -144,9 +167,40 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 	 * Protected methods
 	 *******************************************************************/
 
+	/**
+	 * Keep only user fields that the Create action sends.
+	 *
+	 * @param array $data Received user fields.
+	 * @return array Accepted user fields.
+	 */
 	protected function sanitize( $data ) {
-		$data['user_pass'] = isset( $data['user_pass'] ) ? $data['user_pass'] : false;
-		$data['roles']     = isset( $data['roles'] ) ? $data['roles'] : array();
+		$accepted_fields = array(
+			'username',
+			'base_url',
+			'user_nicename',
+			'user_url',
+			'user_email',
+			'display_name',
+			'nickname',
+			'first_name',
+			'last_name',
+			'description',
+			'rich_editing',
+			'syntax_highlighting',
+			'comment_shortcuts',
+			'admin_color',
+			'use_ssl',
+			'user_registered',
+			'show_admin_bar_front',
+			'locale',
+			'user_pass',
+			'roles',
+		);
+		$data            = array_intersect_key( $data, array_fill_keys( $accepted_fields, true ) );
+
+		$data['user_pass']  = isset( $data['user_pass'] ) ? $data['user_pass'] : false;
+		$data['roles']      = isset( $data['roles'] ) && is_array( $data['roles'] ) ? $data['roles'] : array();
+		$data['user_login'] = $data['username'];
 
 		return $data;
 	}

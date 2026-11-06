@@ -1,19 +1,48 @@
 <?php
+/**
+ * Apply role changes permitted by each receiving site.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/** Handle role changes attached to Create and Update actions. */
 class Wprus_Api_Role extends Wprus_Api_Abstract {
 
+	/**
+	 * Local user receiving a role change.
+	 *
+	 * @var WP_User
+	 */
 	protected $user;
+	/**
+	 * Settings for the sending site.
+	 *
+	 * @var array
+	 */
 	protected $site;
+	/**
+	 * Role changes sent by a connected site.
+	 *
+	 * @var array
+	 */
 	protected $incoming_roles;
 
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
 
+	/**
+	 * Apply only role changes accepted by the receiving site.
+	 *
+	 * @param array   $site           Sending site settings.
+	 * @param WP_User $user           Local user to update.
+	 * @param array   $incoming_roles Roles requested by the sending site.
+	 * @return void No value is returned.
+	 */
 	public function handle_notification_roles( $site, $user, $incoming_roles ) {
 
 		if ( ! $user || ! $site || empty( $incoming_roles ) ) {
@@ -28,7 +57,7 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 			$this->incoming_roles = $incoming_roles;
 
 			if ( $this->site['incoming_roles_merge'] ) {
-				$this->incoming_roles = $this->merge_roles( $this->incoming_roles, $this->user->roles );
+					$this->incoming_roles = $this->merge_roles();
 			}
 
 			if ( ! empty( $this->incoming_roles['set'] ) ) {
@@ -44,7 +73,7 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 				} else {
 					Wprus_Logger::log(
 						sprintf(
-							// translators: %1$s is the meta_key, %2$s is the username, %3$s is the caller
+							// translators: %1$s is the meta_key, %2$s is the username, %3$s is the caller.
 							__(
 								'Role action aborted - role %1$s for user "%2$s" from %3$s not accepted',
 								'wprus'
@@ -74,7 +103,7 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 					} else {
 						Wprus_Logger::log(
 							sprintf(
-								// translators: %1$s is the meta_key, %2$s is the username, %3$s is the caller
+								// translators: %1$s is the meta_key, %2$s is the username, %3$s is the caller.
 								__(
 									'Role action aborted - role %1$s for user "%2$s" from %3$s not accepted',
 									'wprus'
@@ -92,7 +121,7 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 		} else {
 			Wprus_Logger::log(
 				sprintf(
-					// translators: %s is the url of the caller
+					// translators: %s is the url of the caller.
 					__( 'Role action failed - incoming role action not enabled for %s', 'wprus' ),
 					$site['url']
 				),
@@ -102,6 +131,14 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 		}
 	}
 
+	/**
+	 * Add permitted local roles to outgoing user fields.
+	 *
+	 * @param array   $data User fields to send.
+	 * @param array   $site Receiving site settings.
+	 * @param WP_User $user Local user.
+	 * @return array User fields with accepted roles.
+	 */
 	public function handle_notify_remote_data( $data, $site, $user ) {
 
 		if ( $site['outgoing_actions']['role'] ) {
@@ -127,6 +164,11 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 	 * Protected methods
 	 *******************************************************************/
 
+	/**
+	 * Combine incoming roles with the user's existing roles.
+	 *
+	 * @return array Role to set and any additional roles to add.
+	 */
 	protected function merge_roles() {
 
 		if ( $this->incoming_roles['set'] ) {

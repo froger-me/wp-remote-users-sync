@@ -1,8 +1,19 @@
 <?php
+/**
+ * Display browser support settings.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Saved browser support options.
+ *
+ * @var array $browser_support_settings
+ */
 
 ?>
 <div class="wprus-container" data-postbox_class="wprus-misc wprus-togglable">

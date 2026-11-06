@@ -23,16 +23,13 @@ global $wpdb;
 wp_clear_scheduled_hook( 'wprus_nonce_cleanup' );
 wp_clear_scheduled_hook( 'wprus_logs_cleanup' );
 
-$option_prefix = 'wprus';
-$sql           = "DELETE FROM $wpdb->options WHERE `option_name` LIKE %s";
+$sql = "DELETE FROM $wpdb->options WHERE `option_name` = %s OR `option_name` LIKE %s OR `option_name` LIKE %s OR `option_name` LIKE %s";
+$wpdb->query( $wpdb->prepare( $sql, 'wprus', $wpdb->esc_like( 'wprus_' ) . '%', $wpdb->esc_like( '_transient_wprus_' ) . '%', $wpdb->esc_like( '_transient_timeout_wprus_' ) . '%' ) ); // @codingStandardsIgnoreLine
 
-$wpdb->query( $wpdb->prepare( $sql, '%' . $option_prefix . '%' ) ); // @codingStandardsIgnoreLine
-
-$meta_prefix = 'wprus';
 $table       = Wprus::get_table( 'usermeta' );
 $sql         = "DELETE FROM $table WHERE `meta_key` LIKE %s";
 
-$wpdb->query( $wpdb->prepare( $sql, '%' . $meta_prefix . '%' ) ); // @codingStandardsIgnoreLine
+$wpdb->query( $wpdb->prepare( $sql, '%' . $wpdb->esc_like( 'wprus_' ) . '%' ) ); // @codingStandardsIgnoreLine
 
 $table = Wprus::get_table( 'wprus_nonce' );
 $sql   = "DROP TABLE IF EXISTS {$table};";

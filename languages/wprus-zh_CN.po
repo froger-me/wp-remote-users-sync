@@ -1003,6 +1003,12 @@ msgid ""
 "accepted"
 msgstr "元数据操作已中止-来自“%3$s”的用户“%2$s”的元数据%1$s"
 
+#. %1$s is the metadata key, %2$s is the username, %3$s is the sending site.
+#: inc/api/class-wprus-api-meta.php
+#, php-format
+msgid "Metadata action blocked protected key %1$s for user \"%2$s\" from %3$s"
+msgstr "元数据操作已阻止来自 %3$s 的用户“%2$s”的受保护字段 %1$s"
+
 #. %s is the url of the caller
 #: inc/api/class-wprus-api-meta.php:288
 #, php-format

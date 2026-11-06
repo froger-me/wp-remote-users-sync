@@ -1,8 +1,24 @@
 <?php
+/**
+ * Display one activity log entry.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Activity log row.
+ *
+ * @var stdClass $log
+ */
+/**
+ * Label for the log type.
+ *
+ * @var string $type_output
+ */
 
 ?>
 

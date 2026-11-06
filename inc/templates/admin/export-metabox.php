@@ -1,8 +1,24 @@
 <?php
+/**
+ * Display user export controls.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Available user role names.
+ *
+ * @var string[] $roles
+ */
+/**
+ * Available user metadata keys.
+ *
+ * @var string[] $meta_keys
+ */
 
 ?>
 <div class="wprus-container" data-postbox_class="wprus-users wprus-togglable">

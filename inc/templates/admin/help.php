@@ -1,7 +1,12 @@
 <?php
+/**
+ * Display help for the plugin.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 ?>
@@ -62,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<li>
 						<?php
 						printf(
-							// translators: %1$s is the bold englisg word "exactly" ; %2$s is 'http'; %3$s is 'https'; %4$s is 'home' option key in the database ; %5$s is 'wp_options' table name
+							// translators: %1$s is the bold English word "exactly"; %2$s is "http"; %3$s is "https"; %4$s is the "home" option key; %5$s is the "wp_options" table name.
 							esc_html__( 'The URLs used in settings of WP Remote Users Sync %1$s match the URL in your WordPress settings: the protocol (%2$s vs. %3$s) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the %4$s option in the %5$s table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.', 'wprus' ),
 							'<strong>' . esc_html__( 'exactly', 'wprus' ) . '</strong>',
 							'<code>http</code>',
@@ -280,7 +285,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<p>
 					<?php
 					printf(
-						// translators: %1$s is the WordPress support forum URL, %2$s is the Github URL
+						// translators: %1$s is the WordPress support forum URL, %2$s is the GitHub URL.
 						esc_html__( 'More help can be found on %1$s for general inquiries and on %2$s for advanced troubleshooting.', 'wprus' ),
 						'<a href="https://wordpress.org/support/plugin/wp-remote-users-sync/">' . esc_html__( 'the WordPress support forum', 'wprus' ) . '</a>',
 						'<a href="https://github.com/froger-me/wp-remote-users-sync">' . esc_html( 'Github' ) . '</a>'

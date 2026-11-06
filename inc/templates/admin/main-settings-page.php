@@ -1,8 +1,19 @@
 <?php
+/**
+ * Display the plugin settings page.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Settings page identifier.
+ *
+ * @var string $hook_suffix
+ */
 
 ?>
 <div class="wrap">

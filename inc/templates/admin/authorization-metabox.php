@@ -1,8 +1,24 @@
 <?php
+/**
+ * Display authorization settings.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * IP address displayed in the settings field.
+ *
+ * @var string $proxy
+ */
+/**
+ * Whether anonymous sync is enabled.
+ *
+ * @var bool|string $auth_anonymous
+ */
 
 ?>
 <div class="wprus-container" data-postbox_class="wprus-security wprus-togglable">

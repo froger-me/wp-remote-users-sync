@@ -1,7 +1,12 @@
 <?php
+/**
+ * Display the form for adding a connected site.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 ?>

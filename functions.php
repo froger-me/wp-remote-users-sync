@@ -1,10 +1,22 @@
 <?php
+/**
+ * Provide functions shared by the plugin's user actions.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) || ! defined( 'WPINC' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 if ( ! function_exists( 'php_log' ) ) {
+	/**
+	 * Write a value and its calling location to the PHP error log.
+	 *
+	 * @param mixed  $message Value to record.
+	 * @param string $prefix Label added to the log message.
+	 * @return void No value is returned.
+	 */
 	function php_log( $message = '', $prefix = '' ) {
 		$prefix   = $prefix ? ' ' . $prefix . ' => ' : ' => ';
 		$trace    = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
@@ -19,6 +31,12 @@ if ( ! function_exists( 'php_log' ) ) {
 }
 
 if ( ! function_exists( 'wp_hash_password' ) ) {
+	/**
+	 * Hash a password using the current WordPress algorithm.
+	 *
+	 * @param string $password Password to hash.
+	 * @return string Password hash.
+	 */
 	function wp_hash_password(
 		#[\SensitiveParameter]
 		$password
@@ -67,6 +85,14 @@ if ( ! function_exists( 'wp_hash_password' ) ) {
 
 if ( ! function_exists( 'wprus_log' ) ) {
 
+	/**
+	 * Write a message through the plugin activity logger.
+	 *
+	 * @param mixed  $expression Message or data to record.
+	 * @param string $extend Log type or additional context.
+	 * @param string $destination Log destination method.
+	 * @return void No value is returned.
+	 */
 	function wprus_log( $expression, $extend = '', $destination = 'error_log' ) {
 
 		Wprus_Logger::log( $expression, $extend, $destination );
@@ -74,6 +100,15 @@ if ( ! function_exists( 'wprus_log' ) ) {
 }
 
 if ( ! function_exists( 'wprus_get_template' ) ) {
+	/**
+	 * Pass data to a front end template and optionally load it.
+	 *
+	 * @param string $template_name Template name.
+	 * @param array  $args Values made available to the template.
+	 * @param bool   $load Whether to load the template.
+	 * @param bool   $required_once Whether to load the template only once.
+	 * @return string Template path.
+	 */
 	function wprus_get_template( $template_name, $args = array(), $load = true, $required_once = false ) {
 		$template_name = apply_filters( 'wprus_get_template_name', $template_name, $args );
 		$template_args = apply_filters( 'wprus_get_template_args', $args, $template_name );
@@ -92,6 +127,15 @@ if ( ! function_exists( 'wprus_get_template' ) ) {
 }
 
 if ( ! function_exists( 'wprus_get_admin_template' ) ) {
+	/**
+	 * Pass data to an administrator template and optionally load it.
+	 *
+	 * @param string $template_name Template name.
+	 * @param array  $args Values made available to the template.
+	 * @param bool   $load Whether to load the template.
+	 * @param bool   $required_once Whether to load the template only once.
+	 * @return string Administrator template path.
+	 */
 	function wprus_get_admin_template( $template_name, $args = array(), $load = true, $required_once = false ) {
 		$template_name = apply_filters( 'wprus_get_admin_template_name', $template_name, $args );
 		$template_args = apply_filters( 'wprus_get_admin_template_args', $args, $template_name );
@@ -111,6 +155,15 @@ if ( ! function_exists( 'wprus_get_admin_template' ) ) {
 
 if ( ! function_exists( 'wprus_set_auth_cookie' ) ) {
 
+	/**
+	 * Set login cookies that allow cross site requests.
+	 *
+	 * @param int         $user_id WordPress user ID.
+	 * @param bool        $remember Whether to keep the user logged in.
+	 * @param bool|string $secure Whether to use a secure cookie, or an empty value to decide automatically.
+	 * @param string      $token Session token, or an empty value to create one.
+	 * @return void No value is returned.
+	 */
 	function wprus_set_auth_cookie( $user_id, $remember = false, $secure = '', $token = '' ) {
 
 		if ( $remember ) {
@@ -244,6 +297,11 @@ if ( ! function_exists( 'wprus_set_auth_cookie' ) ) {
 
 if ( ! function_exists( 'wprus_clear_auth_cookie' ) ) {
 
+	/**
+	 * Clear login cookies set by the plugin.
+	 *
+	 * @return void No value is returned.
+	 */
 	function wprus_clear_auth_cookie() {
 		do_action( 'clear_auth_cookie' );
 

@@ -1,18 +1,50 @@
 <?php
+/**
+ * Store and display synchronization activity logs.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/** Manage database activity logs and requests from the settings page. */
 class Wprus_Logger {
 
+	/**
+	 * Current activity log settings.
+	 *
+	 * @var array
+	 */
 	public static $log_settings;
+	/**
+	 * Labels for activity log types.
+	 *
+	 * @var array
+	 */
 	public static $log_types;
 
+	/**
+	 * Name of the settings class.
+	 *
+	 * @var string
+	 */
 	protected static $settings_class;
 
+	/**
+	 * Settings object for this instance.
+	 *
+	 * @var Wprus_Settings
+	 */
 	protected $settings;
 
+	/**
+	 * Set the log settings and register hooks when requested.
+	 *
+	 * @param Wprus_Settings $settings   Plugin settings.
+	 * @param bool           $init_hooks Whether to register WordPress hooks.
+	 */
 	public function __construct( $settings, $init_hooks = false ) {
 		$this->settings  = $settings;
 		self::$log_types = array(
@@ -37,6 +69,11 @@ class Wprus_Logger {
 	 * Public methods
 	 *******************************************************************/
 
+	/**
+	 * Load translated labels for activity log types.
+	 *
+	 * @return void No value is returned.
+	 */
 	public static function register_log_types() {
 		self::$log_types = array(
 			'info'    => __( 'Info', 'wprus' ),
@@ -46,6 +83,11 @@ class Wprus_Logger {
 		);
 	}
 
+	/**
+	 * Schedule automatic removal of older log entries.
+	 *
+	 * @return void No value is returned.
+	 */
 	public static function register_logs_cleanup() {
 
 		if ( ! wp_next_scheduled( 'wprus_logs_cleanup' ) ) {
@@ -53,6 +95,14 @@ class Wprus_Logger {
 		}
 	}
 
+	/**
+	 * Write a message to an available log destination.
+	 *
+	 * @param mixed  $expression  Message or structured details.
+	 * @param string $extend      Log type or additional context.
+	 * @param string $destination Log destination method.
+	 * @return void No value is returned.
+	 */
 	public static function log( $expression, $extend = '', $destination = 'error_log' ) {
 
 		if ( method_exists( self::class, $destination ) ) {
@@ -60,6 +110,11 @@ class Wprus_Logger {
 		}
 	}
 
+	/**
+	 * Remove old entries while keeping the configured minimum number.
+	 *
+	 * @return bool|null Whether rows were removed, or nothing during installation.
+	 */
 	public static function clear_logs() {
 
 		if ( defined( 'WP_SETUP_CONFIG' ) || defined( 'WP_INSTALLING' ) ) {
@@ -69,7 +124,8 @@ class Wprus_Logger {
 
 		global $wpdb;
 
-		$table  = Wprus::get_table( 'wprus_logs' );
+		$table = Wprus::get_table( 'wprus_logs' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Cleanup must use the current log table.
 		$result = $wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM $table " // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -91,15 +147,25 @@ class Wprus_Logger {
 		return (bool) $result;
 	}
 
+	/**
+	 * Count activity log entries.
+	 *
+	 * @return int Number of entries.
+	 */
 	public static function get_logs_count() {
 		global $wpdb;
 
 		$table = Wprus::get_table( 'wprus_logs' );
-		$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE 1 = 1;" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE 1 = 1;" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Counts must reflect current logs.
 
 		return absint( $count );
 	}
 
+	/**
+	 * Render the latest activity log entries for the settings page.
+	 *
+	 * @return string Log entries as HTML.
+	 */
 	public static function get_logs() {
 		global $wpdb;
 
@@ -111,7 +177,8 @@ class Wprus_Logger {
 
 		$logs  = '';
 		$table = Wprus::get_table( 'wprus_logs' );
-		$rows  = $wpdb->get_results(
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The view must show current log entries.
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM $table ORDER BY timestamp ASC LIMIT %d;", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				self::$log_settings['min_num']
@@ -141,7 +208,21 @@ class Wprus_Logger {
 		return $logs;
 	}
 
+	/**
+	 * Send current log entries to an authorized administrator.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function refresh_logs_async() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ),
+				),
+				403
+			);
+		}
+
 		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
 
 		if ( ! wp_verify_nonce( $nonce, 'wprus_logs_nonce' ) ) {
@@ -156,7 +237,7 @@ class Wprus_Logger {
 			array(
 				'html'               => self::get_logs(),
 				'clean_trigger_text' => sprintf(
-					// translators: %d is the current number of log entries
+					// translators: %d is the current number of log entries.
 					__( 'Clear All (%d entries)', 'wprus' ),
 					self::get_logs_count()
 				),
@@ -164,14 +245,46 @@ class Wprus_Logger {
 		);
 	}
 
+	/**
+	 * Clear all log entries for an authorized administrator.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function clear_logs_async() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ),
+				),
+				403
+			);
+		}
+
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
+
+		if ( ! wp_verify_nonce( $nonce, 'wprus_logs_nonce' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ),
+				),
+				403
+			);
+		}
+
 		global $wpdb;
 
 		$table = Wprus::get_table( 'wprus_logs' );
 
 		$wpdb->query( "TRUNCATE TABLE $table;" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		wp_send_json_success();
 	}
 
+	/**
+	 * Load the current activity log settings.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function init() {
 		self::$settings_class = get_class( $this->settings );
 		self::$log_settings   = self::$settings_class::get_option(
@@ -187,6 +300,13 @@ class Wprus_Logger {
 	 * Protected methods
 	 *******************************************************************/
 
+	/**
+	 * Store a message in the activity log table.
+	 *
+	 * @param mixed  $expression Message or structured details.
+	 * @param string $type       Activity log type.
+	 * @return array|false Stored entry or false when disabled or unsuccessful.
+	 */
 	protected static function db_log( $expression, $type ) {
 
 		if ( ! self::$log_settings['enable'] ) {
@@ -218,13 +338,14 @@ class Wprus_Logger {
 			$message = $expression;
 		}
 
-		$log    = array(
+		$log   = array(
 			'timestamp' => time(),
 			'type'      => ( ! in_array( $type, array_keys( self::$log_types ), true ) ) ? 'info' : $type,
 			'message'   => $message,
 			'data'      => maybe_serialize( $data ),
 		);
-		$table  = Wprus::get_table( 'wprus_logs' );
+		$table = Wprus::get_table( 'wprus_logs' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Activity logs use their own database table.
 		$result = $wpdb->insert( $table, $log );
 
 		if ( (bool) $result ) {
@@ -235,6 +356,13 @@ class Wprus_Logger {
 		return false;
 	}
 
+	/**
+	 * Write a message to the PHP error log with its calling location.
+	 *
+	 * @param mixed  $expression     Message or structured details.
+	 * @param string $extend_context Additional context.
+	 * @return void No value is returned.
+	 */
 	protected static function error_log( $expression, $extend_context = '' ) {
 
 		if ( ! is_string( $expression ) ) {

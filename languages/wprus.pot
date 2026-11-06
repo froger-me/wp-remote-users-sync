@@ -961,6 +961,12 @@ msgid ""
 "accepted"
 msgstr ""
 
+#. %1$s is the metadata key, %2$s is the username, %3$s is the sending site.
+#: inc/api/class-wprus-api-meta.php
+#, php-format
+msgid "Metadata action blocked protected key %1$s for user \"%2$s\" from %3$s"
+msgstr ""
+
 #. %s is the url of the caller
 #: inc/api/class-wprus-api-meta.php:288
 #, php-format

@@ -926,7 +926,7 @@ ___
 apply_filters( 'wprus_excluded_meta_keys', (mixed) $excluded_meta_keys );
 ```
 **Description**  
-Filter the meta keys excluded from selection for synchronization (by default, keys referring to redundant or site-specific data).  
+Filter the meta keys excluded from selection for synchronization (by default, keys referring to redundant or site-specific data). These keys are also ignored in incoming Metadata actions.
 
 **Parameters**  
 `$excluded_meta_keys`
@@ -967,7 +967,7 @@ ___
 apply_filters( 'wprus_excluded_meta_keys_like', (mixed) $excluded_meta_keys_like_expressions );
 ```
 **Description**  
-Filter the meta keys `LIKE` clauses used to exclude groups of meta keys from selection for synchronization (by default, keys referring to redundant or site-specific data).    
+Filter the meta keys `LIKE` clauses used to exclude groups of meta keys from selection for synchronization (by default, keys referring to redundant or site-specific data). Incoming Metadata actions use regular expressions made from these patterns to ignore the same keys.
 
 **Parameters**  
 `$excluded_meta_keys_like_expressions`
@@ -983,6 +983,36 @@ array(
     '%wprus',
 );
 ```  
+___
+
+#### wprus_incoming_meta_exclusions
+
+```php
+apply_filters( 'wprus_incoming_meta_exclusions', (array) $excluded );
+```
+
+**Description**
+Change which metadata keys an incoming Metadata action ignores. The settings page's exact exclusions and wildcard exclusions, including changes made with `wprus_excluded_meta_keys` and `wprus_excluded_meta_keys_like`, supply the defaults. The wildcard exclusions are converted to regular expressions before checking a request.
+
+All settings page exclusions apply to incoming requests, including keys ending in `capabilities` or `user_level`. WordPress role and permission keys are also checked against the exact prefix of each site and cannot be allowed through this filter. Exact key checks and the default regular expressions ignore letter case.
+
+**Parameters**
+`$excluded` is an array with two lists:
+
+* `keys`: complete metadata key names to ignore.
+* `regex`: complete PHP regular expressions to match keys that should be ignored.
+
+Return the modified array from the filter. For example:
+
+```php
+add_filter( 'wprus_incoming_meta_exclusions', function ( $excluded ) {
+    $excluded['keys'][] = 'private_note';
+    $excluded['regex'][] = '/\Acustom_/i';
+
+    return $excluded;
+} );
+```
+
 ___
 
 #### wprus_init_notification_hooks

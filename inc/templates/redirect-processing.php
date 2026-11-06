@@ -1,5 +1,12 @@
-<?php if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+<?php
+/**
+ * Display the page shown during an asynchronous redirect.
+ *
+ * @package Wprus
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
 }
 
 ?>

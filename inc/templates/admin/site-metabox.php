@@ -1,8 +1,39 @@
 <?php
+/**
+ * Display settings for a connected site.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Settings for this connected site.
+ *
+ * @var array $site
+ */
+/**
+ * Number of this site on the settings page.
+ *
+ * @var int $site_id
+ */
+/**
+ * Labels for the available actions.
+ *
+ * @var array $labels
+ */
+/**
+ * Available user metadata keys.
+ *
+ * @var string[] $meta_keys
+ */
+/**
+ * Available user role names.
+ *
+ * @var string[] $roles
+ */
 
 ?>
 <div data-url="<?php echo esc_attr( $site['url'] ); ?>" class="wprus-container" data-postbox_class="wprus-site wprus-togglable">

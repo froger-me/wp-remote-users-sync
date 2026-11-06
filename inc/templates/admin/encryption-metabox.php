@@ -1,8 +1,19 @@
 <?php
+/**
+ * Display encryption settings.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Saved encryption options.
+ *
+ * @var array $encryption_settings
+ */
 
 ?>
 <div class="wprus-container" data-postbox_class="wprus-security wprus-togglable">

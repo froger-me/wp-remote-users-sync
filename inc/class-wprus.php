@@ -1,25 +1,52 @@
 <?php
+/**
+ * Register plugin requests and manage plugin database tables.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
+/** Register the plugin's request URLs and database tables. */
 class Wprus {
+	/**
+	 * Cached database table names.
+	 *
+	 * @var array
+	 */
 	protected static $tables;
 
+	/**
+	 * Names of accepted request endpoints.
+	 *
+	 * @var array
+	 */
 	protected $authorised_endpoints;
+	/**
+	 * Plugin settings object.
+	 *
+	 * @var Wprus_Settings
+	 */
 	protected $wprus_settings;
 
+	/**
+	 * Store settings and optionally register request hooks.
+	 *
+	 * @param Wprus_Settings $wprus_settings Plugin settings object.
+	 * @param bool           $init_hooks Whether to register WordPress hooks.
+	 */
 	public function __construct( $wprus_settings, $init_hooks = false ) {
 		$this->wprus_settings = $wprus_settings;
 
 		if ( $init_hooks ) {
-			// Add the API endpoints
+			// Add the API endpoints.
 			add_action( 'init', array( $this, 'add_endpoints' ), PHP_INT_MIN + 100, 0 );
-			// Parse the endpoint request
+			// Parse the endpoint request.
 			add_action( 'parse_request', array( $this, 'parse_request' ), 10, 0 );
 
-			// Setup the API endpoint vars
+			// Set up the API endpoint variables.
 			add_filter( 'query_vars', array( $this, 'add_query_vars' ), 10, 1 );
 		}
 	}
@@ -27,6 +54,12 @@ class Wprus {
 	/*******************************************************************
 	 * Public methods
 	 *******************************************************************/
+
+	/**
+	 * Create plugin tables and clear cached settings.
+	 *
+	 * @return void No value is returned.
+	 */
 	public static function activate() {
 
 		$result = self::maybe_create_or_upgrade_db();
@@ -39,6 +72,11 @@ class Wprus {
 		wp_cache_flush();
 	}
 
+	/**
+	 * Remove saved plugin data that expires automatically.
+	 *
+	 * @return void No value is returned.
+	 */
 	public static function deactivate() {
 		global $wpdb;
 
@@ -48,10 +86,20 @@ class Wprus {
 		$wpdb->query( $wpdb->prepare( $sql, $prefix . '%' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	}
 
+	/**
+	 * Run the plugin removal script.
+	 *
+	 * @return void No value is returned.
+	 */
 	public static function uninstall() {
 		include_once WPRUS_PLUGIN_PATH . 'uninstall.php';
 	}
 
+	/**
+	 * Create or update the security code and activity log tables.
+	 *
+	 * @return bool Whether both required tables exist.
+	 */
 	public static function maybe_create_or_upgrade_db() {
 		global $wpdb;
 
@@ -110,6 +158,12 @@ class Wprus {
 		return true;
 	}
 
+	/**
+	 * Get a database table name with the appropriate prefix.
+	 *
+	 * @param string|null $table Database table name.
+	 * @return string|null Prefixed table name, or null when no name was given.
+	 */
 	public static function get_table( $table = null ) {
 
 		if ( is_null( $table ) ) {
@@ -164,6 +218,14 @@ class Wprus {
 		return $table;
 	}
 
+	/**
+	 * Find or load a front end template.
+	 *
+	 * @param string $template_name Template name.
+	 * @param bool   $load Whether to load the template.
+	 * @param bool   $required_once Whether to load the template only once.
+	 * @return string Template path.
+	 */
 	public static function locate_template( $template_name, $load = false, $required_once = true ) {
 		$name     = str_replace( 'templates/', '', $template_name );
 		$paths    = array(
@@ -192,6 +254,14 @@ class Wprus {
 		return $template;
 	}
 
+	/**
+	 * Find or load an administrator template.
+	 *
+	 * @param string $template_name Template name.
+	 * @param bool   $load Whether to load the template.
+	 * @param bool   $required_once Whether to load the template only once.
+	 * @return string Administrator template path.
+	 */
 	public static function locate_admin_template( $template_name, $load = false, $required_once = true ) {
 		$template = apply_filters(
 			'wprus_locate_admin_template',
@@ -207,6 +277,12 @@ class Wprus {
 		return $template;
 	}
 
+	/**
+	 * Register request values used by the plugin.
+	 *
+	 * @param array $vars Existing request value names.
+	 * @return array Request value names.
+	 */
 	public function add_query_vars( $vars ) {
 		$vars[] = '__wprus_api';
 		$vars[] = 'action';
@@ -217,6 +293,11 @@ class Wprus {
 		return $vars;
 	}
 
+	/**
+	 * Register URLs for incoming plugin requests.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function add_endpoints() {
 
 		if ( get_transient( 'wprus_flush' ) ) {
@@ -244,6 +325,11 @@ class Wprus {
 		);
 	}
 
+	/**
+	 * Handle a request for a registered plugin URL.
+	 *
+	 * @return void No value is returned.
+	 */
 	public function parse_request() {
 		global $wp;
 
@@ -265,6 +351,11 @@ class Wprus {
 	 * Protected methods
 	 *******************************************************************/
 
+	/**
+	 * Display the theme 404 page for an unknown plugin request.
+	 *
+	 * @return void No value is returned.
+	 */
 	protected function parse_error() {
 		global $wp_query;
 

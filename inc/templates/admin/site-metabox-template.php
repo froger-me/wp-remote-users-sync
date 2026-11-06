@@ -1,8 +1,29 @@
 <?php
+/**
+ * Display the blank connected site settings form.
+ *
+ * @package Wprus
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
+
+/**
+ * Labels for the available actions.
+ *
+ * @var array $labels
+ */
+/**
+ * Available user metadata keys.
+ *
+ * @var string[] $meta_keys
+ */
+/**
+ * Available user role names.
+ *
+ * @var string[] $roles
+ */
 
 ?>
 <div class="wprus-container" data-postbox_class="wprus-site-template wprus-togglable">

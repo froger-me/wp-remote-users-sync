@@ -4,7 +4,7 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 7.1
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 Requires PHP: 8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -165,6 +165,19 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for previously unanswered general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 2.2.1 =
+* Improve handling of incomplete requests and tokens, invalid metadata exclusion expressions, allowed IP ranges, and plugin data removal.
+* Keep WordPress role and permission fields for single-site and multisite installations separate from incoming Metadata actions (reported by Turan Dadashzada).
+* Apply the settings page metadata exclusions to incoming Metadata actions and add a filter for adjusting those exclusions.
+* Handle incoming metadata results and activity log messages more consistently.
+* Apply the relevant user fields in Create and Update actions while following the receiving site's role settings (reported by Md Jahid Bin Sabit).
+* Keep the existing login name when applying an incoming user update.
+* Add automated checks for user synchronization, plugin settings, and communication with connected sites.
+* Check administrator permissions and request verification values for activity log actions, and administrator permissions for connection tests (reported by Aaron of wellknown.info).
+* Resolve PHP code checker findings across the user action files, including argument counts, missing values and return descriptions.
+* Add descriptions of the plugin's methods and functions, including their parameters and return values.
+* Correct a function call used to generate security codes and describe the values supplied to PHP templates for code checkers.
 
 = 2.2.0 =
 * Remove the user import and export feature (fixing low severity security issue) (thanks to Muni Nitish Kumar Yaddala)
