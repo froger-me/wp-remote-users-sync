@@ -23,6 +23,22 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "X-Loco-Version: 2.4.3; wp-5.5"
 
+#: inc/templates/admin/encryption-metabox.php:63
+msgid "IMPORTANT: All connected sites belong to the same trusted group. Only connect sites you fully trust, and make sure every site in the group is equally trusted."
+msgstr "重要：所有连接的站点都属于同一个受信任的组。请只连接您完全信任的站点，并确保组中的每个站点都受到同等程度的信任。"
+
+#: inc/templates/admin/main-settings-page.php:54
+msgid "Connected sites share the same credentials and must be mutually trusted. Per-site settings control synchronization behavior, not access permissions."
+msgstr "连接的站点共享相同的凭据，必须相互信任。各站点的设置控制的是同步行为，而不是访问权限。"
+
+#: inc/templates/admin/help.php:128
+msgid "WP Remote Users Sync is designed for mutually trusted WordPress installations. All connected sites share the same encryption and signature credentials, establishing trust across the group rather than identifying individual sites independently."
+msgstr "WP Remote Users Sync 专为相互信任的 WordPress 站点设计。所有连接的站点共享相同的加密和签名凭据，信任关系因此建立在整个站点组之间，而不是分别识别各个站点。"
+
+#: inc/templates/admin/help.php:131
+msgid "Per-site action settings control synchronization behavior, not access permissions. All connected sites must therefore be equally trusted."
+msgstr "各站点的操作设置控制的是同步行为，而不是访问权限。因此，所有连接的站点都必须受到同等程度的信任。"
+
 #: inc/templates/admin/help.php:127
 msgid ""
 " - All communications are encrypted using the AES-256-CBC algorithm with a "

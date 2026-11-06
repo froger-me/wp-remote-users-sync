@@ -50,6 +50,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 					<div id="postbox-container-2" class="postbox-container">
 						<?php require WPRUS_PLUGIN_PATH . 'inc/templates/admin/help.php'; ?>
+						<p class="description wprus-site wprus-togglable">
+							<?php esc_html_e( 'Connected sites share the same credentials and must be mutually trusted. Per-site settings control synchronization behavior, not access permissions.', 'wprus' ); ?>
+						</p>
 						<div id="sites_placeholder">
 							<span><?php esc_html_e( 'Start with adding a Remote Site', 'wprus' ); ?></span>
 						</div>

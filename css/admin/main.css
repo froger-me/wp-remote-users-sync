@@ -4,6 +4,8 @@
 
 .wprus-ui-wait,
 #side-sortables .handlediv,
+#encryption .handlediv,
+#browser_support .handlediv,
 #logs .handlediv {
 	display: none;
 }
@@ -30,10 +32,6 @@
     margin-bottom: 0;
     box-shadow: none;
     border-top-width: 0;
-}
-
-#postbox-container-2 .wprus-site.closed {
-	border-bottom-width: 0;
 }
 
 #postbox-container-2 .postbox:not(.wprus-site) + .wprus-site {

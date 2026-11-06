@@ -15,6 +15,22 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.3.3; wp-5.4"
 
+#: inc/templates/admin/encryption-metabox.php:63
+msgid "IMPORTANT: All connected sites belong to the same trusted group. Only connect sites you fully trust, and make sure every site in the group is equally trusted."
+msgstr ""
+
+#: inc/templates/admin/main-settings-page.php:54
+msgid "Connected sites share the same credentials and must be mutually trusted. Per-site settings control synchronization behavior, not access permissions."
+msgstr ""
+
+#: inc/templates/admin/help.php:128
+msgid "WP Remote Users Sync is designed for mutually trusted WordPress installations. All connected sites share the same encryption and signature credentials, establishing trust across the group rather than identifying individual sites independently."
+msgstr ""
+
+#: inc/templates/admin/help.php:131
+msgid "Per-site action settings control synchronization behavior, not access permissions. All connected sites must therefore be equally trusted."
+msgstr ""
+
 #: inc/templates/admin/help.php:127
 msgid ""
 " - All communications are encrypted using the AES-256-CBC algorithm with a "

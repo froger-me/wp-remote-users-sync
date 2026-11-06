@@ -2,6 +2,7 @@
 
 * [General Description](#user-content-general-description)
     * [Overview](#user-content-overview)
+    * [Trust Model](#user-content-trust-model)
 * [Adding User Actions](#user-content-adding-user-actions)
 * [Hooks - actions & filters](#user-content-hooks---actions--filters)
     * [Actions](#user-content-actions)
@@ -23,6 +24,12 @@ This plugin adds the following major features to WordPress:
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
 * **Customizable:** developers can add their own User Actions using action and filter hooks, and more.
 * **Unlimited websites, unlimited features:** there are no restrictions in the number of websites to connect together, and no premium version feature restrictions shenanigans - WP Remote Users Sync is fully-featured right out of the box.
+
+### Trust Model
+
+WP Remote Users Sync is designed for mutually trusted WordPress installations. All connected sites share the same encryption and signature credentials, establishing trust across the group rather than identifying individual sites independently.
+
+Per-site action settings control synchronization behavior, not access permissions. All connected sites must therefore be equally trusted.
 
 ___
 
@@ -956,6 +963,7 @@ array(
     'metaboxhidden_dashboard',
     'dismissed_wp_pointers',
     'session_tokens',
+    '_application_passwords',
     'source_domain',
 );
 ```  
@@ -994,7 +1002,7 @@ apply_filters( 'wprus_incoming_meta_exclusions', (array) $excluded );
 **Description**
 Change which metadata keys an incoming Metadata action ignores. The settings page's exact exclusions and wildcard exclusions, including changes made with `wprus_excluded_meta_keys` and `wprus_excluded_meta_keys_like`, supply the defaults. The wildcard exclusions are converted to regular expressions before checking a request.
 
-All settings page exclusions apply to incoming requests, including keys ending in `capabilities` or `user_level`. WordPress role and permission keys are also checked against the exact prefix of each site and cannot be allowed through this filter. Exact key checks and the default regular expressions ignore letter case.
+All settings page exclusions apply to incoming requests, including keys ending in `capabilities` or `user_level`. WordPress role and permission keys are also checked against the exact prefix of each site, and `_application_passwords` is always excluded. These keys cannot be allowed through this filter. Exact key checks and the default regular expressions ignore letter case.
 
 **Parameters**
 `$excluded` is an array with two lists:

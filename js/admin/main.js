@@ -72,6 +72,7 @@ jQuery(document).ready(function($) {
 
 	toggleUI();
 
+	$('#encryption, #browser_support').removeClass('closed');
 	$('#postbox-container-2 .wprus-site').closest('.postbox').addClass('closed');
 
 	$('#normal-sortables').on('click', '.handlediv, .wprus-site .hndle', function(e) {
@@ -107,7 +108,7 @@ jQuery(document).ready(function($) {
 		}
 
 		var site   = $('#postbox-container-2 .wprus-site-template').clone(),
-			siteId = $('.wprus-site').length;
+			siteId = $('.postbox.wprus-site').length;
 
 		site.find('input, select').each(function(idv, el) {
 			var element = $(el);

@@ -125,6 +125,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h2 class="wprus-help-title"><?php esc_html_e( 'What security measures are in place?', 'wprus' ); ?></h2>
 			<div class="wprus-help-inner">
 				<p>
+					<?php esc_html_e( 'WP Remote Users Sync is designed for mutually trusted WordPress installations. All connected sites share the same encryption and signature credentials, establishing trust across the group rather than identifying individual sites independently.', 'wprus' ); ?>
+				</p>
+				<p>
+					<?php esc_html_e( 'Per-site action settings control synchronization behavior, not access permissions. All connected sites must therefore be equally trusted.', 'wprus' ); ?>
+				</p>
+				<p>
 					<?php esc_html_e( 'Multiple layers of security are in place to protect the privacy, integrity and authenticity of communications between connected sites:', 'wprus' ); ?>
 				</p>
 				<ul>

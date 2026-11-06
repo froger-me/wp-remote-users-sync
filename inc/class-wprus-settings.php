@@ -1046,6 +1046,7 @@ class Wprus_Settings {
 			'metaboxhidden_dashboard',
 			'dismissed_wp_pointers',
 			'session_tokens',
+			'_application_passwords',
 			'source_domain',
 		);
 

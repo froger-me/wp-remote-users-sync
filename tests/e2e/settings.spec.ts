@@ -3,10 +3,13 @@ import { test, expect, lowerCapabilityStorageState } from '../../../../../.anyap
 test('an administrator can open all settings tabs', async ({ page }) => {
   await page.goto('/wp-admin/options-general.php?page=wprus');
   await expect(page.getByRole('heading', { name: 'WP Remote Users Sync' })).toBeVisible();
+  const trustNote = page.getByText('Connected sites share the same credentials and must be mutually trusted.', { exact: false });
   for (const name of ['Remote Sites', 'Security', 'Activity Logs', 'Miscellaneous', 'Help']) {
     const tab = page.getByRole('link', { name });
     await tab.click();
     await expect(tab).toHaveClass(/nav-tab-active/);
+    if (name === 'Remote Sites') await expect(trustNote).toBeVisible();
+    else await expect(trustNote).toBeHidden();
   }
 });
 
@@ -76,6 +79,7 @@ test('each incoming and outgoing action controls its connection-test button', as
 test('security keys are shown on focus and hidden after leaving the field', async ({ page }) => {
   await page.goto('/wp-admin/options-general.php?page=wprus');
   await page.getByRole('link', { name: 'Security' }).click();
+  await expect(page.getByText('IMPORTANT: All connected sites belong to the same trusted group.', { exact: false })).toBeVisible();
   for (const selector of ['#wprus_aes_key', '#wprus_hmac_key']) {
     const field = page.locator(selector);
     await expect(field).toHaveAttribute('type', 'password');

@@ -116,6 +116,64 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 		);
 	}
 
+	/**
+	 * Application passwords cannot be changed by incoming metadata, even when explicitly allowed.
+	 *
+	 * @dataProvider application_password_operations
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 * @param string $operation Metadata operation.
+	 * @param bool   $delete_all Whether deletion applies across users.
+	 * @param string $key Submitted metadata key.
+	 * @return void
+	 */
+	public function test_application_passwords_cannot_be_changed( $operation, $delete_all, $key ) {
+		$id = self::factory()->user->create( array( 'user_login' => 'alice', 'role' => 'administrator' ) );
+		$other_id = self::factory()->user->create( array( 'user_login' => 'bob' ) );
+		$legitimate = WP_Application_Passwords::create_new_application_password( $id, array( 'name' => 'Existing' ) );
+		$injected = WP_Application_Passwords::create_new_application_password( $other_id, array( 'name' => 'Other' ) );
+		$this->assertIsArray( $legitimate );
+		$this->assertIsArray( $injected );
+		$before = get_user_meta( $id, '_application_passwords', false );
+		$other_before = get_user_meta( $other_id, '_application_passwords', false );
+
+		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_meta'] = array( $key );
+		$this->reload_settings();
+		add_filter( 'wprus_excluded_meta_keys', '__return_empty_array' );
+		add_filter( 'wprus_excluded_meta_keys_like', '__return_empty_array' );
+		add_filter( 'wprus_incoming_meta_exclusions', static function () {
+			return array( 'keys' => array(), 'regex' => array() );
+		} );
+
+		$change = array(
+			'meta_value' => 'delete' === $operation ? '' : array( $injected[1] ),
+			'unique'     => false,
+			'prev_value' => '',
+			'delete_all' => $delete_all,
+		);
+		$this->action( 'meta' )->receive( $this->payload( 'alice' ) + array( $operation => array( $key => array( $change ) ) ) );
+		$this->assertSame( $before, get_user_meta( $id, '_application_passwords', false ) );
+		$this->assertSame( $other_before, get_user_meta( $other_id, '_application_passwords', false ) );
+		add_filter( 'application_password_is_api_request', '__return_true' );
+		add_filter( 'wp_is_application_passwords_available', '__return_true' );
+		$this->assertWPError( wp_authenticate_application_password( null, 'alice', $injected[0] ) );
+		$this->assertInstanceOf( WP_User::class, wp_authenticate_application_password( null, 'alice', $legitimate[0] ) );
+	}
+
+	/**
+	 * Supply metadata operations and key capitalization.
+	 *
+	 * @return array Named cases.
+	 */
+	public static function application_password_operations() {
+		$cases = array();
+		foreach ( self::metadata_operations() as $name => $operation ) {
+			$cases[ $name ] = array( $operation[0], $operation[1], '_application_passwords' );
+			$cases[ $name . ' uppercase' ] = array( $operation[0], $operation[1], '_APPLICATION_PASSWORDS' );
+		}
+		return $cases;
+	}
+
 	/** Add, change, and remove allowed metadata. */
 	public function test_add_update_and_delete_allowed_metadata() {
 		$id   = self::factory()->user->create( array( 'user_login' => 'alice' ) );

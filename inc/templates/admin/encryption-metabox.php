@@ -59,4 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</td>
 		</tr>
 	</table>
+	<p class="description">
+		<strong><?php esc_html_e( 'IMPORTANT: All connected sites belong to the same trusted group. Only connect sites you fully trust, and make sure every site in the group is equally trusted.', 'wprus' ); ?></strong>
+	</p>
 </div>

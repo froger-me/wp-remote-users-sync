@@ -4,7 +4,7 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 7.1
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 Requires PHP: 8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -115,6 +115,10 @@ Users existing on one site and not the other will not be synchronised unless the
 For existing user databases in need of immediate synchronisation, administrators should use a third-party user import and export tool to transfer users between sites.
 
 = What security measures are in place? =
+WP Remote Users Sync is designed for mutually trusted WordPress installations. All connected sites share the same encryption and signature credentials, establishing trust across the group rather than identifying individual sites independently.
+
+Per-site action settings control synchronization behavior, not access permissions. All connected sites must therefore be equally trusted.
+
 Multiple layers of security are in place to protect the privacy, integrity and authenticity of communications between connected sites:
 
 * **OpenSSL encryption** - All communications are encrypted using the AES-256-CBC algorithm with a randomly generated Initialisation Vector to ensure their confidentiality
@@ -165,6 +169,11 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for previously unanswered general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 2.2.2 =
+* Keep WordPress application passwords and session meta separate from incoming Metadata actions.
+* Clarify the trust required between connected sites in the settings page and documentation.
+* Restore the bottom border of collapsed site boxes and keep the encryption and browser support boxes open.
 
 = 2.2.1 =
 * Improve handling of incomplete requests and tokens, invalid metadata exclusion expressions, allowed IP ranges, and plugin data removal.

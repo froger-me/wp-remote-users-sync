@@ -416,6 +416,14 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	protected function is_excluded_meta_key( $meta_key ) {
 		global $wpdb;
 
+		// Application passwords must never be changed through metadata synchronization.
+		if (
+			0 === strcasecmp( $meta_key, '_application_passwords' ) ||
+			0 === strcasecmp( $meta_key, 'session_tokens' )
+		) {
+			return true;
+		}
+
 		// Check WordPress role keys first so the filter cannot allow them.
 		static $protected_keys = null;
 
@@ -459,7 +467,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 			/**
 			 * Filters metadata keys excluded from incoming Metadata actions.
 			 *
-			 * WordPress role and permission keys remain excluded regardless of this filter.
+			 * WordPress role, permission, and application-password keys remain excluded regardless of this filter.
 			 *
 			 * @since 2.2.1
 			 * @param array $excluded Lists of exact keys in `keys` and regular expressions in `regex`.

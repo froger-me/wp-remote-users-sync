@@ -31,6 +31,7 @@ class SettingsTest extends Wprus_Feature_Test_Case {
 	public function test_settings_exclude_wordpress_fields_from_metadata() {
 		$rules = $this->settings->get_excluded_meta_request_rules();
 		$this->assertContains( 'session_tokens', $rules['keys'] );
+		$this->assertContains( '_application_passwords', $rules['keys'] );
 		$this->assertContains( 'first_name', $rules['keys'] );
 		$this->assertNotEmpty( $rules['regex'] );
 	}
