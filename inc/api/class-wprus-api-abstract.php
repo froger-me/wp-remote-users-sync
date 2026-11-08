@@ -1285,15 +1285,19 @@ abstract class Wprus_Api_Abstract {
 
 		unset( $data['url'] );
 
-		$data      = apply_filters( 'wprus_action_data', $data, $this->endpoint, $url );
-		$token     = $this->get_token( $url, $data['username'], 'get' );
+		$data  = apply_filters( 'wprus_action_data', $data, $this->endpoint, $url );
+		$token = $this->get_token( $url, $data['username'], 'get' );
+
 		if ( false === $token ) {
 			update_user_meta( $user_id, 'wprus_' . $this->endpoint . '_pending_async_actions', $actions );
+
 			if ( $actions ) {
 				$this->do_async_actions_redirect( $actions, $user_id );
 			}
+
 			return;
 		}
+
 		$args      = array(
 			'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
 			'token'     => rawurlencode( $token ),
@@ -1336,11 +1340,13 @@ abstract class Wprus_Api_Abstract {
 
 			unset( $data['url'] );
 
-			$data      = apply_filters( 'wprus_action_data', $data, $this->endpoint, $url );
-			$token     = $this->get_token( $url, $data['username'], 'get' );
+			$data  = apply_filters( 'wprus_action_data', $data, $this->endpoint, $url );
+			$token = $this->get_token( $url, $data['username'], 'get' );
+
 			if ( false === $token ) {
 				continue;
 			}
+
 			$args      = array(
 				'wprusdata' => rawurlencode( $this->encrypt_data( $data ) ),
 				'token'     => rawurlencode( $token ),
