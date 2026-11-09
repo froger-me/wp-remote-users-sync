@@ -814,10 +814,10 @@ msgid ""
 "address or CIDR per line)."
 msgstr "要授权的远程站点 IP 地址和/或 CIDR 列表（每行一个 IP 地址或 CIDR）。"
 
-#: inc/templates/admin/site-metabox.php:82
-#: inc/templates/admin/site-metabox-template.php:82
-msgid "List of metadata to accept (leave empty to accept all):"
-msgstr "要接受的元数据列表（留空以接受全部）："
+#: inc/templates/admin/site-metabox.php:113
+#: inc/templates/admin/site-metabox-template.php:103
+msgid "List of metadata to accept (leave empty to accept none):"
+msgstr "要接受的元数据列表（留空则不接受任何元数据）："
 
 #: inc/templates/admin/export-metabox.php:58
 msgid "List of metadata to export (leave empty to export none):"

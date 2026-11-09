@@ -4,7 +4,7 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 7.1
-Stable tag: 2.2.2
+Stable tag: 2.3.0
 Requires PHP: 8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -52,6 +52,10 @@ A typical example necessitating custom integration includes plugins or themes re
 If such need for plugin integration arises, website administrators **MUST** contact a third-party developer. The plugin author currently does not have the bandwidth to take on custom work for WPRUS.
 
 == Upgrade Notice ==
+
+= 2.3.0 =
+
+Incoming Metadata actions now accept only the keys selected for each connected site. An empty selection no longer accepts all metadata. Only lowercase letters, numbers, underscores, and hyphens are accepted in metadata keys. Before updating, select the keys you need to receive in each connected site's incoming settings on every receiving site.
 
 = 2.2.0 =
 
@@ -169,6 +173,10 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for previously unanswered general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 2.3.0 =
+* Require an explicit incoming metadata selection for each connected site and protect sensitive metadata keys from alternative spellings.
+* Add the `wprus_protected_meta_keys` filter for protecting additional metadata keys from incoming changes.
 
 = 2.2.2 =
 * Keep WordPress application passwords and session meta separate from incoming Metadata actions.

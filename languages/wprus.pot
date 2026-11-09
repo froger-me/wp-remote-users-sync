@@ -772,9 +772,9 @@ msgid ""
 "address or CIDR per line)."
 msgstr ""
 
-#: inc/templates/admin/site-metabox.php:82
-#: inc/templates/admin/site-metabox-template.php:82
-msgid "List of metadata to accept (leave empty to accept all):"
+#: inc/templates/admin/site-metabox.php:113
+#: inc/templates/admin/site-metabox-template.php:103
+msgid "List of metadata to accept (leave empty to accept none):"
 msgstr ""
 
 #: inc/templates/admin/export-metabox.php:58

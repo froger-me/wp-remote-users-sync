@@ -3,6 +3,42 @@ import { request as playwrightRequest } from '@playwright/test';
 import fs from 'node:fs';
 import { encryptMessage } from './support/protocol';
 
+test('metadata requests accept selected keys and reject protected key variants', async ({ baseURL }) => {
+  const usersFile = process.env.ANYAPE_WP_TEST_TOOLS_E2E_USERS_FILE;
+  if (!baseURL || !usersFile) throw new Error('The browser-test configuration is missing.');
+  const secret = JSON.parse(fs.readFileSync(usersFile, 'utf8')).token as string;
+  const client = await playwrightRequest.newContext({ baseURL, storageState: { cookies: [], origins: [] }, ignoreHTTPSErrors: true });
+  try {
+    const tokenResponse = await client.post('/wprus/token/', {
+      form: { wprusdata: encryptMessage({ action: 'meta', method: 'post', base_url: baseURL }) },
+    });
+    expect(tokenResponse.ok()).toBeTruthy();
+    const { nonce } = await tokenResponse.json() as { nonce: string };
+    await client.post('/wprus/meta/', {
+      form: {
+        token: nonce,
+        wprusdata: encryptMessage({
+          username: 'wprus_test_alice', base_url: 'https://wprus-peer.test',
+          update: {
+            'wp_capabilities ': [{ meta_value: { administrator: true }, prev_value: '' }],
+            '_application_passwords ': [{ meta_value: [], prev_value: '' }],
+            test_note: [{ meta_value: 'selected metadata', prev_value: '' }],
+          },
+        }),
+      },
+    });
+    const response = await client.get('/wp-json/wprus-tests/v1/user/wprus_test_alice', {
+      headers: { 'X-WPRUS-Test-Token': secret },
+    });
+    expect(response.ok()).toBeTruthy();
+    const user = await response.json() as { roles: string[]; test_note: string };
+    expect(user.roles).toEqual(['subscriber']);
+    expect(user.test_note).toBe('selected metadata');
+  } finally {
+    await client.dispose();
+  }
+});
+
 test('a connected site can create, change, and delete an allowed user', async ({ baseURL }) => {
   const usersFile = process.env.ANYAPE_WP_TEST_TOOLS_E2E_USERS_FILE;
   if (!baseURL || !usersFile) throw new Error('The browser-test configuration is missing.');

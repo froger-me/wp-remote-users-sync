@@ -993,6 +993,21 @@ array(
 ```  
 ___
 
+#### wprus_protected_meta_keys
+
+```php
+apply_filters( 'wprus_protected_meta_keys', (array) $keys );
+```
+
+Add metadata keys that incoming Metadata actions must never change. The filter receives an empty array; the plugin adds its protected WordPress keys afterward, so they cannot be removed through this filter.
+
+```php
+add_filter( 'wprus_protected_meta_keys', function ( $keys ) {
+    $keys[] = 'private_key';
+    return $keys;
+} );
+```
+
 #### wprus_incoming_meta_exclusions
 
 ```php
@@ -1001,6 +1016,8 @@ apply_filters( 'wprus_incoming_meta_exclusions', (array) $excluded );
 
 **Description**
 Change which metadata keys an incoming Metadata action ignores. The settings page's exact exclusions and wildcard exclusions, including changes made with `wprus_excluded_meta_keys` and `wprus_excluded_meta_keys_like`, supply the defaults. The wildcard exclusions are converted to regular expressions before checking a request.
+
+Incoming Metadata actions accept only keys explicitly selected for the connected site. An empty selection accepts no metadata. Keys must remain unchanged by WordPress's `sanitize_key()` function: by default, this means lowercase letters, numbers, underscores, and hyphens only. Before updating to version 2.3.0, select the keys needed on each receiving site.
 
 All settings page exclusions apply to incoming requests, including keys ending in `capabilities` or `user_level`. WordPress role and permission keys are also checked against the exact prefix of each site, and `_application_passwords` is always excluded. These keys cannot be allowed through this filter. Exact key checks and the default regular expressions ignore letter case.
 

@@ -156,7 +156,7 @@ return array(
 		'john_doe56\'s new synchronised roles on Site 2 are "author" and "shop_manager"' => 'john_doe56在站点2上的新同步角色是“作者”和“shop_manager”',
 		'Leave blank to accept any IP address (not recommended).' => '保留空白以接受任何IP地址（不建议）。',
 		'List of IP addresses and/or CIDRs of remote sites to authorise (one IP address or CIDR per line).' => '要授权的远程站点 IP 地址和/或 CIDR 列表（每行一个 IP 地址或 CIDR）。',
-		'List of metadata to accept (leave empty to accept all):' => '要接受的元数据列表（留空以接受全部）：',
+		'List of metadata to accept (leave empty to accept none):' => '要接受的元数据列表（留空则不接受任何元数据）：',
 		'List of metadata to export (leave empty to export none):' => '要导出的元数据列表（留空则不导出）：',
 		'List of metadata to transfer (leave empty to transfer none):' => '要传输的元数据列表（留空则不传输）：',
 		'List of roles to accept (leave empty to accept all):' => '要接受的角色列表（留空以接受所有角色）：',

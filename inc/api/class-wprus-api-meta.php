@@ -51,7 +51,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 
 		if ( ! empty( $sites ) ) {
 
-			foreach ( $sites as $index => $site ) {
+			foreach ( $sites as $site ) {
 
 				if ( in_array( $meta_key, $site['outgoing_meta'], true ) ) {
 
@@ -98,7 +98,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 
 		if ( ! empty( $sites ) ) {
 
-			foreach ( $sites as $index => $site ) {
+			foreach ( $sites as $site ) {
 
 				if ( in_array( $meta_key, $site['outgoing_meta'], true ) ) {
 
@@ -145,7 +145,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 
 		if ( ! empty( $sites ) ) {
 
-			foreach ( $sites as $index => $site ) {
+			foreach ( $sites as $site ) {
 
 				if ( in_array( $meta_key, $site['outgoing_meta'], true ) ) {
 
@@ -195,6 +195,9 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 		$site = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
 
 		if ( $site ) {
+			if ( empty( $site['incoming_meta'] ) || ! is_array( $site['incoming_meta'] ) ) {
+				return false;
+			}
 			$user = get_user_by( 'login', $data['username'] );
 
 			if ( ! $user ) {
@@ -209,12 +212,24 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 
 			foreach ( $meta_changes as $change_type => $metas ) {
 
-				if ( ! $metas ) {
+				if ( ! is_array( $metas ) || ! $metas ) {
 
 					continue;
 				}
 
 				foreach ( $metas as $meta_key => $values ) {
+
+					if (
+						! is_string( $meta_key ) ||
+						! is_array( $values ) ||
+						'' === $meta_key ||
+						trim( $meta_key ) !== $meta_key ||
+						wp_unslash( $meta_key ) !== $meta_key ||
+						sanitize_key( $meta_key ) !== $meta_key
+					) {
+						continue;
+					}
+
 					if ( $this->is_excluded_meta_key( $meta_key ) ) {
 						Wprus_Logger::log(
 							sprintf(
@@ -231,12 +246,9 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 						continue;
 					}
 
-					if (
-						empty( $site['incoming_meta'] ) ||
-						in_array( $meta_key, $site['incoming_meta'], true )
-					) {
+					if ( in_array( $meta_key, $site['incoming_meta'], true ) ) {
 
-						foreach ( $values as $index => $value ) {
+						foreach ( $values as $value ) {
 							$success = false;
 							$message = '';
 
@@ -414,44 +426,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	 * @return bool Whether the key is excluded.
 	 */
 	protected function is_excluded_meta_key( $meta_key ) {
-		global $wpdb;
-
-		// Application passwords must never be changed through metadata synchronization.
-		if (
-			0 === strcasecmp( $meta_key, '_application_passwords' ) ||
-			0 === strcasecmp( $meta_key, 'session_tokens' )
-		) {
-			return true;
-		}
-
-		// Check WordPress role keys first so the filter cannot allow them.
-		static $protected_keys = null;
-
-		if ( null === $protected_keys ) {
-			$site_ids = array( get_current_blog_id() );
-
-			if ( is_multisite() ) {
-				$site_ids = array_merge(
-					$site_ids,
-					get_sites(
-						array(
-							'fields' => 'ids',
-							'number' => 0,
-						)
-					)
-				);
-			}
-
-			$protected_keys = array();
-
-			foreach ( array_unique( $site_ids ) as $site_id ) {
-				$prefix           = $wpdb->get_blog_prefix( $site_id );
-				$protected_keys[] = $prefix . 'capabilities';
-				$protected_keys[] = $prefix . 'user_level';
-			}
-		}
-
-		foreach ( $protected_keys as $key ) {
+		foreach ( $this->get_protected_meta_keys() as $key ) {
 
 			if ( 0 === strcasecmp( $meta_key, $key ) ) {
 				return true;
@@ -509,6 +484,53 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	}
 
 	/**
+	 * Get keys that incoming metadata can never change.
+	 *
+	 * @return string[] Protected metadata keys.
+	 */
+	protected function get_protected_meta_keys() {
+		global $wpdb;
+		static $keys = null;
+
+		if ( null === $keys ) {
+			/**
+			 * Add metadata keys that incoming actions must never change.
+			 *
+			 * The default protected keys are added after this filter and cannot be removed.
+			 *
+			 * @since 2.3.0
+			 * @param string[] $keys Additional protected metadata keys.
+			 */
+			$additional_keys = apply_filters( 'wprus_protected_meta_keys', array() );
+			$keys            = is_array( $additional_keys ) ? array_values( array_filter( $additional_keys, 'is_string' ) ) : array();
+			$keys[]          = '_application_passwords';
+			$keys[]          = 'session_tokens';
+			$site_ids        = array( get_current_blog_id() );
+
+			if ( is_multisite() ) {
+				$sites = get_sites(
+					array(
+						'fields' => 'ids',
+						'number' => 0,
+					)
+				);
+
+				if ( is_array( $sites ) ) {
+					$site_ids = array_merge( $site_ids, $sites );
+				}
+			}
+
+			foreach ( array_unique( $site_ids ) as $site_id ) {
+				$prefix = $wpdb->get_blog_prefix( (int) $site_id );
+				$keys[] = $prefix . 'capabilities';
+				$keys[] = $prefix . 'user_level';
+			}
+		}
+
+		return $keys;
+	}
+
+	/**
 	 * Keep only the metadata operations supported by this action.
 	 *
 	 * @param array $data Received metadata changes.
@@ -516,7 +538,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	 */
 	protected function sanitize( $data ) {
 
-		foreach ( $data as $key => $value ) {
+		foreach ( array_keys( $data ) as $key ) {
 
 			if (
 				'base_url' !== $key &&

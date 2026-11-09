@@ -37,17 +37,27 @@ class MultisiteTest extends Wprus_Feature_Test_Case {
 		add_filter(
 			'wprus_incoming_meta_exclusions',
 			static function () {
-				return array( 'keys' => array(), 'regex' => array() );
+				return array(
+					'keys'  => array(),
+					'regex' => array(),
+				);
 			}
 		);
 		switch_to_blog( $site_id );
 		try {
 			$capabilities = $wpdb->get_blog_prefix( $site_id ) . 'capabilities';
+			$GLOBALS['wprus_test_settings']['sites'][0]['incoming_meta'] = array( $capabilities );
+			$this->reload_settings();
 			$before = get_user_meta( $user_id, $capabilities, true );
 			$this->action( 'meta' )->receive(
 				$this->payload( 'alice' ) + array(
 					'delete' => array(
-						$capabilities => array( array( 'meta_value' => '', 'delete_all' => true ) ),
+						$capabilities => array(
+							array(
+								'meta_value' => '',
+								'delete_all' => true,
+							),
+						),
 					),
 				)
 			);
@@ -77,6 +87,8 @@ class MultisiteTest extends Wprus_Feature_Test_Case {
 			)
 		);
 		$prefix  = $wpdb->get_blog_prefix( $site_id );
+		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_meta'] = array( $prefix . 'capabilities', $prefix . 'user_level' );
+		$this->reload_settings();
 		update_user_meta( $user_id, $prefix . 'capabilities', array( 'subscriber' => true ) );
 		update_user_meta( $user_id, $prefix . 'user_level', 0 );
 		add_filter( 'wprus_excluded_meta_keys', '__return_empty_array' );

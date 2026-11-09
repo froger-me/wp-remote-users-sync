@@ -37,7 +37,7 @@ function wprus_test_settings() {
 				'incoming_roles'       => array(),
 				'outgoing_roles'       => array(),
 				'incoming_roles_merge' => false,
-				'incoming_meta'        => array(),
+				'incoming_meta'        => array( 'favourite_colour', 'custom_key', 'allowed_key', 'test_note' ),
 				'outgoing_meta'        => array(),
 			),
 		),

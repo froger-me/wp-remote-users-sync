@@ -106,6 +106,7 @@ test('an administrator can save metadata and role selections', async ({ page }) 
   const site = page.locator('.postbox.wprus-site').filter({ has: page.locator('.wprus-container[data-url="https://wprus-peer.test"]') });
   const outgoingMeta = site.locator('.row-outgoing-metadata');
   if (!(await outgoingMeta.locator('.select2-selection').isVisible())) await site.locator('.handlediv').click();
+  await expect(site.getByText('List of metadata to accept (leave empty to accept none):')).toBeVisible();
   const choose = async (row: ReturnType<typeof site.locator>, value: string) => {
     await row.locator('.select2-selection').click();
     await page.locator('.select2-container--open .select2-results__option').getByText(value, { exact: true }).click();

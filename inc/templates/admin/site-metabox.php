@@ -110,7 +110,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</table>
 		<hr/>
 		<div class="row-incoming-metadata wprus-site-row">
-			<label for=""><?php esc_html_e( 'List of metadata to accept (leave empty to accept all):', 'wprus' ); ?></label>
+			<label for=""><?php esc_html_e( 'List of metadata to accept (leave empty to accept none):', 'wprus' ); ?></label>
 			<select class="wprus-select-tag" name="wprus[sites][<?php echo esc_attr( $site_id ); ?>][incoming_meta][]" multiple>
 			<?php $meta_keys = array_unique( array_merge( $meta_keys, $site['incoming_meta'] ) ); ?>
 			<?php if ( ! empty( $meta_keys ) ) : ?>
