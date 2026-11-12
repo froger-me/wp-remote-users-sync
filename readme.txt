@@ -4,12 +4,12 @@ Donate link: https://paypal.me/frogerme
 Tags: sync, share login, multiple sites
 Requires at least: 4.9.5
 Tested up to: 7.1
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 Requires PHP: 8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Synchronise WordPress Users across Multiple Sites.
+Synchronise WordPress users across connected sites while checking account identities before registration and incoming changes.
 
 == Description ==
 
@@ -22,10 +22,16 @@ This plugin adds the following major features to WordPress:
 * **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, and activity logs.
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing User Actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
+* **Account identity checks:** before an ordinary visitor can register, every connected site must confirm that the username and email address are unused. A matching account or an unavailable site prevents registration. After registration, the plugin checks again and does not send a Create action if a conflict or failed check appears. Users with permission to manage other users can create local accounts without these remote checks.
+* **Protected incoming actions:** a connected site can change, delete, log in, or log out an existing local account only when its username and identifying email address match that account. A mismatch rejects the entire received action, including any profile, password, role, or metadata changes. Email changes are checked against the sender's previous email address.
 * **Activity Logs:** when enabled, all communications between connected sites are logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
 * **Customizable:** developers can add their own User Actions using action and filter hooks, and more - see the [developers documentation](https://github.com/froger-me/wp-remote-users-sync).
 * **Unlimited websites, unlimited features:** there are no restrictions in the number of websites to connect together, and no premium version feature restrictions shenanigans - WP Remote Users Sync is fully-featured right out of the box.
+
+Install the same version on every connected site. Older versions cannot answer account identity checks or provide the identifying email address with outgoing actions. An updated site rejects ordinary registration when it cannot check an older connected site, and rejects actions from an older site that target existing users.
+
+Other registration systems can handle validation by registering a callback for `wprus_validate_user_creation`. The plugin checks connected sites and passes the result to the callback with the username, email address, and user data. The callback must stop creation through its registration system when the result reports a conflict or a failed check. Without such a callback, an ordinary user creation outside WordPress and WooCommerce registration is rejected with a standard WordPress error page.
 
 == Troubleshooting ==
 
@@ -52,6 +58,10 @@ A typical example necessitating custom integration includes plugins or themes re
 If such need for plugin integration arises, website administrators **MUST** contact a third-party developer. The plugin author currently does not have the bandwidth to take on custom work for WPRUS.
 
 == Upgrade Notice ==
+
+= 2.4.0 =
+
+Update every connected site. Ordinary user creation is rejected when a connected site already has the username or email address, or cannot complete the check. Incoming synchronization for an existing account is rejected when the sender does not provide a matching username and identifying email address. Sites on older versions cannot provide these checks and details.
 
 = 2.3.0 =
 
@@ -173,6 +183,13 @@ More help can be found on <a href="https://wordpress.org/support/plugin/wp-remot
 Help is provided for previously unanswered general enquiries and bug fixes only: feature requests, extra integration or conflict resolution with third-party themes or plugins, and specific setup troubleshooting requests will not be addressed (Website administrators must contact a third-party developer).
 
 == Changelog ==
+
+= 2.4.0 =
+* Reject ordinary user creation when any connected site already uses the username or email address, or when a connected site cannot be checked. Recheck after creation and suppress the outgoing Create action if a conflict or check failure appears.
+* Reject the entire incoming synchronization action for an existing user when the sender's username or identifying email address does not match, protecting profile details, passwords, roles, metadata, sessions, and deletion.
+* Check an email change against the sender's previous email address, so a valid change can still synchronize.
+* Give WordPress and WooCommerce registration forms clear errors; show a standard WordPress error page for unsupported registration methods.
+* Pass the connected-site check result to other registration systems through `wprus_validate_user_creation` so they can show errors in their own forms.
 
 = 2.3.0 =
 * Require an explicit incoming metadata selection for each connected site and protect sensitive metadata keys from alternative spellings.

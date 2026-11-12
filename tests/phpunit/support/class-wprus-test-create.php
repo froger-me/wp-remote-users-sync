@@ -25,6 +25,22 @@ trait Wprus_Test_Incoming_Input {
 		$this->data[ $method ] = $payload;
 		return $this->handle_notification();
 	}
+
+	/**
+	 * Receive through the common identity check before the action handler.
+	 *
+	 * @param array  $payload Request data.
+	 * @param string $method Request method.
+	 */
+	public function receive_checked( $payload, $method = 'post' ) {
+		$this->method          = $method;
+		$this->data            = array(
+			'get'  => null,
+			'post' => null,
+		);
+		$this->data[ $method ] = $payload;
+		$this->handle_request();
+	}
 }
 
 /** Test access to the Create action. */
@@ -78,6 +94,17 @@ abstract class Wprus_Feature_Test_Case extends \AnyapeWPTestTools\IntegrationTes
 	/** Prepare independent settings for each case. */
 	protected function setUp(): void {
 		parent::setUp();
+		// PHP tests share one process; a real web request starts these arrays empty.
+		foreach ( array( 'approved_creations', 'blocked_creations', 'previous_emails' ) as $property_name ) {
+			$property = new ReflectionProperty( Wprus_Api_Identity::class, $property_name );
+			$property->setAccessible( true );
+			$property->setValue( null, array() );
+		}
+		if ( isset( $GLOBALS['wprus_test_ready'][1]['identity'] ) ) {
+			$identity = $GLOBALS['wprus_test_ready'][1]['identity'];
+			remove_filter( 'wp_pre_insert_user_data', array( $identity, 'require_validated_creation' ), PHP_INT_MAX );
+			remove_action( 'user_register', array( $identity, 'check_created_user' ), PHP_INT_MIN + 100 );
+		}
 		$GLOBALS['wprus_test_settings'] = wprus_test_settings();
 		$this->settings                 = new Wprus_Settings( array( 'login', 'logout', 'create', 'update', 'delete', 'password', 'role', 'meta' ) );
 	}

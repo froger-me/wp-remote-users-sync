@@ -58,9 +58,10 @@ class OutgoingActionsTest extends Wprus_Feature_Test_Case {
 		$this->assertCount( 2, $peer->requests );
 		$this->assertSame( '/wprus/token/', $peer->requests[0]['path'] );
 		$this->assertSame( '/wprus/create/', $peer->requests[1]['path'] );
+		$this->assertSame( 'alice@example.test', $peer->requests[1]['data']['identity_email'] );
 	}
 
-	/** A profile change sends the updated fields to the simulated site. */
+	/** Several email changes send the final email with the original identity. */
 	public function test_profile_update_sends_the_changed_profile() {
 		$id                        = self::factory()->user->create(
 			array(
@@ -78,6 +79,12 @@ class OutgoingActionsTest extends Wprus_Feature_Test_Case {
 			$result = wp_update_user(
 				array(
 					'ID'         => $id,
+					'user_email' => 'middle@example.test',
+				)
+			);
+			$result = wp_update_user(
+				array(
+					'ID'         => $id,
 					'user_email' => 'changed@example.test',
 				)
 			);
@@ -88,6 +95,8 @@ class OutgoingActionsTest extends Wprus_Feature_Test_Case {
 		$this->assertNotWPError( $result );
 		$this->assertSame( 'changed@example.test', $peer->users['peer_alice']['user_email'] );
 		$this->assertSame( '/wprus/update/', $peer->requests[1]['path'] );
+		$this->assertSame( 'before@example.test', $peer->requests[1]['data']['identity_email'] );
+		$this->assertSame( 'changed@example.test', $peer->requests[1]['data']['user_email'] );
 	}
 
 	/** An allowed role change is sent as part of the user's update. */
@@ -141,6 +150,7 @@ class OutgoingActionsTest extends Wprus_Feature_Test_Case {
 		$this->assertIsArray( $queued );
 		$this->assertCount( 1, $queued );
 		$this->assertSame( 'peer_alice', $queued[0]['username'] );
+		$this->assertSame( get_userdata( $id )->user_email, $queued[0]['identity_email'] );
 		$this->assertSame( 'https://wprus-peer.test', $queued[0]['url'] );
 	}
 
@@ -166,6 +176,7 @@ class OutgoingActionsTest extends Wprus_Feature_Test_Case {
 		$this->assertIsArray( $queued );
 		$this->assertCount( 1, $queued );
 		$this->assertSame( 'peer_alice', $queued[0]['username'] );
+		$this->assertSame( get_userdata( $id )->user_email, $queued[0]['identity_email'] );
 		$this->assertSame( 'https://wprus-peer.test', $queued[0]['url'] );
 	}
 
@@ -189,7 +200,13 @@ class OutgoingActionsTest extends Wprus_Feature_Test_Case {
 
 	/** A WordPress password reset sends the new password to the peer. */
 	public function test_password_reset_sends_the_new_password() {
-		$id                        = self::factory()->user->create( array( 'user_login' => 'peer_alice' ) );
+		$id                        = self::factory()->user->create(
+			array(
+				'user_login' => 'peer_alice',
+				'user_email' => 'source-subscriber@example.test',
+				'role'       => 'subscriber',
+			)
+		);
 		$user                      = get_userdata( $id );
 		$peer                      = $this->peer_for( 'password' );
 		$peer->users['peer_alice'] = array();
@@ -206,6 +223,7 @@ class OutgoingActionsTest extends Wprus_Feature_Test_Case {
 		}
 		$this->assertSame( 'new-password', $peer->users['peer_alice']['user_pass'] );
 		$this->assertSame( '/wprus/password/', $peer->requests[1]['path'] );
+		$this->assertSame( 'source-subscriber@example.test', $peer->requests[1]['data']['identity_email'] );
 	}
 
 	/** A selected WordPress metadata addition reaches the peer. */

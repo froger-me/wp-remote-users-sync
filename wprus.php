@@ -2,8 +2,8 @@
 /**
 Plugin Name: WP Remote Users Sync
 Plugin URI: https://github.com/froger-me/wp-remote-users-sync
-Description: Synchronise WordPress Users across Multiple Sites.
-Version: 2.3.0
+Description: Synchronise WordPress users across connected sites while checking account identities before registration and incoming changes.
+Version: 2.4.0
 Author: Alexandre Froger
 Author URI: https://froger.me/
 Text Domain: wprus
@@ -48,6 +48,8 @@ function wprus_run() {
 	require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-logger.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-settings.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-abstract.php';
+	require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-identity-creation-exception.php';
+	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-identity.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/integration/class-wprus-integration.php';
 
 	do_action( 'wprus_init' );
@@ -81,7 +83,13 @@ function wprus_run() {
 
 		do_action( 'wprus_loaded' );
 
-		$api = array();
+		$api             = array();
+		$api['identity'] = new Wprus_Api_Identity( 'identity', $settings, true );
+
+		if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			require_once WPRUS_PLUGIN_PATH . 'inc/integrations/woocommerce/class-wprus-integration-woocommerce.php';
+			new Wprus_Integration_WooCommerce( $api['identity'] );
+		}
 
 		foreach ( $enabled_api_endpoints as $api_endpoint ) {
 			$api_endpoint_parts    = explode( '-', $api_endpoint );

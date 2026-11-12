@@ -28,7 +28,7 @@ test('incoming requests follow the configured allowed IP addresses', async ({ pa
     expect(response.ok()).toBeTruthy();
     const { nonce } = await response.json() as { nonce: string };
     await client.post('/wprus/update/', {
-      form: { token: nonce, wprusdata: encryptMessage({ username: 'wprus_test_alice', base_url: 'https://wprus-peer.test', display_name: displayName }) },
+      form: { token: nonce, wprusdata: encryptMessage({ username: 'wprus_test_alice', identity_email: 'wprus-alice@example.test', user_email: 'wprus-alice@example.test', base_url: 'https://wprus-peer.test', display_name: displayName }) },
     });
   };
   try {

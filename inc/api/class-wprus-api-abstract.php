@@ -350,10 +350,28 @@ abstract class Wprus_Api_Abstract {
 	public function handle_request() {
 		$data = $this->get_data();
 
+		if (
+			'identity' !== $this->endpoint &&
+			! Wprus_Api_Identity::verify_incoming_identity( $data, $this->endpoint )
+		) {
+			Wprus_Logger::log(
+				sprintf( 'Incoming %s action rejected: user identity mismatch.', $this->endpoint ),
+				'alert',
+				'db_log'
+			);
+			status_header( 409 );
+			return;
+		}
+
 		if ( method_exists( $this, 'handle_notification' ) ) {
 			do_action( 'wprus_before_handle_action_notification', $this->endpoint, $data );
 
-			$result = $this->handle_notification();
+			Wprus_Api_Identity::set_handling_incoming( true );
+			try {
+				$result = $this->handle_notification();
+			} finally {
+				Wprus_Api_Identity::set_handling_incoming( false );
+			}
 
 			do_action( 'wprus_after_handle_action_notification', $this->endpoint, $data, $result );
 
@@ -847,6 +865,7 @@ abstract class Wprus_Api_Abstract {
 	 * @return void No value is returned.
 	 */
 	public function add_async_action( $url, $data ) {
+		$data             = Wprus_Api_Identity::attach_source_identity( $data, $this->endpoint );
 		$data['base_url'] = get_option( 'home' );
 		$data['url']      = $url;
 

@@ -77,6 +77,20 @@ class Wprus_Test_Peer {
 				)
 			);
 		}
+		if ( '/wprus/identity/' === $path ) {
+			$email = isset( $data['user_email'] ) ? $data['user_email'] : '';
+			return $this->response(
+				wp_json_encode(
+					array(
+						'success' => true,
+						'data'    => array(
+							'username_exists' => isset( $this->users[ $data['username'] ?? '' ] ),
+							'email_exists'    => in_array( $email, array_column( $this->users, 'user_email' ), true ),
+						),
+					)
+				)
+			);
+		}
 		$username = isset( $data['username'] ) ? $data['username'] : '';
 		if ( '/wprus/create/' === $path && '' !== $username ) {
 			$this->users[ $username ] = $data;

@@ -21,6 +21,7 @@ test('a connected-site request logs the user in and out with real WordPress cook
       url.searchParams.set('token', token);
       url.searchParams.set('wprusdata', encryptMessage({
         username: 'wprus_test_alice',
+        identity_email: 'wprus-alice@example.test',
         base_url: 'https://wprus-peer.test',
         remember: 0,
         callback_url: baseURL,

@@ -18,7 +18,7 @@ test('metadata requests accept selected keys and reject protected key variants',
       form: {
         token: nonce,
         wprusdata: encryptMessage({
-          username: 'wprus_test_alice', base_url: 'https://wprus-peer.test',
+          username: 'wprus_test_alice', identity_email: 'wprus-alice@example.test', base_url: 'https://wprus-peer.test',
           update: {
             'wp_capabilities ': [{ meta_value: { administrator: true }, prev_value: '' }],
             '_application_passwords ': [{ meta_value: [], prev_value: '' }],
@@ -53,7 +53,7 @@ test('a connected site can create, change, and delete an allowed user', async ({
       expect(response.ok()).toBeTruthy();
       const { nonce } = await response.json() as { nonce: string };
       await client.post(`/wprus/${action}/`, {
-        form: { token: nonce, wprusdata: encryptMessage({ username, base_url: 'https://wprus-peer.test', ...data }) },
+        form: { token: nonce, wprusdata: encryptMessage({ username, identity_email: 'features@example.test', base_url: 'https://wprus-peer.test', ...data }) },
       });
     };
     const readUser = async () => {
@@ -76,7 +76,7 @@ test('a connected site can create, change, and delete an allowed user', async ({
     expect((await readUser()).user_email).toBe('features@example.test');
     expect(await passwordMatches('first-password')).toBe(true);
 
-    await send('update', { roles: { set: 'editor', add: [] } });
+    await send('update', { user_email: 'features@example.test', roles: { set: 'editor', add: [] } });
     expect((await readUser()).roles).toEqual(['editor']);
 
     await send('password', { user_pass: 'second-password' });

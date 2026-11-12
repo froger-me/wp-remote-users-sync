@@ -18,6 +18,7 @@ test('invalid tokens cannot change a user through any action', async ({ baseURL 
     const before = await readUser();
     const data = encryptMessage({
       username: 'wprus_test_alice',
+      identity_email: 'wprus-alice@example.test',
       base_url: 'https://wprus-peer.test',
       user_email: 'changed-without-token@example.test',
       user_pass: 'unexpected-password',

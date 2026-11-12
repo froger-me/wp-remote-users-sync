@@ -119,6 +119,10 @@ class Wprus_Api_Create extends Wprus_Api_Abstract {
 	 * @return void No value is returned.
 	 */
 	public function notify_remote( $user_id ) {
+		if ( Wprus_Api_Identity::is_creation_blocked( $user_id ) ) {
+			return;
+		}
+
 		$sites = $this->settings->get_sites( $this->endpoint, 'outgoing' );
 		$user  = get_user_by( 'ID', $user_id );
 

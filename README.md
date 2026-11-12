@@ -1,5 +1,7 @@
 # WP Remote Users Sync - Synchronise WordPress Users across Multiple Sites
 
+Current version: **2.4.0**.
+
 * [General Description](#user-content-general-description)
     * [Overview](#user-content-overview)
     * [Trust Model](#user-content-trust-model)
@@ -7,6 +9,7 @@
 * [Hooks - actions & filters](#user-content-hooks---actions--filters)
     * [Actions](#user-content-actions)
     * [Filters](#user-content-filters)
+* [Changelog](#user-content-changelog)
 
 ## General Description
 
@@ -19,6 +22,8 @@ This plugin adds the following major features to WordPress:
 * **WP Remote Users Sync admin page:** a settings page under "Settings > WP Remote Users Sync" to manage remote sites, security settings, and activity logs.
 * **Remote Sites:** manage an unlimited amount of connected sites with configuration for incoming and outgoing User Actions (Login, Logout, Create, Update, Delete, Password, Role and Metadata).
 * **Security:** WP Remote Users Sync is the **only** plugin available allowing users to be synchronised with true layers of security in place. All communications are OpenSSL AES-256-CBC encrypted, HMAC SHA256 signed, token-validated and IP-validated.
+* **Account identity checks:** before an ordinary visitor can register, every connected site must confirm that the username and email address are unused. A matching account or an unavailable site prevents registration. After registration, the plugin checks again and does not send a Create action if a conflict or failed check appears. Users with permission to manage other users can create local accounts without these remote checks.
+* **Protected incoming actions:** a connected site can change, delete, log in, or log out an existing local account only when its username and identifying email address match that account. A mismatch rejects the entire received action, including any profile, password, role, or metadata changes. Email changes are checked against the sender's previous email address.
 * **Existing Users:** administrators can use a third-party user import and export tool to transfer existing users between sites before automatic synchronisation begins.
 * **Activity Logs:** when enabled, all communications between connected sites is logged for admin review and troubleshooting.
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
@@ -30,6 +35,10 @@ This plugin adds the following major features to WordPress:
 WP Remote Users Sync is designed for mutually trusted WordPress installations. All connected sites share the same encryption and signature credentials, establishing trust across the group rather than identifying individual sites independently.
 
 Per-site action settings control synchronization behavior, not access permissions. All connected sites must therefore be equally trusted.
+
+Install the same version on every connected site. Older versions cannot answer the account identity check or provide the identifying email address with outgoing actions. An updated site therefore rejects ordinary registration when it cannot check an older connected site, and rejects actions from an older site that target existing users.
+
+Other registration systems can handle validation by registering a callback for `wprus_validate_user_creation`. The plugin checks connected sites and passes the result to the callback with the username, email address, and user data. The callback must stop creation through its registration system when the result reports a conflict or a failed check. Without such a callback, an ordinary user creation outside WordPress and WooCommerce registration is rejected with a standard WordPress error page.
 
 ___
 
@@ -240,6 +249,7 @@ Actions index:
 * [wprus_init](#user-content-wprus_init)
 * [wprus_loaded](#user-content-wprus_loaded)
 * [wprus_ready](#user-content-wprus_ready)
+* [wprus_validate_user_creation](#user-content-wprus_validate_user_creation)
 * [wprus_unauthorized_access](#user-content-wprus_unauthorized_access)
 * [wprus_authorized_access](#user-content-wprus_authorized_access)
 * [wprus_ping_fired](#user-content-wprus_ping_fired)
@@ -255,6 +265,16 @@ Actions index:
 * [wprus_after_init_notification_hooks](#user-content-wprus_after_init_notification_hooks)
 * [wprus_integration](#user-content-wprus_integration)
 * [wprus_integration_run](#user-content-wprus_integration_run)
+
+___
+
+#### wprus_validate_user_creation
+
+```php
+do_action( 'wprus_validate_user_creation', $username, $email, $data, $result );
+```
+
+An integration for another registration system can register this action to handle registration errors before WordPress inserts the account. The callback receives the final username, email address, user data, and the plugin's connected-site check result. The result is `true` when the username and email address are available everywhere. Otherwise it is a `WP_Error` with code `wprus_username_exists`, `wprus_email_exists`, or `wprus_identity_unavailable`. The callback must use its registration system's error handling to stop creation for any of these errors. A registered callback replaces the plugin's default rejection for that registration system.
 
 ___
 
@@ -668,11 +688,13 @@ Filters index:
 * [WP Remote Users Sync - Synchronise WordPress Users across Multiple Sites](#wp-remote-users-sync---synchronise-wordpress-users-across-multiple-sites)
     * [General Description](#general-description)
         * [Overview](#overview)
+        * [Trust Model](#trust-model)
     * [Adding User Actions](#adding-user-actions)
         * [Implementing filter and actions hooks and including a custom User Action API class - example](#implementing-filter-and-actions-hooks-and-including-a-custom-user-action-api-class---example)
         * [Implementing a custom User Action class - example](#implementing-a-custom-user-action-class---example)
     * [Hooks - actions \& filters](#hooks---actions--filters)
         * [Actions](#actions)
+            * [wprus\_validate\_user\_creation](#wprus_validate_user_creation)
             * [wprus\_loaded](#wprus_loaded)
             * [wprus\_loaded](#wprus_loaded-1)
             * [wprus\_ready](#wprus_ready)
@@ -705,6 +727,8 @@ Filters index:
             * [wprus\_sanitize\_settings](#wprus_sanitize_settings)
             * [wprus\_excluded\_meta\_keys](#wprus_excluded_meta_keys)
             * [wprus\_excluded\_meta\_keys\_like](#wprus_excluded_meta_keys_like)
+            * [wprus\_protected\_meta\_keys](#wprus_protected_meta_keys)
+            * [wprus\_incoming\_meta\_exclusions](#wprus_incoming_meta_exclusions)
             * [wprus\_init\_notification\_hooks](#wprus_init_notification_hooks)
             * [wprus\_fire\_action\_timeout](#wprus_fire_action_timeout)
             * [wprus\_request\_token\_timeout](#wprus_request_token_timeout)
@@ -721,6 +745,8 @@ Filters index:
             * [wprus\_locate\_template](#wprus_locate_template)
             * [wprus\_locate\_admin\_template](#wprus_locate_admin_template)
             * [wprus\_locate\_template\_paths](#wprus_locate_template_paths)
+    * [Changelog](#changelog)
+        * [2.4.0](#240)
 
 ___
 
@@ -1329,3 +1355,13 @@ array(
 ```
 
 ___
+
+## Changelog
+
+### 2.4.0
+
+* Reject ordinary user creation when a connected site already uses the username or email address, or when a connected site cannot be checked. Check again after creation and skip the outgoing Create action if that check fails.
+* Reject the entire incoming synchronization action for an existing user when the sender's username or identifying email address does not match. This protects profile details, passwords, roles, metadata, sessions, and deletion.
+* Check email changes against the sender's previous email address so valid changes can still synchronize.
+* Show clear registration errors in WordPress and WooCommerce, and a standard WordPress error page for unsupported registration methods.
+* Pass the connected-site check result to other registration systems through `wprus_validate_user_creation` so they can show errors in their own forms.

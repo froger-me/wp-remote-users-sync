@@ -34,14 +34,29 @@ update_option( 'default_role', 'subscriber' );
 
 $wprus_test_user = get_user_by( 'login', 'wprus_test_alice' );
 if ( ! $wprus_test_user ) {
-	$wprus_test_user = wp_insert_user(
+	$wprus_administrators = get_users(
 		array(
-			'user_login' => 'wprus_test_alice',
-			'user_email' => 'wprus-alice@example.test',
-			'user_pass'  => 'wprus-test-password',
-			'role'       => 'subscriber',
+			'role'   => 'administrator',
+			'number' => 1,
 		)
 	);
+	if ( empty( $wprus_administrators ) ) {
+		WP_CLI::error( 'The browser test fixture needs an administrator to create its user.' );
+	}
+	$wprus_previous_user_id = get_current_user_id();
+	wp_set_current_user( $wprus_administrators[0]->ID );
+	try {
+		$wprus_test_user = wp_insert_user(
+			array(
+				'user_login' => 'wprus_test_alice',
+				'user_email' => 'wprus-alice@example.test',
+				'user_pass'  => 'wprus-test-password',
+				'role'       => 'subscriber',
+			)
+		);
+	} finally {
+		wp_set_current_user( $wprus_previous_user_id );
+	}
 	if ( is_wp_error( $wprus_test_user ) ) {
 		WP_CLI::error( $wprus_test_user->get_error_message() );
 	}
@@ -51,6 +66,7 @@ update_user_meta( $wprus_test_user_id, 'test_note', 'test fixture' );
 require_once dirname( __DIR__ ) . '/support/class-wprus-test-peer.php';
 $wprus_test_peer                            = new Wprus_Test_Peer();
 $wprus_test_peer->users['wprus_test_alice'] = array( 'logged_in' => false );
+$wprus_test_peer->users['wprus_test_dup'] = array( 'user_email' => 'existing@example.test' );
 update_option( 'wprus_tests_peer', $wprus_test_peer, false );
 
 $wprus_test_loader = "<?php\nif ( defined( 'ANYAPE_WP_TEST_TOOLS_E2E' ) && ANYAPE_WP_TEST_TOOLS_E2E ) {\n    require WP_PLUGIN_DIR . '/wp-remote-users-sync/tests/e2e/support/local-control.php';\n}\n";
