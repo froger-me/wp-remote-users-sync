@@ -129,12 +129,6 @@ abstract class Wprus_Api_Abstract {
 				add_action( 'init', array( $this, 'init_remote_hooks' ), PHP_INT_MIN + 100, 0 );
 			} else {
 				add_action( 'init', array( $this, 'init_local_hooks' ), PHP_INT_MIN + 100, 0 );
-				add_action(
-					'wp_ajax_wprus_' . $endpoint . '_notify_ping_remote',
-					array( $this, 'notify_ping_remote' ),
-					10,
-					0
-				);
 
 				if ( $this->has_async_actions() ) {
 
@@ -302,14 +296,7 @@ abstract class Wprus_Api_Abstract {
 	 * @return void No value is returned.
 	 */
 	public function init_remote_hooks() {
-		$data = $this->get_data();
-
-		if ( isset( $data['ping'] ) ) {
-			add_action( 'wprus_api_' . $this->endpoint, array( $this, 'handle_ping_notification' ), 10, 0 );
-		} else {
-			add_action( 'wprus_api_' . $this->endpoint, array( $this, 'handle_request' ), 10, 0 );
-		}
-
+		add_action( 'wprus_api_' . $this->endpoint, array( $this, 'handle_request' ), 10, 0 );
 		add_action( 'wprus_api_token', array( $this, 'handle_token_request' ), 10, 0 );
 	}
 
@@ -351,7 +338,7 @@ abstract class Wprus_Api_Abstract {
 		$data = $this->get_data();
 
 		if (
-			'identity' !== $this->endpoint &&
+			! in_array( $this->endpoint, array( 'identity', 'wp-admin' ), true ) &&
 			! Wprus_Api_Identity::verify_incoming_identity( $data, $this->endpoint )
 		) {
 			Wprus_Logger::log(
@@ -360,6 +347,13 @@ abstract class Wprus_Api_Abstract {
 				'db_log'
 			);
 			status_header( 409 );
+
+			return;
+		}
+
+		if ( 'wp-admin' !== $this->endpoint && isset( $data['ping'] ) ) {
+			status_header( 400 );
+
 			return;
 		}
 
@@ -367,6 +361,7 @@ abstract class Wprus_Api_Abstract {
 			do_action( 'wprus_before_handle_action_notification', $this->endpoint, $data );
 
 			Wprus_Api_Identity::set_handling_incoming( true );
+
 			try {
 				$result = $this->handle_notification();
 			} finally {
@@ -418,7 +413,9 @@ abstract class Wprus_Api_Abstract {
 			} elseif ( 'post' === $this->method ) {
 
 				if ( self::$ip_whitelist ) {
+
 					foreach ( self::$ip_whitelist as $range ) {
+
 						if ( $this->cidr_match( $remote_addr, $range ) ) {
 							$is_authorized_remote = true;
 							break;
@@ -460,10 +457,10 @@ abstract class Wprus_Api_Abstract {
 		if ( ! $is_authorized_remote ) {
 			do_action( 'wprus_unauthorized_access', $this->endpoint, $remote_data, $token, $this );
 
-			if ( isset( $remote_data['ping'] ) ) {
+			if ( 'wp-admin' === $this->endpoint ) {
 				$message = __( 'The remote website encountered the following error: ', 'wprus' ) . $message;
 
-				wp_send_json_error( $message );
+				wp_send_json_error( $message, 403 );
 			} elseif ( $this->needs_redirect() ) {
 				$url = isset( $remote_data['callback_url'] ) ? $remote_data['callback_url'] : home_url();
 
@@ -471,7 +468,6 @@ abstract class Wprus_Api_Abstract {
 
 				exit();
 			} else {
-
 				exit();
 			}
 		}
@@ -638,206 +634,6 @@ abstract class Wprus_Api_Abstract {
 		$site     = $this->settings->get_site( $site_url, $endpoint, $direction );
 
 		return $site;
-	}
-
-	/**
-	 * Handle requests for test pings and reply with JSON data
-	 *
-	 * @return void No value is returned.
-	 */
-	public function handle_ping_notification() {
-		$data = $this->get_data_post();
-
-		if ( empty( $data ) ) {
-			Wprus_Logger::log( __( 'A ping was received but the initiator did not use matching encryption and signature action keys', 'wprus' ), 'info', 'db_log' );
-			wp_send_json_error( __( 'Mismatch Encryption settings - please make sure the action keys are correctly configured on both sites.', 'wprus' ) );
-		}
-
-		if (
-			empty( $data['base_url'] ) ||
-			empty( $data['direction'] ) ||
-			(
-				'incoming' !== $data['direction'] &&
-				'outgoing' !== $data['direction']
-			)
-		) {
-			Wprus_Logger::log( __( 'A ping was received but the initiator did not send the proper data.', 'wprus' ), 'info', 'db_log' );
-			wp_send_json_error( __( 'Malformed data - the test request was received but the data could not be extracted.', 'wprus' ) );
-		}
-
-		$site            = $this->get_active_site_for_action( $this->endpoint, $data['base_url'], $data['direction'] );
-		$action_label    = $this->endpoint;
-		$direction_label = ( 'incoming' === $data['direction'] ) ? __( 'incoming', 'wprus' ) : __( 'outgoing', 'wprus' );
-		$remote_addr     = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-		$settings_class  = self::$settings_class;
-		$class_vars      = get_class_vars( $settings_class );
-
-		if ( isset( $class_vars['actions'][ $action_label ] ) ) {
-			$action_label = $class_vars['actions'][ $action_label ];
-		}
-
-		if ( $site ) {
-			do_action( 'wprus_ping_success', $this->endpoint, $data, $remote_addr );
-
-			// translators: %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction.
-			$message = __( 'Ping received for activated action "%1$s" from %2$s with remote IP %3$s (%4$s)', 'wprus' );
-
-			Wprus_Logger::log(
-				sprintf(
-					$message,
-					$action_label,
-					$data['base_url'],
-					$remote_addr,
-					$direction_label
-				),
-				'success',
-				'db_log'
-			);
-
-			// translators: %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction.
-			$message = __( 'Ping success for action "%1$s" from %2$s with remote IP %3$s (%4$s)', 'wprus' );
-
-			wp_send_json_success(
-				sprintf(
-					$message,
-					$action_label,
-					get_option( 'home' ),
-					$remote_addr,
-					$direction_label
-				)
-			);
-		}
-
-		do_action( 'wprus_ping_failure', $this->endpoint, $data, $remote_addr );
-
-		// translators: %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction.
-		$message = __( 'Ping received for deactivated action "%1$s" from %2$s with remote IP %3$s (%4$s)', 'wprus' );
-
-		Wprus_Logger::log(
-			sprintf(
-				$message,
-				$action_label,
-				$data['base_url'],
-				$remote_addr,
-				$direction_label
-			),
-			'warning',
-			'db_log'
-		);
-
-		// translators: %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction.
-		$message = __( '"%1$s" action is not activated on %2$s with remote IP %3$s (%4$s).', 'wprus' );
-		$message = sprintf(
-			$message,
-			$action_label,
-			get_option( 'home' ),
-			$remote_addr,
-			$direction_label
-		);
-
-		wp_send_json_error( $message );
-	}
-
-	/**
-	 * Send a test ping request to a remote website and send the response to the user interface
-	 *
-	 * @return void No value is returned.
-	 */
-	public function notify_ping_remote() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ), 403 );
-		}
-
-		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
-
-		if ( ! wp_verify_nonce( $nonce, 'wprus_ping_nonce' ) ) {
-			wp_send_json_error( __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ) );
-		}
-
-		$url          = filter_input( INPUT_POST, 'site_url', FILTER_VALIDATE_URL );
-		$direction    = filter_input( INPUT_POST, 'direction', FILTER_UNSAFE_RAW );
-		$data         = filter_input( INPUT_POST, 'data', FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY );
-		$success      = false;
-		$payload      = false;
-		$default_data = array(
-			'ping'      => 1,
-			'direction' => ( 'incoming' === $direction ) ? 'outgoing' : 'incoming',
-		);
-
-		if ( $data ) {
-			$data = array_merge( $default_data, $data );
-		} else {
-			$data = $default_data;
-		}
-
-		$response = $this->fire_action(
-			$url,
-			$data,
-			true,
-			5
-		);
-
-		do_action( 'wprus_ping_fired', $this->endpoint, $data, $response );
-
-		if ( 200 === absint( $response['response_code'] ) ) {
-			$data = json_decode( $response['body'], true );
-
-			if ( JSON_ERROR_NONE !== json_last_error() ) {
-				$payload  = __( 'Error contacting the remote site: ', 'wprus' );
-				$payload .= __( 'Payload error - ' ) . json_last_error_msg();
-			} else {
-
-				if ( $data['success'] ) {
-					$success = true;
-				}
-
-				$payload = $data['data'];
-			}
-		}
-
-		if ( ! $success && ! $payload ) {
-			$payload = __( 'Error contacting the remote site: ', 'wprus' );
-
-			if (
-				! empty( $response['response_code'] ) &&
-				200 !== $response['response_code'] &&
-				! empty( $response['response_message'] )
-			) {
-				$payload .= $response['response_code'] . ' - ' . $response['response_message'];
-			} else {
-				// translators: %s is the error code.
-				$payload .= ( ! empty( $response['response_code'] ) ) ? sprintf( __( ' - code: %s - ', 'wprus' ), $response['response_code'] ) : '';
-				$payload .= __( 'an undefined error occured. Please make sure the address is correct and try again.', 'wprus' );
-				$payload .= "\n";
-				$payload .= __( 'On the remote site, please make sure the plugin is activated and that the permalinks are up to date by visiting the permalinks settings page.', 'wprus' );
-			}
-
-			if ( 404 === absint( $response['response_code'] ) ) {
-				$payload .= "\n";
-				$payload .= __( 'On the remote site, please make sure the permalinks are not using the "Plain" option.', 'wprus' );
-			}
-		}
-
-		$log_type = ( $success ) ? 'success' : 'alert';
-
-		Wprus_Logger::log( $payload, $log_type, 'db_log' );
-
-		if ( ! $success ) {
-			Wprus_Logger::log(
-				array(
-					'message' => 'Response data received from the remote site: ',
-					$response,
-				),
-				'info',
-				'db_log'
-			);
-		}
-
-		if ( $success ) {
-			wp_send_json_success( $payload );
-		}
-
-		wp_send_json_error( $payload );
 	}
 
 	/**
@@ -1089,6 +885,7 @@ abstract class Wprus_Api_Abstract {
 
 		if ( $body && 200 === wp_remote_retrieve_response_code( $response ) ) {
 			$token_info = json_decode( $body, true );
+
 			if ( ! is_array( $token_info ) || empty( $token_info['nonce'] ) || ! is_string( $token_info['nonce'] ) || ! isset( $token_info['expiry'] ) || ! is_numeric( $token_info['expiry'] ) || $token_info['expiry'] <= time() ) {
 				$token_info = false;
 			}
@@ -1448,15 +1245,19 @@ abstract class Wprus_Api_Abstract {
 	 */
 	protected function cidr_match( $ip, $range ) {
 		$parts = explode( '/', $range );
+
 		if ( 2 !== count( $parts ) || ! ctype_digit( $parts[1] ) || (int) $parts[1] > 32 ) {
 			return false;
 		}
+
 		$ip     = ip2long( $ip );
 		$subnet = ip2long( $parts[0] );
 		$bits   = (int) $parts[1];
+
 		if ( false === $ip || false === $subnet ) {
 			return false;
 		}
+
 		if ( 0 === $bits ) {
 			return true;
 		}

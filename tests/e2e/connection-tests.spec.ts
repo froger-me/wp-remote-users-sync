@@ -1,5 +1,28 @@
 import { test, expect } from '../../../../../.anyape-wp-test-tools/e2e/test';
 
+for (const mode of ['readable', 'compact'] as const) {
+  test(`connection test uses the ${mode} administration script`, async ({ page }) => {
+    await page.goto(`/wp-admin/options-general.php?page=wprus&wprus_test_script=${mode}`);
+    const file = mode === 'readable' ? 'main.js' : 'main.min.js';
+    await expect(page.locator(`script[src*="/js/admin/${file}?"]`)).toHaveCount(1);
+    const site = page.locator('.postbox.wprus-site').filter({
+      has: page.locator('.wprus-container[data-url="https://wprus-peer.test"]'),
+    });
+    const cell = site.locator('.action-test[data-action="create"][data-direction="incoming"]');
+    if (!(await cell.getByRole('button', { name: 'Test' }).isVisible())) await site.locator('.handlediv').click();
+    const response = page.waitForResponse(item =>
+      item.url().includes('admin-ajax.php') &&
+      item.request().postData()?.includes('wprus_wp_admin_notify_ping_remote') === true,
+    );
+    await cell.getByRole('button', { name: 'Test' }).click();
+    const result = await response;
+    expect((await result.json() as { success: boolean }).success).toBe(true);
+    const form = new URLSearchParams(result.request().postData() ?? '');
+    expect(form.get('data[target_action]')).toBe('create');
+    expect(form.get('direction')).toBe('incoming');
+  });
+}
+
 test('an administrator can test every action in both directions', async ({ page }) => {
   const settings = '/wp-admin/options-general.php?page=wprus';
   const site = page.locator('.postbox.wprus-site').filter({
@@ -28,10 +51,13 @@ test('an administrator can test every action in both directions', async ({ page 
       const direction = await cell.getAttribute('data-direction');
       const response = page.waitForResponse(item =>
         item.url().includes('admin-ajax.php') &&
-        item.request().postData()?.includes(`wprus_${action}_notify_ping_remote`) === true,
+        item.request().postData()?.includes('wprus_wp_admin_notify_ping_remote') === true,
       );
       await cell.getByRole('button', { name: 'Test' }).click();
       const result = await response;
+      const form = new URLSearchParams(result.request().postData() ?? '');
+      expect(form.get('data[target_action]')).toBe(action);
+      expect(form.get('direction')).toBe(direction);
       expect((await result.json() as { success: boolean }).success, `${action} ${direction}`).toBe(true);
       await expect(row.locator('.action-test-result .success'), `${action} ${direction}`).toBeVisible();
     }
@@ -70,7 +96,7 @@ test('connection tests show failures from the simulated site', async ({ page }) 
     for (const failure of ['disabled', 'malformed', 'timeout']) {
       await mode(failure);
       const response = page.waitForResponse(item =>
-        item.url().includes('admin-ajax.php') && item.request().postData()?.includes('wprus_create_notify_ping_remote') === true,
+        item.url().includes('admin-ajax.php') && item.request().postData()?.includes('wprus_wp_admin_notify_ping_remote') === true,
       );
       await cell.getByRole('button', { name: 'Test' }).click();
       const result = await response;

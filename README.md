@@ -6,6 +6,7 @@ Current version: **2.4.0**.
     * [Overview](#user-content-overview)
     * [Trust Model](#user-content-trust-model)
 * [Adding User Actions](#user-content-adding-user-actions)
+* [Administrative Requests](#user-content-administrative-requests)
 * [Hooks - actions & filters](#user-content-hooks---actions--filters)
     * [Actions](#user-content-actions)
     * [Filters](#user-content-filters)
@@ -39,6 +40,33 @@ Per-site action settings control synchronization behavior, not access permission
 Install the same version on every connected site. Older versions cannot answer the account identity check or provide the identifying email address with outgoing actions. An updated site therefore rejects ordinary registration when it cannot check an older connected site, and rejects actions from an older site that target existing users.
 
 Other registration systems can handle validation by registering a callback for `wprus_validate_user_creation`. The plugin checks connected sites and passes the result to the callback with the username, email address, and user data. The callback must stop creation through its registration system when the result reports a conflict or a failed check. Without such a callback, an ordinary user creation outside WordPress and WooCommerce registration is rejected with a standard WordPress error page.
+
+___
+
+## Administrative Requests
+
+`/wprus/wp-admin/` is always available when the plugin's security settings are valid. The user action settings do not turn it off. It uses the plugin's existing security token, encryption, signature, and connected-site checks.
+
+On activation, the plugin saves its version in the `wprus_plugin_version` WordPress option. After registering its request addresses, it checks whether WordPress has saved a rule for each destination. It checks destinations because other plugins may add language prefixes to the address patterns. If a destination is missing, the version changed, or connection settings request a refresh, it saves the complete set of rules again and records the current version. This also makes `/wprus/wp-admin/` available on sites upgrading from an older version.
+
+The decrypted request keeps `username`, `base_url`, and any fields added by existing filters at the top level. Two additional top-level fields belong to this address: `action` names the administrative operation, and `data` holds the fields that operation needs. When `data` repeats `base_url`, it must equal the top-level value. For a connection test, `action` is `ping` and `data` contains `base_url`, `target_action` (such as `create`), and `direction` (`incoming` or `outgoing`).
+
+Add another administrative operation by registering a function with `wprus_wp_admin_handlers`:
+
+```php
+function my_plugin_handle_status( $data ) {
+    return array( 'status' => 'ok' );
+}
+
+add_filter( 'wprus_wp_admin_handlers', function ( $handlers ) {
+    $handlers['status'] = 'my_plugin_handle_status';
+    return $handlers;
+} );
+```
+
+The function receives only `data`. It must return a result on success or a `WP_Error` on failure. Returning `null` produces an HTTP 500 error. The `wprus_after_handle_action_notification` hook receives the result; the plugin sends the final JSON response from that hook at priority 10. Code that needs to inspect the result first should use a lower priority.
+
+The existing `wprus_ping_fired`, `wprus_ping_success`, and `wprus_ping_failure` hooks still receive the user action being tested as their first argument. The next argument contains the connection test's `data` fields. A disabled user action produces a failed connection test with HTTP 200.
 
 ___
 
@@ -375,14 +403,14 @@ do_action( 'wprus_ping_fired', (string) $endpoint, (mixed) $ping_data, (mixed) $
 ```
 
 **Description**  
-Fired when a test ping was sent to a remote site.  
+Fired when a connection test was sent to a remote site.
 
 **Parameters**  
 `$endpoint`
-> (string) The API endpoint the test ping was sent to.  
+> (string) The user action being tested.
 
 `$ping_data`
-> (mixed) The data sent to perform the ping.  
+> (mixed) The connection test's `base_url`, `target_action`, and `direction`.
 
 `$response`
 > (mixed) The response received from the remote site.  
@@ -399,10 +427,10 @@ Fired when a test ping was received from a remote site and was successful.
 
 **Parameters**  
 `$endpoint`
-> (string) The API endpoint receiving the test ping.  
+> (string) The user action being tested.
 
 `$ping_remote_data`
-> (mixed) The data received from the remote site to perform the ping.  
+> (mixed) The connection test's `base_url`, `target_action`, and `direction`.
 
 `$remote_addr`
 > (string) The IP address of the remote site.  
@@ -419,10 +447,10 @@ Fired when a test ping was received from a remote site and failed.
 
 **Parameters**  
 `$endpoint`
-> (string) The API endpoint receiving the test ping.  
+> (string) The user action being tested.
 
 `$ping_remote_data`
-> (mixed) The data received from the remote site to perform the ping.  
+> (mixed) The connection test's `base_url`, `target_action`, and `direction`.
 
 `$remote_addr`
 > (string) The IP address of the remote site.  
@@ -574,11 +602,11 @@ ___
 #### wprus_after_handle_action_notification
 
 ```php
-do_action( 'wprus_after_handle_action_notification', (string) $endpoint, (mixed) $data, (bool) $result );
+do_action( 'wprus_after_handle_action_notification', (string) $endpoint, (mixed) $data, (mixed) $result );
 ```
 
 **Description**  
-Fired after handling a notification received from a remote site.   
+Fired after handling a request received from a connected site. For `wp-admin`, this hook receives the returned result before the plugin sends its JSON response at priority 10.
 
 **Parameters**  
 `$endpoint`
@@ -595,7 +623,7 @@ array(
 ``` 
 
 `$result`
-> (bool) Wether handling the notification was successful or failed ; any change to user data is considered successful even if warnings were raised (for example, if the Update action was received and a user was created instead of updated).  
+> (mixed) The result returned by the request handler. Administrative handlers return a value on success or a `WP_Error` on failure.
 ___
 
 
@@ -689,6 +717,7 @@ Filters index:
     * [General Description](#general-description)
         * [Overview](#overview)
         * [Trust Model](#trust-model)
+    * [Administrative Requests](#administrative-requests)
     * [Adding User Actions](#adding-user-actions)
         * [Implementing filter and actions hooks and including a custom User Action API class - example](#implementing-filter-and-actions-hooks-and-including-a-custom-user-action-api-class---example)
         * [Implementing a custom User Action class - example](#implementing-a-custom-user-action-class---example)

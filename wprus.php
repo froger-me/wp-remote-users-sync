@@ -50,6 +50,7 @@ function wprus_run() {
 	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-abstract.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-identity-creation-exception.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-identity.php';
+	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-wp-admin.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/integration/class-wprus-integration.php';
 
 	do_action( 'wprus_init' );
@@ -85,6 +86,7 @@ function wprus_run() {
 
 		$api             = array();
 		$api['identity'] = new Wprus_Api_Identity( 'identity', $settings, true );
+		$api['wp-admin'] = new Wprus_Api_Wp_Admin( 'wp-admin', $settings, true );
 
 		if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			require_once WPRUS_PLUGIN_PATH . 'inc/integrations/woocommerce/class-wprus-integration-woocommerce.php';
@@ -92,6 +94,10 @@ function wprus_run() {
 		}
 
 		foreach ( $enabled_api_endpoints as $api_endpoint ) {
+			if ( in_array( $api_endpoint, array( 'identity', 'wp-admin' ), true ) ) {
+				continue;
+			}
+
 			$api_endpoint_parts    = explode( '-', $api_endpoint );
 			$api_endpoint_parts    = array_map( 'ucfirst', $api_endpoint_parts );
 			$api_handler_classname = 'Wprus_Api_' . implode( '_', $api_endpoint_parts );

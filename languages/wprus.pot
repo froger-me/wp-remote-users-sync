@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Remote Users Sync\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 04:40+0000\n"
+"POT-Creation-Date: 2026-11-12 00:00+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -58,8 +58,8 @@ msgid ""
 msgstr ""
 
 #. %s is the error code
-#: inc/api/class-wprus-api-abstract.php:759
 #, php-format
+#: inc/api/class-wprus-api-wp-admin.php:283
 msgid " - code: %s - "
 msgstr ""
 
@@ -127,8 +127,8 @@ msgid ""
 msgstr ""
 
 #. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:684
 #, php-format
+#: inc/api/class-wprus-api-wp-admin.php:191
 msgid "\"%1$s\" action is not activated on %2$s with remote IP %3$s (%4$s)."
 msgstr ""
 
@@ -149,7 +149,7 @@ msgstr ""
 msgid "(No message)"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:619
+#: inc/api/class-wprus-api-wp-admin.php:126
 msgid "A ping was received but the initiator did not send the proper data."
 msgstr ""
 
@@ -178,7 +178,7 @@ msgid ""
 "\"custom_role1\" on Site 1, and \"author\" on Site 2"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:402
+#: inc/api/class-wprus-api-abstract.php:433
 msgid "Access granted"
 msgstr ""
 
@@ -186,7 +186,7 @@ msgstr ""
 msgid "Action Encryption Key"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:914
+#: inc/api/class-wprus-api-abstract.php:763
 msgid "Action not sent because a security token could not be obtained."
 msgstr ""
 
@@ -218,8 +218,8 @@ msgid "Add Remote Site"
 msgstr ""
 
 #. %1$s is the url of the script ; %2$s is the action called
-#: inc/api/class-wprus-api-abstract.php:1294
 #, php-format
+#: inc/api/class-wprus-api-abstract.php:1171
 msgid "Added %1$s async URL in %2$s"
 msgstr ""
 
@@ -245,7 +245,7 @@ msgid ""
 "try again."
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:760
+#: inc/api/class-wprus-api-wp-admin.php:284
 msgid ""
 "an undefined error occured. Please make sure the address is correct and try "
 "again."
@@ -334,19 +334,21 @@ msgstr ""
 msgid "Consider the following scenario:"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:199
+#: inc/api/class-wprus-api-abstract.php:200
 msgid "Could not decrypt data: invalid bundle."
 msgstr ""
 
 #. %1$s is the username; %2$s is the action; %3$s is the remote site URL
-#: inc/api/class-wprus-api-abstract.php:902
 #, php-format
+#: inc/api/class-wprus-api-abstract.php:751
 msgid ""
 "Could not obtain a token for username \"%1$s\"; action \"%2$s\" was not sent "
 "to %3$s."
 msgstr ""
 
-#: inc/class-wprus-settings.php:89 inc/templates/admin/help.php:30
+#: inc/class-wprus-settings.php:89
+#: inc/templates/admin/help.php:30
+#: inc/api/class-wprus-api-wp-admin.php:107
 msgid "Create"
 msgstr ""
 
@@ -378,7 +380,9 @@ msgstr ""
 msgid "Create action failed - received invalid data."
 msgstr ""
 
-#: inc/class-wprus-settings.php:91 inc/templates/admin/help.php:37
+#: inc/class-wprus-settings.php:91
+#: inc/templates/admin/help.php:37
+#: inc/api/class-wprus-api-wp-admin.php:109
 msgid "Delete"
 msgstr ""
 
@@ -459,8 +463,8 @@ msgstr ""
 msgid "Enable Logs"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:736
-#: inc/api/class-wprus-api-abstract.php:749
+#: inc/api/class-wprus-api-wp-admin.php:260
+#: inc/api/class-wprus-api-wp-admin.php:273
 msgid "Error contacting the remote site: "
 msgstr ""
 
@@ -482,7 +486,9 @@ msgid ""
 "smaller batches."
 msgstr ""
 
-#: inc/class-wprus-logger.php:150 inc/api/class-wprus-api-abstract.php:704
+#: inc/class-wprus-logger.php:150
+#: inc/api/class-wprus-api-wp-admin.php:210
+#: inc/api/class-wprus-api-wp-admin.php:216
 msgid "Error: unauthorized access - please reload the page and try again."
 msgstr ""
 
@@ -553,19 +559,19 @@ msgstr ""
 msgid "Failed to create the necessary database table(s)."
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:282
+#: inc/api/class-wprus-api-abstract.php:287
 msgid "Failed to create token - invalid payload"
 msgstr ""
 
 #. %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:1051
 #, php-format
+#: inc/api/class-wprus-api-abstract.php:906
 msgid "Failed to renew token for %s"
 msgstr ""
 
 #. %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:1036
 #, php-format
+#: inc/api/class-wprus-api-abstract.php:891
 msgid "Failed to renew token for %s - retrying..."
 msgstr ""
 
@@ -723,7 +729,7 @@ msgid ""
 "doing synchronisation:"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:625
+#: inc/api/class-wprus-api-wp-admin.php:134
 msgid "incoming"
 msgstr ""
 
@@ -800,7 +806,9 @@ msgstr ""
 msgid "List of supported actions by default:"
 msgstr ""
 
-#: inc/class-wprus-settings.php:87 inc/templates/admin/help.php:22
+#: inc/class-wprus-settings.php:87
+#: inc/templates/admin/help.php:22
+#: inc/api/class-wprus-api-wp-admin.php:105
 msgid "Login"
 msgstr ""
 
@@ -843,7 +851,9 @@ msgid ""
 "authentication."
 msgstr ""
 
-#: inc/class-wprus-settings.php:88 inc/templates/admin/help.php:26
+#: inc/class-wprus-settings.php:88
+#: inc/templates/admin/help.php:26
+#: inc/api/class-wprus-api-wp-admin.php:106
 msgid "Logout"
 msgstr ""
 
@@ -901,7 +911,8 @@ msgstr ""
 msgid "Logs"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:620
+#: inc/api/class-wprus-api-wp-admin.php:127
+#: inc/api/class-wprus-api-wp-admin.php:233
 msgid ""
 "Malformed data - the test request was received but the data could not be "
 "extracted."
@@ -920,7 +931,9 @@ msgstr ""
 msgid "Merge with existing roles"
 msgstr ""
 
-#: inc/class-wprus-settings.php:94 inc/templates/admin/help.php:49
+#: inc/class-wprus-settings.php:94
+#: inc/templates/admin/help.php:49
+#: inc/api/class-wprus-api-wp-admin.php:112
 msgid "Metadata"
 msgstr ""
 
@@ -1050,13 +1063,13 @@ msgid ""
 "useful when exporting users in batches."
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:767
+#: inc/api/class-wprus-api-wp-admin.php:291
 msgid ""
 "On the remote site, please make sure the permalinks are not using the "
 "\"Plain\" option."
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:762
+#: inc/api/class-wprus-api-wp-admin.php:286
 msgid ""
 "On the remote site, please make sure the plugin is activated and that the "
 "permalinks are up to date by visiting the permalinks settings page."
@@ -1079,7 +1092,7 @@ msgstr ""
 msgid "OpenSSL encryption"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:625
+#: inc/api/class-wprus-api-wp-admin.php:134
 msgid "outgoing"
 msgstr ""
 
@@ -1092,7 +1105,9 @@ msgstr ""
 msgid "Overall, performances should be marginally impacted."
 msgstr ""
 
-#: inc/class-wprus-settings.php:92 inc/templates/admin/help.php:40
+#: inc/class-wprus-settings.php:92
+#: inc/templates/admin/help.php:40
+#: inc/api/class-wprus-api-wp-admin.php:110
 msgid "Password"
 msgstr ""
 
@@ -1146,24 +1161,24 @@ msgid ""
 msgstr ""
 
 #. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:638
 #, php-format
+#: inc/api/class-wprus-api-wp-admin.php:147
 msgid ""
 "Ping received for activated action \"%1$s\" from %2$s with remote IP %3$s "
 "(%4$s)"
 msgstr ""
 
 #. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:669
 #, php-format
+#: inc/api/class-wprus-api-wp-admin.php:176
 msgid ""
 "Ping received for deactivated action \"%1$s\" from %2$s with remote IP %3$s "
 "(%4$s)"
 msgstr ""
 
 #. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:653
 #, php-format
+#: inc/api/class-wprus-api-wp-admin.php:162
 msgid "Ping success for action \"%1$s\" from %2$s with remote IP %3$s (%4$s)"
 msgstr ""
 
@@ -1199,8 +1214,8 @@ msgid ""
 msgstr ""
 
 #. %1$s is the url of the endpoint ; %2$s is the action called
-#: inc/api/class-wprus-api-abstract.php:1253
 #, php-format
+#: inc/api/class-wprus-api-abstract.php:1123
 msgid "Ready to redirect to %1$s async URL in %2$s"
 msgstr ""
 
@@ -1224,8 +1239,8 @@ msgid "Remove site configuration"
 msgstr ""
 
 #. %s is the url of the caller
-#: inc/api/class-wprus-api-abstract.php:1011
 #, php-format
+#: inc/api/class-wprus-api-abstract.php:863
 msgid "Renewing token for %s"
 msgstr ""
 
@@ -1246,7 +1261,9 @@ msgstr ""
 msgid "Role action failed - incoming role action not enabled for %s"
 msgstr ""
 
-#: inc/class-wprus-settings.php:93 inc/templates/admin/help.php:44
+#: inc/class-wprus-settings.php:93
+#: inc/templates/admin/help.php:44
+#: inc/api/class-wprus-api-wp-admin.php:111
 msgid "Roles"
 msgstr ""
 
@@ -1373,7 +1390,7 @@ msgid ""
 "connected together."
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:425
+#: inc/api/class-wprus-api-abstract.php:456
 msgid "The remote website encountered the following error: "
 msgstr ""
 
@@ -1448,27 +1465,27 @@ msgstr ""
 msgid "Toggle all actions"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:265
+#: inc/api/class-wprus-api-abstract.php:270
 msgid "Token"
 msgstr ""
 
 #. %1$s is the remote site ; %2$s is the action
-#: inc/api/class-wprus-api-abstract.php:275
 #, php-format
+#: inc/api/class-wprus-api-abstract.php:280
 msgid "Token created: site %1$s - action \"%2$s\""
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:407
+#: inc/api/class-wprus-api-abstract.php:438
 msgid "Unauthorized access (invalid method)"
 msgstr ""
 
 #. %s is the remote IP address
-#: inc/api/class-wprus-api-abstract.php:405
 #, php-format
+#: inc/api/class-wprus-api-abstract.php:436
 msgid "Unauthorized access (invalid remote IP address %s)"
 msgstr ""
 
-#: inc/api/class-wprus-api-abstract.php:374
+#: inc/api/class-wprus-api-abstract.php:405
 msgid "Unauthorized access (invalid token)"
 msgstr ""
 
@@ -1478,7 +1495,9 @@ msgid ""
 "the user are replaced with incoming roles."
 msgstr ""
 
-#: inc/class-wprus-settings.php:90 inc/templates/admin/help.php:33
+#: inc/class-wprus-settings.php:90
+#: inc/templates/admin/help.php:33
+#: inc/api/class-wprus-api-wp-admin.php:108
 msgid "Update"
 msgstr ""
 
@@ -1685,4 +1704,17 @@ msgstr ""
 msgid ""
 "Yes - as long as the websites can reach each other, WP Remote User Sync will "
 "work."
+msgstr ""
+
+
+#: inc/api/class-wprus-api-wp-admin.php:49
+msgid "Invalid administrative request."
+msgstr ""
+
+#: inc/api/class-wprus-api-wp-admin.php:59
+msgid "Unknown administrative action."
+msgstr ""
+
+#: inc/api/class-wprus-api-wp-admin.php:88
+msgid "Administrative action did not return a result."
 msgstr ""

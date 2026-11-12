@@ -185,6 +185,9 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 == Changelog ==
 
 = 2.4.0 =
+* Send ping connection tests to a new `/wprus/wp-admin/` endpoint.
+* Let other plugins register administrative actions through `wprus_wp_admin_handlers`. Each action returns a result, which the plugin sends as a JSON response.
+* Save the installed plugin version during activation and refresh WordPress's saved request rules when a registered address is missing, the version changes, or settings change.
 * Reject ordinary user creation when any connected site already uses the username or email address, or when a connected site cannot be checked. Recheck after creation and suppress the outgoing Create action if a conflict or check failure appears.
 * Reject the entire incoming synchronization action for an existing user when the sender's username or identifying email address does not match, protecting profile details, passwords, roles, metadata, sessions, and deletion.
 * Check an email change against the sender's previous email address, so a valid change can still synchronize.

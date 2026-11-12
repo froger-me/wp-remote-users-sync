@@ -67,7 +67,12 @@ class Wprus_Test_Peer {
 		if ( 'get' === $this->tokens[ $body['token'] ] ) {
 			unset( $this->tokens[ $body['token'] ] );
 		}
-		if ( ! empty( $data['ping'] ) && in_array( $data['direction'] ?? '', array( 'incoming', 'outgoing' ), true ) ) {
+		if (
+			'/wprus/wp-admin/' === $path &&
+			'ping' === ( $data['action'] ?? '' ) &&
+			! empty( $data['data']['target_action'] ) &&
+			in_array( $data['data']['direction'] ?? '', array( 'incoming', 'outgoing' ), true )
+		) {
 			return $this->response(
 				wp_json_encode(
 					array(
@@ -76,6 +81,9 @@ class Wprus_Test_Peer {
 					)
 				)
 			);
+		}
+		if ( '/wprus/wp-admin/' === $path ) {
+			return new WP_Error( 'wprus_test_unexpected_action', 'The simulated site received an unexpected administrative action.' );
 		}
 		if ( '/wprus/identity/' === $path ) {
 			$email = isset( $data['user_email'] ) ? $data['user_email'] : '';

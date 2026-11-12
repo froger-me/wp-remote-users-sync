@@ -25,6 +25,12 @@ class Wprus {
 	 */
 	protected $authorised_endpoints;
 	/**
+	 * Request rules registered by this plugin.
+	 *
+	 * @var array
+	 */
+	protected $registered_rewrite_rules;
+	/**
 	 * Plugin settings object.
 	 *
 	 * @var Wprus_Settings
@@ -66,6 +72,10 @@ class Wprus {
 
 		if ( ! $result ) {
 			die( esc_html( __( 'Failed to create the necessary database table(s).', 'wprus' ) ) );
+		}
+
+		if ( ! get_option( 'wprus_plugin_version' ) ) {
+			update_option( 'wprus_plugin_version', self::get_plugin_version() );
 		}
 
 		set_transient( 'wprus_flush', 1, 60 );
@@ -299,30 +309,47 @@ class Wprus {
 	 * @return void No value is returned.
 	 */
 	public function add_endpoints() {
-
-		if ( get_transient( 'wprus_flush' ) ) {
-			delete_transient( 'wprus_flush' );
-			flush_rewrite_rules();
-		}
-
-		$this->authorised_endpoints = array(
+		$this->authorised_endpoints     = array(
 			'token' => 'token',
 		);
-		$this->authorised_endpoints = apply_filters( 'wprus_wp_endpoints', $this->authorised_endpoints );
+		$this->authorised_endpoints     = apply_filters( 'wprus_wp_endpoints', $this->authorised_endpoints );
+		$this->registered_rewrite_rules = array();
 
 		foreach ( $this->authorised_endpoints as $action => $url_suffix ) {
-			add_rewrite_rule(
-				'^wprus/' . $url_suffix . '/?$',
-				'index.php?__wprus_api=1&action=' . $action,
-				'top'
-			);
+			$pattern = '^wprus/' . $url_suffix . '/?$';
+			$target  = 'index.php?__wprus_api=1&action=' . $action;
+
+			add_rewrite_rule( $pattern, $target, 'top' );
+			$this->registered_rewrite_rules[ $pattern ] = $target;
 		}
 
-		add_rewrite_rule(
-			'^wprus_download',
-			'index.php?wprus_download=1',
-			'top'
-		);
+		add_action( 'wp_loaded', array( $this, 'maybe_flush_rewrite_rules' ), 10, 0 );
+	}
+
+	/** Refresh saved request rules when plugin rules or the installed version change. */
+	public function maybe_flush_rewrite_rules() {
+		$version       = self::get_plugin_version();
+		$rules_changed = false;
+
+		if ( get_option( 'permalink_structure' ) ) {
+			$saved_rules = get_option( 'rewrite_rules', array() );
+
+			// Other plugins may add a language prefix to the saved rule patterns.
+			foreach ( $this->registered_rewrite_rules as $target ) {
+				if ( ! is_array( $saved_rules ) || ! in_array( $target, $saved_rules, true ) ) {
+					$rules_changed = true;
+					break;
+				}
+			}
+		}
+
+		if ( ! get_transient( 'wprus_flush' ) && ! $rules_changed && get_option( 'wprus_plugin_version' ) === $version ) {
+			return;
+		}
+
+		flush_rewrite_rules();
+		delete_transient( 'wprus_flush' );
+		update_option( 'wprus_plugin_version', $version );
 	}
 
 	/**
@@ -350,6 +377,23 @@ class Wprus {
 	/*******************************************************************
 	 * Protected methods
 	 *******************************************************************/
+
+	/**
+	 * Read the version from the installed plugin file.
+	 *
+	 * @return string Plugin version.
+	 */
+	protected static function get_plugin_version() {
+		static $version = null;
+
+		if ( null === $version ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			$plugin_data = get_plugin_data( WPRUS_PLUGIN_PATH . 'wprus.php', false, false );
+			$version     = $plugin_data['Version'];
+		}
+
+		return $version;
+	}
 
 	/**
 	 * Display the theme 404 page for an unknown plugin request.

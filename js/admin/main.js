@@ -172,8 +172,11 @@ jQuery(document).ready(function($) {
 				nonce     : $('#wprus_ping_nonce').val(),
 				site_url  : button.closest('.wprus-container').data('url'),
 				direction : dataContainer.data('direction'),
-				data      : { username: WPRUS.username },
-				action    : 'wprus_' + dataContainer.data('action') + '_notify_ping_remote',
+				data      : {
+					username      : WPRUS.username,
+					target_action : dataContainer.data('action')
+				},
+				action    : 'wprus_wp_admin_notify_ping_remote',
 			};
 
 		button.attr('disabled', 'disabled');

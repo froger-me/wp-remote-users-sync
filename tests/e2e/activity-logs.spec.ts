@@ -24,13 +24,11 @@ test('a subscriber with valid request values cannot clear logs or test connectio
       expect(response.status(), action).toBe(403);
       expect((await response.json() as { success: boolean }).success, action).toBe(false);
     }
-    for (const action of ['create', 'update', 'delete', 'password', 'role', 'meta', 'login', 'logout']) {
-      const response = await context.request.post('/wp-admin/admin-ajax.php', {
-        form: { action: `wprus_${action}_notify_ping_remote`, nonce: nonces.ping },
-      });
-      expect(response.status(), action).toBe(403);
-      expect((await response.json() as { success: boolean }).success, action).toBe(false);
-    }
+    const response = await context.request.post('/wp-admin/admin-ajax.php', {
+      form: { action: 'wprus_wp_admin_notify_ping_remote', nonce: nonces.ping },
+    });
+    expect(response.status()).toBe(403);
+    expect((await response.json() as { success: boolean }).success).toBe(false);
   } finally {
     await context.close();
   }
