@@ -20,6 +20,19 @@ class Wprus_Test_Peer {
 	 */
 	public $users = array();
 	/**
+	 * Metadata keys configured for the requesting site.
+	 *
+	 * @var array
+	 */
+	public $outgoing_meta = array(
+		'billing_address_1',
+		'test_note',
+		'wp_capabilities',
+		'session_tokens',
+		'BILLING_CITY',
+		'billing_address_1',
+	);
+	/**
 	 * Issued token values.
 	 *
 	 * @var array
@@ -83,6 +96,17 @@ class Wprus_Test_Peer {
 			);
 		}
 		if ( '/wprus/wp-admin/' === $path ) {
+			if ( 'outgoing_meta' === ( $data['action'] ?? '' ) ) {
+				return $this->response(
+					wp_json_encode(
+						array(
+							'success' => true,
+							'data'    => $this->outgoing_meta,
+						)
+					)
+				);
+			}
+
 			return new WP_Error( 'wprus_test_unexpected_action', 'The simulated site received an unexpected administrative action.' );
 		}
 		if ( '/wprus/identity/' === $path ) {

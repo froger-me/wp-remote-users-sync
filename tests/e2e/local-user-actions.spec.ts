@@ -28,6 +28,7 @@ async function createUser(page: import('@playwright/test').Page, secret: string,
   await page.locator('#email').fill(`${username}@example.test`);
   const notify = page.locator('#send_user_notification');
   if (await notify.isChecked()) await notify.uncheck();
+  await expect(page.locator('#pass1')).toHaveValue(/\S/);
   await page.locator('#createusersub').click();
   await expect(page.locator('#message')).toContainText(/user|created/i);
   const response = await page.request.get(`/wp-json/wprus-tests/v1/user/${username}`, { headers: { 'X-WPRUS-Test-Token': secret } });

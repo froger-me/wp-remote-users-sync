@@ -31,7 +31,6 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 	 * @return bool Always true for the Login action.
 	 */
 	public function has_async_actions() {
-
 		return true;
 	}
 

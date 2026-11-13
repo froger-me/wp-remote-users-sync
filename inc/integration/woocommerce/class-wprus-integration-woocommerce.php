@@ -21,11 +21,31 @@ class Wprus_Integration_WooCommerce {
 	/**
 	 * Register validation after WooCommerce has chosen the final username.
 	 *
-	 * @param Wprus_Api_Identity $identity The core account identity checker.
+	 * @param bool $init_hooks Whether to register WordPress hooks.
 	 */
-	public function __construct( $identity ) {
-		$this->identity = $identity;
-		add_filter( 'woocommerce_registration_errors', array( $this, 'validate_registration' ), 10, 3 );
+	public function __construct( $init_hooks ) {
+
+		if ( $init_hooks ) {
+			add_action( 'wprus_integration_run', array( $this, 'wprus_integration_run' ) );
+		}
+	}
+
+	/**
+	 * Run the integration - set the properties needed for other filters
+	 *
+	 * @param Wprus_Integration $integration Main integration object.
+	 * @return void
+	 */
+	public function wprus_integration_run( $integration ) {
+
+		if (
+			isset( $integration->api['identity'] ) &&
+			$integration->api['identity'] instanceof Wprus_Api_Identity
+		) {
+			$this->identity = $integration->api['identity'];
+
+			add_filter( 'woocommerce_registration_errors', array( $this, 'woocommerce_registration_errors' ), 10, 3 );
+		}
 	}
 
 	/**
@@ -36,7 +56,7 @@ class Wprus_Integration_WooCommerce {
 	 * @param string   $email Email address being registered.
 	 * @return WP_Error Registration errors.
 	 */
-	public function validate_registration( $errors, $username, $email ) {
+	public function woocommerce_registration_errors( $errors, $username, $email ) {
 		return $this->identity->validate_registration( $errors, $username, $email );
 	}
 }

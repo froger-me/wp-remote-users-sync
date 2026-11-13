@@ -188,7 +188,6 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 		$has_editor           = in_array( 'editor', $roles, true );
 		$has_author           = in_array( 'author', $roles, true );
 		$has_contributor      = in_array( 'contributor', $roles, true );
-		$has_subscriber       = in_array( 'subscriber', $roles, true );
 
 		foreach ( $roles as $index => $role ) {
 

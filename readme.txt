@@ -51,6 +51,8 @@ Each **bug** report will be addressed in a timely manner if properly documented 
 
 Although WP Remote Users Sync works out of the box with most combinations of WordPress plugins and themes, there are some edge cases necessitating integration, with code included in the core files of WP Remote Users Sync executing under certain conditions.
 
+WooCommerce is included in the plugin's default integration list. Developers can use `wprus_registered_integrations` to change that list. When an active plugin's integration class is created, `wprus_did_register_integration` runs. After all listed plugins are checked, `wprus_did_register_integrations` runs with an object that later holds the main plugin, its request handlers, settings, and activity logger. Once settings are valid, `wprus_integration_run` passes that populated object to integration code. See the developer documentation for the arguments and examples.
+
 Integrations added to core are limited to popular plugins and themes: any extra code specific to a handful of installations require a separate custom plugin not shared with the community (created and maintained by a third-party developer).
 
 A typical example necessitating custom integration includes plugins or themes relying on their own custom tables, directly updating the database with SQL queries instead of using WordPress built-in functions, destroying sessions with low-level functions instead of using the built-in WordPress method, etc.
@@ -185,6 +187,8 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 == Changelog ==
 
 = 2.4.0 =
+* Add WooCommerce to the default integration list. Rename the integration list filter to `wprus_registered_integrations`, and add `wprus_did_register_integration` and `wprus_did_register_integrations` so other code can respond when integrations are created. Make the main plugin objects available through `wprus_integration_run` after settings are valid.
+* Let administrators retrieve outgoing metadata keys from a connected site and select the keys to accept without removing their existing selections, using the `/wprus/wp-admin/` endpoint.
 * Send ping connection tests to a new `/wprus/wp-admin/` endpoint.
 * Let other plugins register administrative actions through `wprus_wp_admin_handlers`. Each action returns a result, which the plugin sends as a JSON response.
 * Save the installed plugin version during activation and refresh WordPress's saved request rules when a registered address is missing, the version changes, or settings change.

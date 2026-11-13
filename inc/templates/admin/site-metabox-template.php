@@ -53,26 +53,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php endforeach; ?>
 		</table>
 		<hr/>
-			<div class="row-outgoing-metadata wprus-site-row">
-				<label for=""><?php esc_html_e( 'List of metadata to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
-				<select class="wprus-select" data-name="[outgoing_meta][]" multiple>
-				<?php if ( ! empty( $meta_keys ) ) : ?>
-					<?php foreach ( $meta_keys as $meta_key ) : ?>
-						<option value="<?php echo esc_attr( $meta_key ); ?>"><?php echo esc_html( $meta_key ); ?></option>
-					<?php endforeach; ?>
-				<?php endif; ?>
-				</select>
-			</div>
-			<div class="row-outgoing-roles wprus-site-row">
-				<label for=""><?php esc_html_e( 'List of roles to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
-				<select class="wprus-select" data-name="[outgoing_roles][]" multiple>
-				<?php if ( ! empty( $roles ) ) : ?>
-					<?php foreach ( $roles as $user_role ) : ?>
-						<option value="<?php echo esc_attr( $user_role ); ?>"><?php echo esc_html( $user_role ); ?></option>
-					<?php endforeach; ?>
-				<?php endif; ?>
-				</select>
-			</div>
+		<div class="row-outgoing-metadata wprus-site-row">
+			<label for=""><?php esc_html_e( 'List of metadata to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
+			<select class="wprus-select" data-name="[outgoing_meta][]" multiple>
+			<?php if ( ! empty( $meta_keys ) ) : ?>
+				<?php foreach ( $meta_keys as $meta_key ) : ?>
+					<option value="<?php echo esc_attr( $meta_key ); ?>"><?php echo esc_html( $meta_key ); ?></option>
+				<?php endforeach; ?>
+			<?php endif; ?>
+			</select>
+			<p class="description"><?php esc_html_e( 'In the "Incoming Actions" section of the settings on the remote site, use the "Get remote Outgoing metadata keys" button if the keys selected above are not provided for selection in the "List of metadata to accept".', 'wprus' ); ?>
+		</div>
+		<div class="row-outgoing-roles wprus-site-row">
+			<label for=""><?php esc_html_e( 'List of roles to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
+			<select class="wprus-select" data-name="[outgoing_roles][]" multiple>
+			<?php if ( ! empty( $roles ) ) : ?>
+				<?php foreach ( $roles as $user_role ) : ?>
+					<option value="<?php echo esc_attr( $user_role ); ?>"><?php echo esc_html( $user_role ); ?></option>
+				<?php endforeach; ?>
+			<?php endif; ?>
+			</select>
+		</div>
 	</div>
 	<div class="incoming_actions">
 		<h4><?php esc_html_e( 'Incoming Actions', 'wprus' ); ?></h4>
@@ -108,7 +109,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</select>
-		</div>
+			<p><button type="button" class="button wprus-match-outgoing-meta" disabled="disabled"><?php esc_html_e( 'Get remote Outgoing metadata keys', 'wprus' ); ?></button></p>		</div>
 		<div class="row-incoming-roles wprus-site-row">
 			<label for=""><?php esc_html_e( 'List of roles to accept (leave empty to accept all):', 'wprus' ); ?></label>
 			<select class="wprus-select" data-name="[incoming_roles][]" multiple>

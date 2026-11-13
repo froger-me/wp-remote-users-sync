@@ -35,7 +35,6 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 		add_action( 'set_user_role', array( $this, 'track_updates' ), PHP_INT_MAX - 100, 1 );
 		add_action( 'wp_update_user', array( $this, 'track_updates' ), PHP_INT_MAX - 100, 1 );
 
-		// WordPress has no before_profile_update action, so intercept the login field first.
 		add_filter( 'pre_user_login', array( $this, 'remove_set_user_role_action' ), 10, 1 );
 	}
 
@@ -263,7 +262,7 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 	 * @return array Accepted user fields.
 	 */
 	protected function sanitize( $data ) {
-		$accepted_fields = array(
+		$accepted_fields   = array(
 			'username',
 			'base_url',
 			'user_nicename',
@@ -286,8 +285,7 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 			'user_pass',
 			'roles',
 		);
-		$data            = array_intersect_key( $data, array_fill_keys( $accepted_fields, true ) );
-
+		$data              = array_intersect_key( $data, array_fill_keys( $accepted_fields, true ) );
 		$data['user_pass'] = isset( $data['user_pass'] ) ? $data['user_pass'] : false;
 		$data['roles']     = isset( $data['roles'] ) && is_array( $data['roles'] ) ? $data['roles'] : array();
 

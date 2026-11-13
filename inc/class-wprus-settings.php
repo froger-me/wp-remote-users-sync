@@ -112,9 +112,10 @@ class Wprus_Settings {
 	 * @return mixed Setting value or its default.
 	 */
 	public static function get_option( $key, $default_val = false ) {
+		$default_method = 'get_default_' . $key . '_option';
 
-		if ( ! $default_val && method_exists( self::class, 'get_default_' . $key . '_option' ) ) {
-			$default_val = call_user_func( array( self::class, 'get_default_' . $key . '_option' ) );
+		if ( ! $default_val && method_exists( self::class, $default_method ) ) {
+			$default_val = self::$default_method();
 		}
 
 		$options = self::$settings;
@@ -298,6 +299,7 @@ class Wprus_Settings {
 					'ajax_url'               => admin_url( 'admin-ajax.php' ),
 					'delete_site_confirm'    => __( 'Are you sure you want to remove this site? It will only take effect after saving the settings.', 'wprus' ),
 					'undefined_error'        => __( 'An undefined error occured - please visit the permalinks settings page and try again.', 'wprus' ),
+					'no_outgoing_meta'       => __( 'No eligible outgoing metadata keys were returned.', 'wprus' ),
 					'http_required'          => __( "The Remote Site address must start with \"http\".\nIdeally, only secure websites (address starting with \"https\") should be connected together.", 'wprus' ),
 					'invalid_file_name'      => __( 'Error: invalid file name. Please use a file exported with WP Remote Users Sync.', 'wprus' ),
 					'invalid_file'           => __( 'Error: invalid file. Please use a non-empty file exported with WP Remote Users Sync.', 'wprus' ),
@@ -368,7 +370,6 @@ class Wprus_Settings {
 	public function add_settings_meta_boxes( $post_type ) {
 
 		if ( $post_type !== self::$settings_page_id ) {
-
 			return;
 		}
 
@@ -694,7 +695,6 @@ class Wprus_Settings {
 	public function get_sites( $action = false, $direction = false ) {
 
 		if ( $direction && ! in_array( $direction, array( 'incoming', 'outgoing' ), true ) ) {
-
 			return array();
 		}
 
@@ -777,6 +777,7 @@ class Wprus_Settings {
 		$regexes  = array();
 
 		foreach ( $patterns as $pattern ) {
+
 			if ( is_string( $pattern ) ) {
 				$regexes[] = $this->meta_like_to_regex( $pattern );
 			}
@@ -1082,6 +1083,7 @@ class Wprus_Settings {
 		$escaped    = false;
 
 		foreach ( str_split( $pattern ) as $character ) {
+
 			if ( $escaped ) {
 				$expression .= preg_quote( $character, '/' );
 				$escaped     = false;
@@ -1117,8 +1119,7 @@ class Wprus_Settings {
 			$exclude      = $this->get_excluded_meta();
 			$exclude_like = $this->get_excluded_meta_like();
 			$table        = Wprus::get_table( 'usermeta' );
-
-			$sql = "
+			$sql          = "
 				SELECT DISTINCT meta_key
 				FROM {$table} m
 				WHERE m.meta_key NOT IN (" . implode( ',', array_fill( 0, count( $exclude ), '%s' ) ) . ')
@@ -1126,10 +1127,9 @@ class Wprus_Settings {
 				' . implode( ' AND m.meta_key NOT LIKE ', array_fill( 0, count( $exclude_like ), '%s' ) ) . '
 				ORDER BY m.meta_key ASC
 			;';
-
-			$params    = array_merge( $exclude, $exclude_like );
-			$query     = $wpdb->prepare( $sql, $params ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$meta_keys = $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- Read distinct keys once and cache them below.
+			$params       = array_merge( $exclude, $exclude_like );
+			$query        = $wpdb->prepare( $sql, $params ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$meta_keys    = $wpdb->get_col( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- Read distinct keys once and cache them below.
 
 			wp_cache_set( 'wprus_meta_keys', $meta_keys, 'wprus' );
 		}

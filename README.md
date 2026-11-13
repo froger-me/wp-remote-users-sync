@@ -49,7 +49,9 @@ ___
 
 On activation, the plugin saves its version in the `wprus_plugin_version` WordPress option. After registering its request addresses, it checks whether WordPress has saved a rule for each destination. It checks destinations because other plugins may add language prefixes to the address patterns. If a destination is missing, the version changed, or connection settings request a refresh, it saves the complete set of rules again and records the current version. This also makes `/wprus/wp-admin/` available on sites upgrading from an older version.
 
-The decrypted request keeps `username`, `base_url`, and any fields added by existing filters at the top level. Two additional top-level fields belong to this address: `action` names the administrative operation, and `data` holds the fields that operation needs. When `data` repeats `base_url`, it must equal the top-level value. For a connection test, `action` is `ping` and `data` contains `base_url`, `target_action` (such as `create`), and `direction` (`incoming` or `outgoing`).
+The decrypted request keeps `username`, `base_url`, and any fields added by existing filters at the top level. Two additional top-level fields belong to this address: `action` names the administrative operation, and `data` holds the fields that operation needs. When `data` repeats `base_url`, it must equal the top-level value. For a connection test, `action` is `ping` and `data` contains `base_url`, `target_action` (such as `create`), and `direction` (`incoming` or `outgoing`). The built-in `outgoing_meta` action takes the requesting site's address in `data.base_url` and returns the metadata keys that the remote site has selected to send to that site. Both sites must support this action.
+
+For a saved connection, **Get remote Outgoing metadata keys** appears below the incoming metadata list. It retrieves the keys selected for that connection on the remote site, including keys that do not yet exist on this site. This site checks the keys against its existing metadata exclusions, then adds and selects those it accepts. Existing selections stay selected, and you can remove any key before saving. Matching does not save settings or change any user information. Save the settings page when you are satisfied with the selection.
 
 Add another administrative operation by registering a function with `wprus_wp_admin_handlers`:
 
@@ -291,7 +293,9 @@ Actions index:
 * [wprus_after_handle_action_notification](#user-content-wprus_after_handle_action_notification)
 * [wprus_before_init_notification_hooks](#user-content-wprus_before_init_notification_hooks)
 * [wprus_after_init_notification_hooks](#user-content-wprus_after_init_notification_hooks)
-* [wprus_integration](#user-content-wprus_integration)
+* [wprus_require_integration_file](#user-content-wprus_require_integration_file)
+* [wprus_did_register_integration](#user-content-wprus_did_register_integration)
+* [wprus_did_register_integrations](#user-content-wprus_did_register_integrations)
 * [wprus_integration_run](#user-content-wprus_integration_run)
 
 ___
@@ -667,45 +671,61 @@ ___
 do_action( 'wprus_require_integration_file', (string) $plugin_slug, (string) $class_name );
 ```
 **Description**  
-Fired when an integration with a third-party plugin needs to load a class file inheriting `Wprus_Integration`.  
+Fired when a registered plugin is active but its integration class has not been loaded. A callback can load the class here. If the class is still missing, the plugin also looks for `inc/integration/<slug>/class-wprus-integration-<slug>.php`.
 
 **Parameters**  
 `$plugin_slug`
 > (string) The slug of the plugin integrated.  
 
 `$class_name`
-> (string) The name of the integration class - must inherit `Wprus_Integration`.
+> (string) The name of the integration class.
 
 ___
 
-#### wprus_integration
+#### wprus_did_register_integration
 
 ```php
-do_action( 'wprus_integration', (mixed) $wprus_integration_obj, (string) $plugin_slug );
+do_action( 'wprus_did_register_integration', $plugin_integration, $plugin_slug );
 ```
 **Description**  
-Fired when an integration with a third-party plugin is active and loaded.  
+Fired after an active plugin's integration class has been loaded and created.
 
 **Parameters**  
-`$wprus_integration_obj`
-> (mixed) The `Wprus_Integration` object used to provide features integration.  
+`$plugin_integration`
+> The object created from the registered integration class.
 
 `$plugin_slug`
-> (string) The slug of the plugin integrated.
+> (string) The registered integration slug.
+
+___
+
+#### wprus_did_register_integrations
+
+```php
+do_action( 'wprus_did_register_integrations', $integration );
+```
+**Description**
+
+Fired after the plugin has checked every registered integration. It runs when the integration list is not empty, even if none of the listed plugins is active.
+
+**Parameters**
+
+`$integration`
+> The shared `Wprus_Integration` object. It receives the plugin objects when `wprus_ready` runs.
 
 ___
 
 #### wprus_integration_run
 
 ```php
-do_action( 'wprus_integration_run', (mixed) $wprus_integration_obj );
+do_action( 'wprus_integration_run', $integration );
 ```
 **Description**  
-Fired when an integration with a third-party plugin hooks is fully initialized.  
+Fired after the plugin settings have been validated and the shared integration object has received the plugin objects.
 
 **Parameters**  
-`$wprus_integration_obj`
-> (mixed) The `Wprus_Integration` object used to provide features integration.  
+`$integration`
+> The shared `Wprus_Integration` object. Its public `wprus`, `api`, `settings`, and `wprus_logger` properties contain the corresponding plugin objects.
 
 ___
 
@@ -741,7 +761,8 @@ Filters index:
             * [wprus\_before\_init\_notification\_hooks](#wprus_before_init_notification_hooks)
             * [wprus\_after\_init\_notification\_hooks](#wprus_after_init_notification_hooks)
             * [wprus\_require\_integration\_file](#wprus_require_integration_file)
-            * [wprus\_integration](#wprus_integration)
+            * [wprus\_did\_register\_integration](#wprus_did_register_integration)
+            * [wprus\_did\_register\_integrations](#wprus_did_register_integrations)
             * [wprus\_integration\_run](#wprus_integration_run)
         * [Filters](#filters)
             * [wprus\_enabled\_api\_endpoints](#wprus_enabled_api_endpoints)
@@ -766,7 +787,7 @@ Filters index:
             * [wprus\_debug](#wprus_debug)
             * [wprus\_action\_data](#wprus_action_data)
             * [wprus\_async\_url](#wprus_async_url)
-            * [wprus\_registered\_integration](#wprus_registered_integration)
+            * [wprus\_registered\_integrations](#wprus_registered_integrations)
             * [wprus\_get\_admin\_template\_name](#wprus_get_admin_template_name)
             * [wprus\_get\_admin\_template\_args](#wprus_get_admin_template_args)
             * [wprus\_get\_template\_name](#wprus_get_template_name)
@@ -1232,25 +1253,26 @@ Filter the full URL used to send an asynchronous action to a remote site.
 
 ___
 
-#### wprus_registered_integration
+#### wprus_registered_integrations
 
 ```php
-apply_filters( 'wprus_registered_integration', array $integrations );
+apply_filters( 'wprus_registered_integrations', $integrations );
 ```
 **Description**  
-Filter integrations. See `inc/integration/class-wprus-integration.php`.  
+Change the list of integrations before the plugin checks which ones are active. WooCommerce is already in the default `Wprus_Integration::$integrations` array. Its class is loaded from `inc/integration/woocommerce/`. Other plugins can load their own classes through `wprus_require_integration_file`.
 
 **Parameters**  
 `$integrations`
 > (array) The integrations info. Structure:  
 ```php
 array (
-    $slug => array(                          // $slug is the unique integration slug
-        'plugin'     => 'plugin_name',       // name of the plugin being integrated ; passed to is_plugin_active() to determine if the integration needs to be loaded
-        'class_name' => 'Integration_Class', // Class name of the integration class ; the class must be included using the action wprus_require_integration_file, and must inherit the Wprus_Integration class
+    $slug => array(                          // Unique name for this integration.
+        'plugin'     => 'plugin/plugin.php', // Plugin file checked with is_plugin_active().
+        'class_name' => 'Integration_Class', // Class to create when the plugin is active.
     ),
 );
 ```
+The class constructor receives `true`. The class does not need to extend `Wprus_Integration`.
 
 ___
 
@@ -1389,6 +1411,8 @@ ___
 
 ### 2.4.0
 
+* List WooCommerce in the default integrations array. Rename `wprus_registered_integration` to `wprus_registered_integrations`, and add `wprus_did_register_integration` and `wprus_did_register_integrations` after integration classes are created. The shared plugin objects are passed through `wprus_integration_run` after settings are valid.
+* Let administrators retrieve and select outgoing metadata keys from a connected site's settings.
 * Reject ordinary user creation when a connected site already uses the username or email address, or when a connected site cannot be checked. Check again after creation and skip the outgoing Create action if that check fails.
 * Reject the entire incoming synchronization action for an existing user when the sender's username or identifying email address does not match. This protects profile details, passwords, roles, metadata, sessions, and deletion.
 * Check email changes against the sender's previous email address so valid changes can still synchronize.

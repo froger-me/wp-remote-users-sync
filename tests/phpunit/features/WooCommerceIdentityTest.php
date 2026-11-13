@@ -5,9 +5,8 @@
  * @package Wprus
  */
 
-// Load the shared action helpers and WooCommerce integration.
+// Load the shared action helpers.
 require_once dirname( __DIR__ ) . '/support/class-wprus-test-create.php';
-require_once dirname( __DIR__, 3 ) . '/inc/integrations/woocommerce/class-wprus-integration-woocommerce.php';
 
 use AnyapeWPTestTools\HttpMock;
 
@@ -42,8 +41,8 @@ class WooCommerceIdentityTest extends Wprus_Feature_Test_Case {
 				)
 			)
 		);
-		$integration = new Wprus_Integration_WooCommerce( $identity );
-		$errors      = $integration->validate_registration( new WP_Error(), 'generated.customer', 'customer@example.test' );
+		$integration = $this->start_woocommerce_integration( $identity );
+		$errors      = $integration->woocommerce_registration_errors( new WP_Error(), 'generated.customer', 'customer@example.test' );
 		$this->assertFalse( $errors->has_errors() );
 		$this->assertSame(
 			array(
@@ -60,7 +59,7 @@ class WooCommerceIdentityTest extends Wprus_Feature_Test_Case {
 				array()
 			)
 		);
-		remove_filter( 'woocommerce_registration_errors', array( $integration, 'validate_registration' ), 10 );
+		remove_filter( 'woocommerce_registration_errors', array( $integration, 'woocommerce_registration_errors' ), 10 );
 	}
 
 	/** A remote conflict uses WooCommerce's existing error object. */
@@ -92,9 +91,63 @@ class WooCommerceIdentityTest extends Wprus_Feature_Test_Case {
 				)
 			)
 		);
-		$integration = new Wprus_Integration_WooCommerce( $identity );
-		$errors      = $integration->validate_registration( new WP_Error(), 'customer', 'used@example.test' );
+		$integration = $this->start_woocommerce_integration( $identity );
+		$errors      = $integration->woocommerce_registration_errors( new WP_Error(), 'customer', 'used@example.test' );
 		$this->assertSame( 'wprus_email_exists', $errors->get_error_code() );
-		remove_filter( 'woocommerce_registration_errors', array( $integration, 'validate_registration' ), 10 );
+		remove_filter( 'woocommerce_registration_errors', array( $integration, 'woocommerce_registration_errors' ), 10 );
+	}
+
+	/**
+	 * Start WooCommerce through the same registration path used by the plugin.
+	 *
+	 * @param Wprus_Api_Identity $identity Account identity checker.
+	 * @return Wprus_Integration_WooCommerce Started integration.
+	 */
+	private function start_woocommerce_integration( $identity ) {
+		$integration    = null;
+		$active_plugins = static function ( $plugins ) {
+			$plugins[] = 'woocommerce/woocommerce.php';
+			return $plugins;
+		};
+		$capture        = static function ( $registered, $slug ) use ( &$integration ) {
+			if ( 'woocommerce' === $slug ) {
+				$integration = $registered;
+			}
+		};
+
+		add_filter( 'option_active_plugins', $active_plugins );
+		add_action( 'wprus_integration', $capture, 10, 2 );
+		try {
+			Wprus_Integration::init();
+		} finally {
+			remove_action( 'wprus_integration', $capture, 10 );
+			remove_filter( 'option_active_plugins', $active_plugins );
+		}
+
+		$this->assertInstanceOf( Wprus_Integration_WooCommerce::class, $integration );
+		$this->assertSame( 10, has_action( 'wprus_integration_run', array( $integration, 'wprus_integration_run' ) ) );
+		$this->assertSame( 10, has_filter( 'woocommerce_registration_errors', array( $integration, 'woocommerce_registration_errors' ) ) );
+		$contexts        = array();
+		$capture_context = static function ( $context ) use ( &$contexts ) {
+			if ( $context instanceof Wprus_Integration && get_class( $context ) === Wprus_Integration::class ) {
+				$contexts[] = $context;
+			}
+		};
+		add_action( 'wprus_integration_run', $capture_context );
+		$previous_ready = $GLOBALS['wprus_test_ready'];
+		try {
+			do_action( 'wprus_ready', null, array( 'identity' => $identity ), $this->settings, null );
+		} finally {
+			remove_action( 'wprus_integration_run', $capture_context );
+			$GLOBALS['wprus_test_ready'] = $previous_ready;
+		}
+		$this->assertNotEmpty( $contexts );
+		foreach ( $contexts as $context ) {
+			$this->assertSame( $identity, $context->api['identity'] );
+			remove_action( 'wprus_ready', array( $context, 'run' ), 10 );
+		}
+		remove_action( 'wprus_integration_run', array( $integration, 'wprus_integration_run' ), 10 );
+
+		return $integration;
 	}
 }

@@ -88,12 +88,8 @@ function wprus_run() {
 		$api['identity'] = new Wprus_Api_Identity( 'identity', $settings, true );
 		$api['wp-admin'] = new Wprus_Api_Wp_Admin( 'wp-admin', $settings, true );
 
-		if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			require_once WPRUS_PLUGIN_PATH . 'inc/integrations/woocommerce/class-wprus-integration-woocommerce.php';
-			new Wprus_Integration_WooCommerce( $api['identity'] );
-		}
-
 		foreach ( $enabled_api_endpoints as $api_endpoint ) {
+
 			if ( in_array( $api_endpoint, array( 'identity', 'wp-admin' ), true ) ) {
 				continue;
 			}

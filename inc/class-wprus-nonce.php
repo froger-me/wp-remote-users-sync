@@ -73,7 +73,7 @@ class Wprus_Nonce {
 	) {
 
 		if ( $delegate && ( is_array( $delegate ) ) ) {
-			$nonce = call_user_func_array( $delegate, $delegate_args );
+			$nonce = $delegate( ...$delegate_args );
 		} else {
 			$id    = self::generate_id();
 			$nonce = md5( wp_salt( 'nonce' ) . $id . microtime( true ) );
@@ -132,7 +132,6 @@ class Wprus_Nonce {
 	public static function validate_nonce( $value ) {
 
 		if ( empty( $value ) ) {
-
 			return false;
 		}
 
@@ -159,7 +158,6 @@ class Wprus_Nonce {
 		$result = $wpdb->insert( $table, $data );
 
 		if ( (bool) $result ) {
-
 			return $data;
 		}
 
@@ -175,6 +173,7 @@ class Wprus_Nonce {
 	 */
 	protected static function fetch_nonce( $value ) {
 		global $wpdb;
+
 		$table = Wprus::get_table( 'wprus_nonce' );
 		$row   = $wpdb->get_row(
 			$wpdb->prepare(
@@ -226,7 +225,6 @@ class Wprus_Nonce {
 	public static function clear_nonces() {
 
 		if ( defined( 'WP_SETUP_CONFIG' ) || defined( 'WP_INSTALLING' ) ) {
-
 			return;
 		}
 
@@ -249,7 +247,6 @@ class Wprus_Nonce {
 	 * @return string Random identifier.
 	 */
 	protected static function generate_id() {
-
 		require_once ABSPATH . 'wp-includes/class-phpass.php';
 
 		$hasher = new PasswordHash( 8, false );

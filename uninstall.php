@@ -26,8 +26,8 @@ wp_clear_scheduled_hook( 'wprus_logs_cleanup' );
 $sql = "DELETE FROM $wpdb->options WHERE `option_name` = %s OR `option_name` LIKE %s OR `option_name` LIKE %s OR `option_name` LIKE %s";
 $wpdb->query( $wpdb->prepare( $sql, 'wprus', $wpdb->esc_like( 'wprus_' ) . '%', $wpdb->esc_like( '_transient_wprus_' ) . '%', $wpdb->esc_like( '_transient_timeout_wprus_' ) . '%' ) ); // @codingStandardsIgnoreLine
 
-$table       = Wprus::get_table( 'usermeta' );
-$sql         = "DELETE FROM $table WHERE `meta_key` LIKE %s";
+$table = Wprus::get_table( 'usermeta' );
+$sql   = "DELETE FROM $table WHERE `meta_key` LIKE %s";
 
 $wpdb->query( $wpdb->prepare( $sql, '%' . $wpdb->esc_like( 'wprus_' ) . '%' ) ); // @codingStandardsIgnoreLine
 

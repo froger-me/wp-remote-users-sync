@@ -106,7 +106,7 @@ class Wprus_Logger {
 	public static function log( $expression, $extend = '', $destination = 'error_log' ) {
 
 		if ( method_exists( self::class, $destination ) ) {
-			call_user_func_array( array( self::class, $destination ), array( $expression, $extend ) );
+			self::$destination( $expression, $extend );
 		}
 	}
 
@@ -118,7 +118,6 @@ class Wprus_Logger {
 	public static function clear_logs() {
 
 		if ( defined( 'WP_SETUP_CONFIG' ) || defined( 'WP_INSTALLING' ) ) {
-
 			return;
 		}
 
@@ -214,6 +213,7 @@ class Wprus_Logger {
 	 * @return void No value is returned.
 	 */
 	public function refresh_logs_async() {
+
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error(
 				array(
@@ -251,6 +251,7 @@ class Wprus_Logger {
 	 * @return void No value is returned.
 	 */
 	public function clear_logs_async() {
+
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error(
 				array(
@@ -310,7 +311,6 @@ class Wprus_Logger {
 	protected static function db_log( $expression, $type ) {
 
 		if ( ! self::$log_settings['enable'] ) {
-
 			return false;
 		}
 
@@ -349,7 +349,6 @@ class Wprus_Logger {
 		$result = $wpdb->insert( $table, $log );
 
 		if ( (bool) $result ) {
-
 			return $log;
 		}
 
@@ -388,7 +387,8 @@ class Wprus_Logger {
 			foreach ( $alternatives as $alternative ) {
 
 				if ( function_exists( $alternative['func'] ) ) {
-					$expression = call_user_func_array( $alternative['func'], $alternative['args'] );
+					$func       = $alternative['func'];
+					$expression = $func( ...$alternative['args'] );
 
 					break;
 				}

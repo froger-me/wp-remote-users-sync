@@ -48,7 +48,7 @@ if ( ! function_exists( 'wp_hash_password' ) ) {
 			if ( empty( $wp_hasher ) ) {
 				require_once ABSPATH . WPINC . '/class-phpass.php';
 
-				$wp_hasher = new PasswordHash( 8, true ); // @codingStandardsIgnoreLine
+				$wp_hasher = new PasswordHash( 8, true ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
 
 			do_action( 'wprus_password', $password );

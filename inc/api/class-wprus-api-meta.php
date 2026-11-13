@@ -422,10 +422,13 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	/**
 	 * Check whether a metadata key is excluded from incoming changes.
 	 *
+	 * Also used by administrative actions that prepare incoming metadata selections.
+	 *
 	 * @param string $meta_key Metadata key to check.
 	 * @return bool Whether the key is excluded.
 	 */
-	protected function is_excluded_meta_key( $meta_key ) {
+	public function is_excluded_meta_key( $meta_key ) {
+
 		foreach ( $this->get_protected_meta_keys() as $key ) {
 
 			if ( 0 === strcasecmp( $meta_key, $key ) ) {
@@ -459,6 +462,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 			}
 
 			foreach ( $excluded['regex'] as $index => $pattern ) {
+
 				if ( ! is_string( $pattern ) || false === @preg_match( $pattern, '' ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Invalid filter values are logged below.
 					unset( $excluded['regex'][ $index ] );
 					Wprus_Logger::log( __( 'Ignored an invalid metadata exclusion expression.', 'wprus' ), 'warning', 'db_log' );

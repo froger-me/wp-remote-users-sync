@@ -137,6 +137,90 @@ test('an administrator can save metadata and role selections', async ({ page }) 
   }
 });
 
+for (const mode of ['readable', 'compact'] as const) {
+  test(`incoming metadata can match the remote selection with the ${mode} script`, async ({ page }) => {
+    const settings = `/wp-admin/options-general.php?page=wprus&wprus_test_script=${mode}`;
+    await page.goto(settings);
+    const file = mode === 'readable' ? 'main.js' : 'main.min.js';
+    await expect(page.locator(`script[src*="/js/admin/${file}?"]`)).toHaveCount(1);
+    const site = page.locator('.postbox.wprus-site').filter({ has: page.locator('.wprus-container[data-url="https://wprus-peer.test"]') });
+    const row = site.locator('.row-incoming-metadata');
+    const select = row.locator('select.wprus-select-tag');
+    const button = row.getByRole('button', { name: 'Get remote Outgoing metadata keys' });
+    const templateButton = page.locator('.wprus-site-template .wprus-match-outgoing-meta');
+    await expect(templateButton).toBeDisabled();
+    if (!(await button.isVisible())) await site.locator('.handlediv').click();
+    await expect(button).toBeVisible();
+    const original = await select.evaluate(element => Array.from((element as HTMLSelectElement).selectedOptions, option => option.value));
+    page.on('dialog', dialog => dialog.dismiss());
+    try {
+      const response = page.waitForResponse(item => item.url().includes('admin-ajax.php') &&
+        item.request().postData()?.includes('wprus_wp_admin_notify_outgoing_meta_remote') === true);
+      await button.click();
+      const result = await response;
+      const form = new URLSearchParams(result.request().postData() ?? '');
+      expect(form.get('site_url')).toBe('https://wprus-peer.test');
+      expect((await result.json() as { success: boolean; data: string[] }).data).toEqual(['billing_address_1', 'test_note']);
+      await expect(button).toBeEnabled();
+      expect((await select.evaluate(element => Array.from((element as HTMLSelectElement).selectedOptions, option => option.value))).sort())
+        .toEqual([...original, 'billing_address_1'].sort());
+      await expect(select.locator('option[value="billing_address_1"]')).toHaveCount(1);
+      await expect(select.locator('option[value="wp_capabilities"]:checked')).toHaveCount(0);
+      await expect(select.locator('option[value="BILLING_CITY"]:checked')).toHaveCount(0);
+      await button.click();
+      await expect(button).toBeEnabled();
+      await expect(select.locator('option[value="billing_address_1"]')).toHaveCount(1);
+      await row.locator('.select2-selection__choice').filter({ hasText: 'test_note' }).locator('.select2-selection__choice__remove').click();
+      expect((await select.evaluate(element => Array.from((element as HTMLSelectElement).selectedOptions, option => option.value))).sort())
+        .toEqual([...original.filter(key => key !== 'test_note'), 'billing_address_1'].sort());
+      await page.locator('#submit').click();
+      await expect(page.getByText('Settings saved.')).toBeVisible();
+      expect((await site.locator('.row-incoming-metadata select').evaluate(element =>
+        Array.from((element as HTMLSelectElement).selectedOptions, option => option.value))).sort())
+        .toEqual([...original.filter(key => key !== 'test_note'), 'billing_address_1'].sort());
+    } finally {
+      await page.goto(settings);
+      await site.locator('.row-incoming-metadata select').evaluate((element, values) => {
+        const select = element as HTMLSelectElement;
+        for (const option of select.options) option.selected = values.includes(option.value);
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      }, original);
+      await page.locator('#submit').click();
+      await expect(page.getByText('Settings saved.')).toBeVisible();
+    }
+  });
+}
+
+test('empty and failed matching requests keep the current selection', async ({ page }) => {
+  await page.goto('/wp-admin/options-general.php?page=wprus&wprus_test_script=readable');
+  const site = page.locator('.postbox.wprus-site').filter({ has: page.locator('.wprus-container[data-url="https://wprus-peer.test"]') });
+  const row = site.locator('.row-incoming-metadata');
+  const button = row.getByRole('button', { name: 'Get remote Outgoing metadata keys' });
+  const select = row.locator('select.wprus-select-tag');
+  if (!(await button.isVisible())) await site.locator('.handlediv').click();
+  const original = await select.evaluate(element => Array.from((element as HTMLSelectElement).selectedOptions, option => option.value));
+  let response: 'empty' | 'error' = 'empty';
+  await page.route('**/wp-admin/admin-ajax.php', async route => {
+    if (!route.request().postData()?.includes('wprus_wp_admin_notify_outgoing_meta_remote')) {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: response === 'empty' ? 200 : 500,
+      contentType: 'application/json',
+      body: response === 'empty' ? JSON.stringify({ success: true, data: [] }) : JSON.stringify({ success: false, data: 'Request failed.' }),
+    });
+  });
+  page.on('dialog', dialog => dialog.dismiss());
+  await button.click();
+  await expect(button).toBeEnabled();
+  await expect(select).toHaveValues(original);
+  response = 'error';
+  await button.click();
+  await expect(button).toBeEnabled();
+  await expect(select).toHaveValues(original);
+});
+
 test('browser support choices are saved and conflicting choices are disabled', async ({ page }) => {
   const settings = '/wp-admin/options-general.php?page=wprus';
   const misc = async () => { await page.getByRole('link', { name: 'Miscellaneous' }).click(); };

@@ -17,32 +17,37 @@ class Wprus_Integration {
 	 *
 	 * @var array
 	 */
-	public static $integrations = array();
+	public static $integrations = array(
+		'woocommerce' => array(
+			'plugin'     => 'woocommerce/woocommerce.php',
+			'class_name' => 'Wprus_Integration_WooCommerce',
+		),
+	);
 
 	/**
 	 * Main plugin object.
 	 *
 	 * @var Wprus
 	 */
-	protected $wprus;
+	public $wprus;
 	/**
-	 * User action objects.
+	 * API action objects.
 	 *
 	 * @var array
 	 */
-	protected $api;
+	public $api;
 	/**
 	 * Plugin settings object.
 	 *
 	 * @var Wprus_Settings
 	 */
-	protected $settings;
+	public $settings;
 	/**
 	 * Activity logger.
 	 *
 	 * @var Wprus_Logger
 	 */
-	protected $wprus_logger;
+	public $wprus_logger;
 
 	/**
 	 * Optionally register the integration startup hook.
@@ -66,29 +71,40 @@ class Wprus_Integration {
 	 * @return void No value is returned.
 	 */
 	public static function init() {
-		$integrations = apply_filters( 'wprus_registered_integration', self::$integrations );
+		$integrations = apply_filters( 'wprus_registered_integrations', self::$integrations );
 
 		if ( empty( $integrations ) ) {
-
 			return;
 		}
 
-		foreach ( $integrations as $slug => $info ) {
+		$integration = new self( true );
 
-			if ( is_plugin_active( $info['plugin'] ) ) {
-				$class_name = $info['class_name'];
+		foreach ( $integrations as $slug => $integration_details ) {
+
+			if ( is_plugin_active( $integration_details['plugin'] ) ) {
+				$class_name = $integration_details['class_name'];
 
 				if ( ! class_exists( $class_name ) ) {
-					do_action( 'wprus_require_integration_file', $slug, $info['class_name'] );
+					do_action( 'wprus_require_integration_file', $slug, $integration_details['class_name'] );
+				}
+
+				if ( ! class_exists( $class_name ) && is_string( $slug ) && sanitize_key( $slug ) === $slug ) {
+					$path = WPRUS_PLUGIN_PATH . 'inc/integration/' . $slug . '/class-wprus-integration-' . $slug . '.php';
+
+					if ( is_file( $path ) ) {
+						require_once $path;
+					}
 				}
 
 				if ( class_exists( $class_name ) ) {
-					$integration = new $class_name( true );
+					$plugin_integration = new $class_name( true );
 
-					do_action( 'wprus_integration', $integration, $slug );
+					do_action( 'wprus_did_register_integration', $plugin_integration, $slug );
 				}
 			}
 		}
+
+		do_action( 'wprus_did_register_integrations', $integration );
 	}
 
 	/**
@@ -111,5 +127,5 @@ class Wprus_Integration {
 
 	/*******************************************************************
 	 * Protected methods
-	 */
+	 *******************************************************************/
 }

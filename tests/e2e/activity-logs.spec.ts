@@ -24,14 +24,36 @@ test('a subscriber with valid request values cannot clear logs or test connectio
       expect(response.status(), action).toBe(403);
       expect((await response.json() as { success: boolean }).success, action).toBe(false);
     }
-    const response = await context.request.post('/wp-admin/admin-ajax.php', {
-      form: { action: 'wprus_wp_admin_notify_ping_remote', nonce: nonces.ping },
-    });
-    expect(response.status()).toBe(403);
-    expect((await response.json() as { success: boolean }).success).toBe(false);
+    for (const action of ['wprus_wp_admin_notify_ping_remote', 'wprus_wp_admin_notify_outgoing_meta_remote']) {
+      const response = await context.request.post('/wp-admin/admin-ajax.php', {
+        form: { action, nonce: nonces.ping, site_url: 'https://wprus-peer.test' },
+      });
+      expect(response.status(), action).toBe(403);
+      expect((await response.json() as { success: boolean }).success, action).toBe(false);
+    }
   } finally {
     await context.close();
   }
+});
+
+test('metadata matching requires a valid administrator request and a saved site', async ({ page }) => {
+  await page.goto('/wp-admin/options-general.php?page=wprus');
+  const nonce = await page.locator('#wprus_ping_nonce').inputValue();
+  const action = 'wprus_wp_admin_notify_outgoing_meta_remote';
+  const invalidNonce = await page.request.post('/wp-admin/admin-ajax.php', {
+    form: { action, nonce: 'invalid', site_url: 'https://wprus-peer.test' },
+  });
+  expect((await invalidNonce.json() as { success: boolean }).success).toBe(false);
+  const unknown = await page.request.post('/wp-admin/admin-ajax.php', {
+    form: { action, nonce, site_url: 'https://unconfigured.test' },
+  });
+  expect(unknown.status()).toBe(400);
+  expect((await unknown.json() as { success: boolean }).success).toBe(false);
+  const valid = await page.request.post('/wp-admin/admin-ajax.php', {
+    form: { action, nonce, site_url: 'https://wprus-peer.test' },
+  });
+  expect(valid.status()).toBe(200);
+  expect((await valid.json() as { success: boolean; data: string[] }).data).toContain('billing_address_1');
 });
 
 test('an administrator can refresh and clear the activity log', async ({ page }) => {

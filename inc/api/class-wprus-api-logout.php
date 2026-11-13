@@ -169,7 +169,6 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 	public function notify_remote() {
 
 		if ( ! is_user_logged_in() ) {
-
 			return;
 		}
 
@@ -232,11 +231,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 	 * @return bool Whether the logout request is valid.
 	 */
 	protected function validate( $data ) {
-		$valid =
-			parent::validate( $data ) &&
-			username_exists( $data['username'] );
-
-		return $valid;
+		return parent::validate( $data ) && username_exists( $data['username'] );
 	}
 
 	/**

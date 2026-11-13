@@ -72,6 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</select>
+			<p class="description"><?php esc_html_e( 'In the "Incoming Actions" section of the settings on the remote site, use the "Get remote Outgoing metadata keys" button if the keys selected above are not provided for selection in the "List of metadata to accept".', 'wprus' ); ?>
 		</div>
 		<div class="row-outgoing-roles wprus-site-row">
 			<label for=""><?php esc_html_e( 'List of roles to transfer (leave empty to transfer none):', 'wprus' ); ?></label>
@@ -119,6 +120,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php endforeach; ?>
 			<?php endif; ?>
 			</select>
+			<p><button type="button" class="button wprus-match-outgoing-meta"><?php esc_html_e( 'Get remote Outgoing metadata keys', 'wprus' ); ?></button></p>
 		</div>
 		<div class="row-incoming-roles wprus-site-row">
 			<label for=""><?php esc_html_e( 'List of roles to accept (leave empty to accept all):', 'wprus' ); ?></label>

@@ -15,6 +15,16 @@ require_once dirname( __DIR__, 2 ) . '/support/class-wprus-test-peer.php';
 /** Give tests a decoded administrative request. */
 class Wprus_Test_Wp_Admin extends Wprus_Api_Wp_Admin {
 	use Wprus_Test_Incoming_Input;
+
+	/**
+	 * Expose the remote key filter to these tests.
+	 *
+	 * @param array $keys Remote metadata keys.
+	 * @return array Accepted keys.
+	 */
+	public function filter_keys( $keys ) {
+		return $this->filter_outgoing_meta_keys( $keys );
+	}
 }
 
 /**
@@ -34,6 +44,56 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 		$this->assertSame( 10, has_action( 'wprus_after_handle_action_notification', $callback ) );
 		$id = _wp_filter_build_unique_id( 'wprus_after_handle_action_notification', $callback, 10 );
 		$this->assertSame( 3, $GLOBALS['wp_filter']['wprus_after_handle_action_notification']->callbacks[10][ $id ]['accepted_args'] );
+		$this->assertNotWPError( $admin->receive( $this->request( 'outgoing_meta' ) ) );
+	}
+
+	/** The request reads only the saved outgoing keys for the requesting site. */
+	public function test_outgoing_meta_uses_requesting_site_settings() {
+		$GLOBALS['wprus_test_settings']['sites'][0]['outgoing_meta']            = array( 'billing_address_1', 'test_note' );
+		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_meta']            = array( 'different_key' );
+		$GLOBALS['wprus_test_settings']['sites'][0]['outgoing_actions']['meta'] = false;
+		$GLOBALS['wprus_test_settings']['sites'][]                              = array_merge(
+			$GLOBALS['wprus_test_settings']['sites'][0],
+			array(
+				'url'           => 'https://another.test',
+				'outgoing_meta' => array( 'other_key' ),
+			)
+		);
+		$this->reload_settings();
+		$request = $this->request( 'outgoing_meta' );
+		$this->assertSame( array( 'billing_address_1', 'test_note' ), $this->admin()->receive( $request ) );
+		$request['base_url']         = 'https://another.test';
+		$request['data']['base_url'] = 'https://another.test';
+		$this->assertSame( array( 'other_key' ), $this->admin()->receive( $request ) );
+		$request['data'] = array();
+		$this->assertSame( 'wprus_invalid_outgoing_meta_request', $this->admin()->receive( $request )->get_error_code() );
+		$request['base_url']         = 'https://wprus-peer.test/subsite';
+		$request['data']['base_url'] = 'https://wprus-peer.test/subsite';
+		$this->assertSame( 'wprus_unknown_outgoing_meta_site', $this->admin()->receive( $request )->get_error_code() );
+		$GLOBALS['wprus_test_settings']['sites'][0]['outgoing_meta'] = array();
+		$this->reload_settings();
+		$this->assertSame( array(), $this->admin()->receive( array_merge( $this->request( 'outgoing_meta' ), array( 'data' => array( 'base_url' => 'https://wprus-peer.test' ) ) ) ) );
+	}
+
+	/** Safe keys survive the same exclusions used for incoming metadata. */
+	public function test_outgoing_meta_filters_remote_keys() {
+		global $wpdb;
+		$keys = array(
+			'billing_address_1',
+			'billing_address_1',
+			'test_note',
+			'',
+			12,
+			' billing_city',
+			'billing city',
+			'BILLING_CITY',
+			'foo\\bar',
+			$wpdb->prefix . 'capabilities',
+			$wpdb->prefix . 'user_level',
+			'session_tokens',
+			'_application_passwords',
+		);
+		$this->assertSame( array( 'billing_address_1', 'test_note' ), $this->admin()->filter_keys( $keys ) );
 	}
 
 	/** Returned values become JSON responses. */

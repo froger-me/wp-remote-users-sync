@@ -1718,3 +1718,41 @@ msgstr ""
 #: inc/api/class-wprus-api-wp-admin.php:88
 msgid "Administrative action did not return a result."
 msgstr ""
+
+#: inc/templates/admin/site-metabox.php:123
+#: inc/templates/admin/site-metabox-template.php:112
+msgid "Get remote Outgoing metadata keys"
+msgstr ""
+
+#: inc/templates/admin/site-metabox.php:75
+#: inc/templates/admin/site-metabox-template.php:65
+msgid "In the \"Incoming Actions\" section of the settings on the remote site, use the \"Get remote Outgoing metadata keys\" button if the keys selected above are not provided for selection in the \"List of metadata to accept\"."
+msgstr ""
+
+#: inc/class-wprus-settings.php:301
+msgid "No eligible outgoing metadata keys were returned."
+msgstr ""
+
+#: inc/api/class-wprus-api-wp-admin.php:78
+msgid "Invalid outgoing metadata request."
+msgstr ""
+
+#: inc/api/class-wprus-api-wp-admin.php:84
+msgid "The requesting site is not configured."
+msgstr ""
+
+#: inc/api/class-wprus-api-wp-admin.php:397
+msgid "The remote site is not configured."
+msgstr ""
+
+#: inc/api/class-wprus-api-wp-admin.php:403
+msgid "Unable to identify the current user."
+msgstr ""
+
+#: inc/api/class-wprus-api-wp-admin.php:425
+msgid "Unable to retrieve outgoing metadata from the remote site."
+msgstr ""
+
+#: inc/api/class-wprus-api-wp-admin.php:433
+msgid "The remote site returned invalid metadata."
+msgstr ""

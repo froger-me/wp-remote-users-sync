@@ -29,7 +29,6 @@ class Wprus_Crypto {
 		$crypt_key = hex2bin( hash( 'sha256', $crypt_key ) );
 
 		if ( mb_strlen( $crypt_key, '8bit' ) !== 32 ) {
-
 			throw new Exception( 'Needs a 256-bit key!' );
 		}
 
@@ -65,7 +64,6 @@ class Wprus_Crypto {
 		$crypt_key = hex2bin( hash( 'sha256', $crypt_key ) );
 
 		if ( mb_strlen( $crypt_key, '8bit' ) !== 32 ) {
-
 			throw new Exception( 'Needs a 256-bit key!' );
 		}
 
@@ -112,19 +110,16 @@ class Wprus_Crypto {
 	public static function hmac_verify( $original, $new_val ) {
 
 		if ( function_exists( 'hash_equals' ) ) {
-
 			return hash_equals( $original, $new_val );
 		}
 
 		if ( ! is_string( $original ) || ! is_string( $new_val ) ) {
-
 			return false;
 		}
 
 		$original_length = mb_strlen( $original );
 
 		if ( mb_strlen( $new_val ) !== $original_length ) {
-
 			return false;
 		}
 
@@ -144,7 +139,6 @@ class Wprus_Crypto {
 	 * @return string Encoded bytes.
 	 */
 	public static function base64url_encode( $s ) {
-
 		return str_replace( '/', self::SLASH_REPLACE, base64_encode( $s ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	}
 
@@ -155,7 +149,6 @@ class Wprus_Crypto {
 	 * @return string|false Decoded bytes, or false on failure.
 	 */
 	public static function base64url_decode( $s ) {
-
 		return base64_decode( str_replace( self::SLASH_REPLACE, '/', $s ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 	}
 }

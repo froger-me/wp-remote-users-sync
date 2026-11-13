@@ -11,6 +11,7 @@ test('creating a WordPress user sends the profile to the simulated site', async 
   await page.locator('#email').fill('wprus-remote@example.test');
   const notify = page.locator('#send_user_notification');
   if (await notify.isChecked()) await notify.uncheck();
+  await expect(page.locator('#pass1')).toHaveValue(/\S/);
   await page.locator('#createusersub').click();
   await expect(page.locator('#message')).toContainText(/user|created/i);
 

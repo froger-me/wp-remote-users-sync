@@ -140,7 +140,6 @@ class Wprus {
 		$table = $wpdb->get_var( "SHOW TABLES LIKE '" . self::get_table( 'wprus_nonce' ) . "'" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( self::get_table( 'wprus_nonce' ) !== $table ) {
-
 			return false;
 		}
 
@@ -161,7 +160,6 @@ class Wprus {
 		$table = $wpdb->get_var( "SHOW TABLES LIKE '" . self::get_table( 'wprus_logs' ) . "'" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( self::get_table( 'wprus_logs' ) !== $table ) {
-
 			return false;
 		}
 
@@ -177,12 +175,10 @@ class Wprus {
 	public static function get_table( $table = null ) {
 
 		if ( is_null( $table ) ) {
-
 			return $table;
 		}
 
 		if ( isset( self::$tables[ $table ] ) ) {
-
 			return self::$tables[ $table ];
 		}
 
@@ -197,17 +193,15 @@ class Wprus {
 		$use_base_prefix = apply_filters( 'wprus_wpdb_use_base_prefix', $use_base_prefix );
 
 		if ( is_multisite() ) {
-			if ( $is_plugin_active_for_network ) {
 
-				$use_base_prefix = array_merge(
-					$use_base_prefix,
+			if ( $is_plugin_active_for_network ) {
+				$use_base_prefix = apply_filters(
+					'wprus_wpdb_use_base_prefix_network_active',
 					array(
 						'wprus_logs',
 						'wprus_nonce',
 					)
 				);
-
-				$use_base_prefix = apply_filters( 'wprus_wpdb_use_base_prefix_network_active', $use_base_prefix );
 
 				if ( in_array( $table, $use_base_prefix, true ) ) {
 					$table = $wpdb->base_prefix . $table;
@@ -320,6 +314,7 @@ class Wprus {
 			$target  = 'index.php?__wprus_api=1&action=' . $action;
 
 			add_rewrite_rule( $pattern, $target, 'top' );
+
 			$this->registered_rewrite_rules[ $pattern ] = $target;
 		}
 
@@ -334,10 +329,11 @@ class Wprus {
 		if ( get_option( 'permalink_structure' ) ) {
 			$saved_rules = get_option( 'rewrite_rules', array() );
 
-			// Other plugins may add a language prefix to the saved rule patterns.
 			foreach ( $this->registered_rewrite_rules as $target ) {
+
 				if ( ! is_array( $saved_rules ) || ! in_array( $target, $saved_rules, true ) ) {
 					$rules_changed = true;
+
 					break;
 				}
 			}
@@ -388,6 +384,7 @@ class Wprus {
 
 		if ( null === $version ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
 			$plugin_data = get_plugin_data( WPRUS_PLUGIN_PATH . 'wprus.php', false, false );
 			$version     = $plugin_data['Version'];
 		}

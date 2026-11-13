@@ -27,6 +27,7 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 
 			if ( ! $this->doing_remote_action ) {
 				add_action( 'wp_ajax_wprus_wp_admin_notify_ping_remote', array( $this, 'notify_ping_remote' ), 10, 0 );
+				add_action( 'wp_ajax_wprus_wp_admin_notify_outgoing_meta_remote', array( $this, 'notify_outgoing_meta_remote' ), 10, 0 );
 			}
 		}
 	}
@@ -52,15 +53,45 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 
 		$handlers = apply_filters(
 			'wprus_wp_admin_handlers',
-			array( 'ping' => array( $this, 'handle_ping_notification' ) ),
+			array(
+				'ping'          => array( $this, 'handle_ping_notification' ),
+				'outgoing_meta' => array( $this, 'handle_outgoing_meta_notification' ),
+			),
 			$this
 		);
 
-		if ( ! is_array( $handlers ) || ! isset( $handlers[ $_data['action'] ] ) || ! is_callable( $handlers[ $_data['action'] ] ) ) {
+		$handler = is_array( $handlers ) ? ( $handlers[ $_data['action'] ] ?? null ) : null;
+
+		try {
+			$handler = Closure::fromCallable( $handler );
+		} catch ( TypeError $error ) {
 			return new WP_Error( 'wprus_unknown_admin_action', __( 'Unknown administrative action.', 'wprus' ), array( 'status' => 400 ) );
 		}
 
-		return call_user_func( $handlers[ $_data['action'] ], $_data['data'] );
+		return $handler( $_data['data'] );
+	}
+
+	/**
+	 * Return outgoing metadata keys configured for the requesting site.
+	 *
+	 * @param array $data Administrative action data.
+	 * @return array|WP_Error Configured keys or an error.
+	 */
+	public function handle_outgoing_meta_notification( $data ) {
+
+		if ( ! is_array( $data ) || empty( $data['base_url'] ) || ! is_string( $data['base_url'] ) ) {
+			return new WP_Error( 'wprus_invalid_outgoing_meta_request', __( 'Invalid outgoing metadata request.', 'wprus' ), array( 'status' => 400 ) );
+		}
+
+		$site = $this->settings->get_site( $data['base_url'] );
+
+		if ( ! $site || ! isset( $site['url'] ) || untrailingslashit( $site['url'] ) !== untrailingslashit( $data['base_url'] ) ) {
+			return new WP_Error( 'wprus_unknown_outgoing_meta_site', __( 'The requesting site is not configured.', 'wprus' ), array( 'status' => 400 ) );
+		}
+
+		return isset( $site['outgoing_meta'] ) && is_array( $site['outgoing_meta'] )
+			? array_values( $site['outgoing_meta'] )
+			: array();
 	}
 
 	/**
@@ -72,6 +103,7 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 	 * @return void
 	 */
 	public function send_response( $endpoint, $data, $result ) {
+
 		if ( 'wp-admin' !== $endpoint ) {
 			return;
 		}
@@ -79,9 +111,11 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 		if ( is_wp_error( $result ) ) {
 			$error_data = $result->get_error_data();
 			$status     = is_array( $error_data ) && isset( $error_data['status'] ) ? absint( $error_data['status'] ) : 400;
+
 			if ( $status < 200 || $status > 599 ) {
 				$status = 400;
 			}
+
 			wp_send_json_error( $result->get_error_message(), $status );
 		}
 
@@ -206,16 +240,7 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 	 * @return void No value is returned.
 	 */
 	public function notify_ping_remote() {
-
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ), 403 );
-		}
-
-		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
-
-		if ( ! wp_verify_nonce( $nonce, 'wprus_ping_nonce' ) ) {
-			wp_send_json_error( __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ) );
-		}
+		$this->authorize_local_ajax_request();
 
 		$url       = filter_input( INPUT_POST, 'site_url', FILTER_VALIDATE_URL );
 		$direction = filter_input( INPUT_POST, 'direction', FILTER_UNSAFE_RAW );
@@ -313,5 +338,111 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 		}
 
 		wp_send_json_error( $payload );
+	}
+
+	/**
+	 * Authorize a local administrative AJAX request.
+	 *
+	 * @return void
+	 */
+	protected function authorize_local_ajax_request() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ), 403 );
+		}
+
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_UNSAFE_RAW );
+
+		if ( ! wp_verify_nonce( $nonce, 'wprus_ping_nonce' ) ) {
+			wp_send_json_error( __( 'Error: unauthorized access - please reload the page and try again.', 'wprus' ) );
+		}
+	}
+
+	/**
+	 * Keep only remote metadata keys permitted by this site.
+	 *
+	 * @param array $keys Raw metadata keys returned by the remote site.
+	 * @return array Accepted metadata keys.
+	 */
+	protected function filter_outgoing_meta_keys( $keys ) {
+		require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-meta.php';
+
+		$meta_handler = new Wprus_Api_Meta( 'meta', $this->settings, false );
+		$accepted     = array();
+
+		foreach ( $keys as $meta_key ) {
+
+			if (
+				! is_string( $meta_key ) ||
+				'' === $meta_key ||
+				trim( $meta_key ) !== $meta_key ||
+				wp_unslash( $meta_key ) !== $meta_key ||
+				sanitize_key( $meta_key ) !== $meta_key
+			) {
+				continue;
+			}
+
+			if ( $meta_handler->is_excluded_meta_key( $meta_key ) ) {
+				continue;
+			}
+
+			$accepted[] = $meta_key;
+		}
+
+		return array_values( array_unique( $accepted ) );
+	}
+
+	/**
+	 * Retrieve and validate a connected site's outgoing metadata keys.
+	 *
+	 * @return void
+	 */
+	public function notify_outgoing_meta_remote() {
+		$this->authorize_local_ajax_request();
+
+		$url  = filter_input( INPUT_POST, 'site_url', FILTER_VALIDATE_URL );
+		$site = is_string( $url ) ? $this->settings->get_site( $url ) : false;
+
+		if ( ! $site || ! isset( $site['url'] ) || untrailingslashit( $site['url'] ) !== untrailingslashit( $url ) ) {
+			wp_send_json_error( __( 'The remote site is not configured.', 'wprus' ), 400 );
+		}
+
+		$user = wp_get_current_user();
+
+		if ( ! $user->exists() || '' === $user->user_login ) {
+			wp_send_json_error( __( 'Unable to identify the current user.', 'wprus' ), 403 );
+		}
+
+		$payload = array(
+			'username' => $user->user_login,
+			'action'   => 'outgoing_meta',
+			'data'     => array( 'base_url' => get_option( 'home' ) ),
+		);
+
+		$response = $this->fire_action( $site['url'], $payload, true, 5 );
+		$decoded  = json_decode( $response['body'], true );
+
+		if (
+			200 !== absint( $response['response_code'] ) ||
+			JSON_ERROR_NONE !== json_last_error() ||
+			! is_array( $decoded ) ||
+			true !== ( $decoded['success'] ?? null ) ||
+			! isset( $decoded['data'] ) ||
+			! is_array( $decoded['data'] )
+		) {
+			$message = ( is_array( $decoded ) && isset( $decoded['data'] ) && is_string( $decoded['data'] ) )
+				? $decoded['data']
+				: __( 'Unable to retrieve outgoing metadata from the remote site.', 'wprus' );
+
+			wp_send_json_error( $message );
+		}
+
+		$keys = $decoded['data'];
+
+		if ( array_keys( $keys ) !== array_keys( array_values( $keys ) ) ) {
+			wp_send_json_error( __( 'The remote site returned invalid metadata.', 'wprus' ) );
+		}
+
+		wp_send_json_success( $this->filter_outgoing_meta_keys( $keys ) );
 	}
 }

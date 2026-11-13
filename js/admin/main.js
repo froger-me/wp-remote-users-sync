@@ -148,6 +148,63 @@ jQuery(document).ready(function($) {
 		});
 	});
 
+	$('#normal-sortables').on('click', '.wprus-match-outgoing-meta', function(e) {
+		e.preventDefault();
+
+		var button = $(this),
+			row    = button.closest('.row-incoming-metadata'),
+			select = row.find('select.wprus-select-tag'),
+			site   = button.closest('.wprus-container');
+
+		button.prop('disabled', true);
+
+		$.ajax({
+			url: WPRUS.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'wprus_wp_admin_notify_outgoing_meta_remote',
+				nonce: $('#wprus_ping_nonce').val(),
+				site_url: site.data('url')
+			},
+			success: function(response) {
+				if (!response.success) {
+					window.alert(response.data || WPRUS.undefined_error);
+					return;
+				}
+
+				if (!Array.isArray(response.data)) {
+					window.alert(WPRUS.undefined_error);
+					return;
+				}
+
+				if (!response.data.length) {
+					window.alert(WPRUS.no_outgoing_meta);
+					return;
+				}
+
+				response.data.forEach(function(key) {
+					var option = select.find('option').filter(function() {
+						return this.value === key;
+					});
+
+					if (option.length) {
+						option.prop('selected', true);
+					} else {
+						select.append(new Option(key, key, true, true));
+					}
+				});
+
+				select.trigger('change');
+			},
+			error: function() {
+				window.alert(WPRUS.undefined_error);
+			},
+			complete: function() {
+				button.prop('disabled', false);
+			}
+		});
+	});
+
 	$('#normal-sortables').on('change', '.action-checkbox input', function() {
 		var checkbox = $(this),
 			row      = checkbox.closest('tr'),

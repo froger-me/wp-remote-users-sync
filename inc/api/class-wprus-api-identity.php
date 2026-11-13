@@ -106,6 +106,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @return array|WP_Error Existence results or an error.
 	 */
 	public function check_remote_site( $site, $username, $email ) {
+
 		if ( ! is_array( $site ) || empty( $site['url'] ) ) {
 			return new WP_Error( 'wprus_identity_unavailable' );
 		}
@@ -168,15 +169,18 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @return true|WP_Error True when clear everywhere, or an error.
 	 */
 	public function check_remote_identity( $username, $email ) {
+
 		foreach ( $this->settings->get_sites() as $site ) {
 			$result = $this->check_remote_site( $site, $username, $email );
 
 			if ( is_wp_error( $result ) ) {
 				return $result;
 			}
+
 			if ( $result['username_exists'] ) {
 				return new WP_Error( 'wprus_username_exists' );
 			}
+
 			if ( $result['email_exists'] ) {
 				return new WP_Error( 'wprus_email_exists' );
 			}
@@ -187,7 +191,9 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 
 	/** Whether the current user can manage other users. */
 	public static function can_manage_users() {
+
 		foreach ( array( 'manage_network_users', 'promote_users', 'remove_users', 'edit_users', 'add_users', 'create_users', 'delete_users' ) as $capability ) {
+
 			if ( current_user_can( $capability ) ) {
 				return true;
 			}
@@ -205,6 +211,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @return WP_Error Registration errors.
 	 */
 	public function validate_registration( $errors, $username, $email ) {
+
 		if ( $errors->has_errors() || self::can_manage_users() ) {
 			return $errors;
 		}
@@ -227,6 +234,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @return string Message suitable for a registration form.
 	 */
 	public function get_public_error_message( $error ) {
+
 		switch ( $error->get_error_code() ) {
 			case 'wprus_username_exists':
 				return __( 'This username is already in use. Please choose another.', 'wprus' );
@@ -245,6 +253,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @param WP_User  $user Proposed user data.
 	 */
 	public function validate_admin_registration( $errors, $update, $user ) {
+
 		if ( ! $update ) {
 			$this->validate_registration( $errors, $user->user_login, $user->user_email );
 		}
@@ -258,8 +267,10 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @return WP_User|WP_Error Proposed user or registration error.
 	 */
 	public function validate_rest_registration( $prepared_user, $request ) {
+
 		if ( ! is_wp_error( $prepared_user ) && ! $request->get_param( 'id' ) ) {
 			$errors = $this->validate_registration( new WP_Error(), $prepared_user->user_login, $prepared_user->user_email );
+
 			if ( $errors->has_errors() ) {
 				return $errors;
 			}
@@ -290,6 +301,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @throws Wprus_Identity_Creation_Exception When a registration method has no validation.
 	 */
 	public function require_validated_creation( $data, $update, $user_id, $userdata ) {
+
 		if ( $update || self::$handling_incoming || self::can_manage_users() ) {
 			return $data;
 		}
@@ -310,6 +322,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 		}
 
 		$message = sprintf( 'WPRUS rejected an unvalidated user creation for "%s".', $username );
+
 		$this->log_creation_failure( $message );
 		throw new Wprus_Identity_Creation_Exception( $message ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 	}
@@ -320,16 +333,19 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @param int $user_id Newly created user's ID.
 	 */
 	public function check_created_user( $user_id ) {
+
 		if ( self::$handling_incoming || self::can_manage_users() ) {
 			return;
 		}
 
 		$user = get_userdata( $user_id );
+
 		if ( ! $user ) {
 			return;
 		}
 
 		$result = $this->check_remote_identity( $user->user_login, $user->user_email );
+
 		if ( is_wp_error( $result ) ) {
 			self::$blocked_creations[ $user_id ] = true;
 			Wprus_Logger::log(
@@ -357,6 +373,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @param WP_User $old_user_data User data before the update.
 	 */
 	public function remember_previous_email( $user_id, $old_user_data ) {
+
 		if ( $old_user_data instanceof WP_User && ! isset( self::$previous_emails[ $user_id ] ) ) {
 			self::$previous_emails[ $user_id ] = $old_user_data->user_email;
 		}
@@ -382,11 +399,13 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @return array Action data with the source email.
 	 */
 	public static function attach_source_identity( $data, $endpoint ) {
+
 		if ( ! is_array( $data ) || ! isset( $data['username'] ) || 'identity' === $endpoint || isset( $data['identity_email'] ) ) {
 			return $data;
 		}
 
 		$user = get_user_by( 'login', $data['username'] );
+
 		if ( ! $user ) {
 			return $data;
 		}
@@ -406,11 +425,13 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @return bool Whether the account identity matches or does not exist locally.
 	 */
 	public static function verify_incoming_identity( $data, $endpoint ) {
+
 		if ( ! is_array( $data ) || ! isset( $data['username'] ) || ! is_string( $data['username'] ) || '' === $data['username'] ) {
 			return false;
 		}
 
 		$user = get_user_by( 'login', $data['username'] );
+
 		if ( ! $user ) {
 			return true;
 		}
@@ -438,17 +459,22 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	 * @throws Throwable When no earlier exception handler exists.
 	 */
 	public static function handle_uncaught_exception( Throwable $exception ) {
+
 		if ( $exception instanceof Wprus_Identity_Creation_Exception ) {
 			wp_die(
 				esc_html__( 'We could not create your account right now. Please try again later or contact the site administrator.', 'wprus' ),
 				esc_html__( 'Account not created', 'wprus' ),
 				array( 'response' => 409 )
 			);
+
 			return;
 		}
 
-		if ( is_callable( self::$previous_exception_handler ) ) {
-			call_user_func( self::$previous_exception_handler, $exception );
+		$previous_handler = self::$previous_exception_handler;
+
+		if ( null !== $previous_handler ) {
+			$previous_handler( $exception );
+
 			return;
 		}
 
