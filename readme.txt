@@ -165,6 +165,13 @@ Roles can be synchronised when the Create and Update actions are fired, with the
 Extra user information can be synchronised too out of the box as long as they are stored in the user metadata.
 For example, it means all the address and profile information in WooCommerce can be synchronised, but not the orders status or subscription status.
 
+= How do I synchronise user metadata? =
+On the site sending the data, enable the **Metadata** action under **Outgoing Actions** and select the metadata keys to synchronise in **List of metadata to transfer**.
+
+On the receiving site, enable **Metadata** under **Incoming Actions** and select the same keys in **List of metadata to accept**. You can also click **Get remote Outgoing metadata keys** to automatically retrieve and select the keys configured on the sending site, even if they do not exist locally.
+
+Only metadata for keys selected on both sites are synchronised, and WordPress-specific or sensitive metadata fields are forcefully excluded for security reasons.
+
 = What about user passwords? =
 Passwords are automatically synchronised as long as the Password action is enabled (outgoing and incoming respectively).
 Communications are encrypted, signed, token-validated and IP-validated to make the process as secure as possible.
