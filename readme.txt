@@ -189,7 +189,7 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 = 2.4.0 =
 * Add WooCommerce to the default integration list. Rename the integration list filter to `wprus_registered_integrations`, and add `wprus_did_register_integration` and `wprus_did_register_integrations` so other code can respond when integrations are created. Make the main plugin objects available through `wprus_integration_run` after settings are valid.
 * Let administrators retrieve outgoing metadata keys from a connected site and select the keys to accept without removing their existing selections, using the `/wprus/wp-admin/` endpoint.
-* Send ping connection tests to a new `/wprus/wp-admin/` endpoint.
+* Introduce a new `/wprus/wp-admin/` endpoint and use it for existing ping.
 * Let other plugins register administrative actions through `wprus_wp_admin_handlers`. Each action returns a result, which the plugin sends as a JSON response.
 * Save the installed plugin version during activation and refresh WordPress's saved request rules when a registered address is missing, the version changes, or settings change.
 * Reject ordinary user creation when any connected site already uses the username or email address, or when a connected site cannot be checked. Recheck after creation and suppress the outgoing Create action if a conflict or check failure appears.
