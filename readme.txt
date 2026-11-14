@@ -63,7 +63,8 @@ If such need for plugin integration arises, website administrators **MUST** cont
 
 = 2.4.0 =
 
-Update every connected site. Ordinary user creation is rejected when a connected site already has the username or email address, or cannot complete the check. Incoming synchronization for an existing account is rejected when the sender does not provide a matching username and identifying email address. Sites on older versions cannot provide these checks and details.
+Update WPRUS on all connected sites. All user Actions now check both **username and email address** to identify users. New user creation is rejected if a connected site already has an account with the same username or email address.
+Any plugin that allows multiple account per email address would introduce incompatibilities and must not be used. Plugins that allow user to change their login are also still incompatible.
 
 = 2.3.0 =
 
@@ -187,7 +188,7 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 == Changelog ==
 
 = 2.4.0 =
-* Add WooCommerce to the default integration list. Rename the integration list filter to `wprus_registered_integrations`, and add `wprus_did_register_integration` and `wprus_did_register_integrations` so other code can respond when integrations are created. Make the main plugin objects available through `wprus_integration_run` after settings are valid.
+* Refactor integration mechanism. Rename the integration list filter to `wprus_registered_integrations`, and add `wprus_did_register_integration` and `wprus_did_register_integrations` so other code can respond when integrations are created.
 * Let administrators retrieve outgoing metadata keys from a connected site and select the keys to accept without removing their existing selections, using the `/wprus/wp-admin/` endpoint.
 * Introduce a new `/wprus/wp-admin/` endpoint and use it for existing ping.
 * Let other plugins register administrative actions through `wprus_wp_admin_handlers`. Each action returns a result, which the plugin sends as a JSON response.
