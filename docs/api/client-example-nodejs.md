@@ -56,7 +56,7 @@ function decryptMessage(encoded) {
 }
 ```
 
-The encrypted message contains a fresh 16-byte IV, a 32-byte HMAC-SHA-256 signature, and AES-256-CBC ciphertext. Base64 encoding replaces only `/` with `_`. Check the decoder with the [fixed test message](protocol.md#encryption-test-values).
+The encrypted message contains a fresh 16-byte IV, a 32-byte HMAC-SHA-256 signature, and AES-256-CBC ciphertext. Base64 encoding replaces only `/` with `_`. Check the decoder with the [fixed test message](protocol.md#encryption-test-message).
 
 ## Request a token
 
@@ -120,6 +120,37 @@ const available = result.success === true &&
 ```
 
 To update an account, send `username`, the identifying `identity_email` and the fields to change. For email changes, send the previous address in `identity_email` and the new address in `user_email`. A successful account-changing request returns HTTP 200 with `{"success":true,"data":true}`. Check the HTTP status and returned JSON errors for unsuccessful operations.
+
+## Handle errors
+
+The error response contains an HTTP status, `data.code` and sometimes `data.details`. Read the body even when the HTTP status indicates an error:
+
+```javascript
+async function readOperationResponse(response) {
+  const result = await response.json();
+  if (response.status === 200 && result.success === true) {
+    return result.data;
+  }
+
+  const code = result.data?.code;
+  const details = result.data?.details ?? {};
+  if (typeof code !== 'string') {
+    throw new Error('Unrecognized WPRUS error response');
+  }
+
+  if (code === 'reassignment_user_not_found' && details.account_deleted) {
+    // The account has already been deleted.
+  } else if (code === 'role_not_allowed' || code === 'role_sync_disabled') {
+    // Inspect details.account_saved, applied_roles and rejected_roles.
+  } else if (code === 'metadata_partial_failure') {
+    // Inspect details.applied and details.rejected before retrying.
+  }
+
+  throw new Error('WPRUS HTTP ' + response.status + ': ' + code);
+}
+```
+
+Other useful codes include `invalid_token` (403), `identity_mismatch` (409), `existing_user_login` (409) and `existing_user_email` (409). See the [error code reference](operations.md#error-responses-and-retries).
 
 ## Browser login and logout
 

@@ -87,6 +87,29 @@ For an update, request a POST token for `update`, then send the same outer JSON 
 
 For `wp-admin` requests, include both the sender's top-level `base_url` and `data.base_url` in the encrypted message.
 
+## Handle errors
+
+For operations that can fail, capture the HTTP status and response body separately. This preserves the error details even when the server returns HTTP 400, 403, 409 or 422:
+
+```bash
+response_file=$(mktemp)
+trap 'rm -f "$response_file"' EXIT
+
+status=$(curl --silent --show-error \
+  --output "$response_file" --write-out '%{http_code}' \
+  --header 'Content-Type: application/json' \
+  --data "$body" "$receiver/wprus/identity/")
+
+if [[ "$status" == 200 ]]; then
+  jq . "$response_file"
+else
+  jq -r '.data.code' "$response_file"
+  jq -c '.data.details // {}' "$response_file"
+fi
+```
+
+Use the same response handling for Create, Update, Delete and Metadata requests. For `role_not_allowed` and `role_sync_disabled`, inspect `details.account_saved` and the role lists. For `reassignment_user_not_found`, `details.account_deleted` is `true`. For `metadata_partial_failure`, `details.applied` and `details.rejected` identify completed and rejected changes. See the [error code reference](operations.md#error-responses-and-retries).
+
 ## Browser login and logout
 
 Request a token using `method:"get"`. Encrypt the browser operation message containing `username`, `identity_email` and sender `base_url`. URL-encode `wprusdata` and `token` into the query string of `/wprus/login/` or `/wprus/logout/`, then navigate the visiting user's browser to that URL. GET tokens are single-use.

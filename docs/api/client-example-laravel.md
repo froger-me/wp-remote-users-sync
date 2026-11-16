@@ -70,7 +70,7 @@ function decryptMessage(string $encoded, string $encryptionKey, string $signatur
 }
 ```
 
-The wire format is a random 16-byte IV, a 32-byte HMAC-SHA-256 signature, and AES-256-CBC ciphertext, Base64-encoded with only `/` replaced by `_`. Check the decoder against the [fixed test message](protocol.md#encryption-test-values).
+The wire format is a random 16-byte IV, a 32-byte HMAC-SHA-256 signature, and AES-256-CBC ciphertext, Base64-encoded with only `/` replaced by `_`. Check the decoder against the [fixed test message](protocol.md#encryption-test-message).
 
 ## Request a token
 
@@ -131,6 +131,35 @@ For a user update, request a POST token for `update` and send encrypted JSON to 
 Administrative requests use `/wprus/wp-admin/` with `action` set to `ping` or `outgoing_meta`. Include the sender URL in both `base_url` and `data.base_url`.
 
 A successful account-changing request returns HTTP 200 with `{"success":true,"data":true}`. Check the HTTP status and returned JSON errors for unsuccessful operations.
+
+## Handle errors
+
+For account-changing requests, inspect the HTTP response before using `throw()`. The error code and optional details identify the actual outcome:
+
+```php
+function readWprusResponse(\Illuminate\Http\Client\Response $response): array
+{
+    if ($response->status() === 200 && $response->json('success') === true) {
+        return ['success' => true, 'data' => $response->json('data')];
+    }
+
+    $code = $response->json('data.code');
+    $details = $response->json('data.details') ?? [];
+
+    if (!is_string($code) || $code === '') {
+        throw new RuntimeException('Unrecognized WPRUS error response');
+    }
+
+    return [
+        'success' => false,
+        'status' => $response->status(),
+        'code' => $code,
+        'details' => $details,
+    ];
+}
+```
+
+For `reassignment_user_not_found`, `details.account_deleted` is `true`; do not repeat the deletion. For `role_not_allowed` and `role_sync_disabled`, inspect `account_saved`, `applied_roles` and `rejected_roles`. For `metadata_partial_failure`, inspect `applied` and `rejected`. See the [error code reference](operations.md#error-responses-and-retries).
 
 ## Browser login and logout
 

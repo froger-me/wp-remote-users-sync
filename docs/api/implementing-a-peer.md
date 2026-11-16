@@ -99,13 +99,20 @@ Return HTTP 200 and:
 {"success":true,"data":true}
 ```
 
-when the operation succeeds. Return an appropriate unsuccessful HTTP code and JSON error when it fails:
+when the operation succeeds. When an operation fails, return an HTTP status and a specific error code:
 
 ```json
-{"success":false,"data":{"code":"action_failed"}}
+{
+  "success": false,
+  "data": {
+    "code": "existing_user_email"
+  }
+}
 ```
 
-Use HTTP 400 for invalid input, 403 for denied actions, 404 for unknown accounts, 409 for account identity conflicts, and 422 for data that cannot be applied. For metadata operations with mixed results, account for changes already made before deciding whether to retry.
+The `code` identifies the exact failure. Include an optional `message` for a human-readable explanation and an optional `details` object when a change partly succeeded. Use the codes and statuses in [Operations and responses](operations.md#error-responses-and-retries). For example, invalid input returns HTTP 400, disabled actions return HTTP 403, unknown accounts return HTTP 404, identity conflicts return HTTP 409, and rejected changes return HTTP 422.
+
+If a profile is saved before a role error, report `account_saved`, `applied_roles` and `rejected_roles`. If deletion succeeds but content reassignment fails, report `account_deleted` and `content_reassigned`. For metadata failures, report the number of applied changes and identify each rejected operation and key. These details let the sender decide what needs to be corrected without repeating changes that already succeeded.
 
 The permitted profile fields, role structure and metadata entry formats are described in [Operations and responses](operations.md).
 
@@ -113,7 +120,7 @@ The permitted profile fields, role structure and metadata entry formats are desc
 
 The administrative address receives encrypted requests with `action` set to `ping` or `outgoing_meta`, plus a nested `data` object. Confirm that both `base_url` and `data.base_url` identify the same registered sender.
 
-For `ping`, check whether `target_action` is enabled in the requested `direction` on your application. Return HTTP 200 with `{"success":true,"data":"..."}` for an allowed action or HTTP 403 with an error message for a denied one.
+For `ping`, check whether `target_action` is enabled in the requested `direction` on your application. Return HTTP 200 with `{"success":true,"data":"..."}` for an allowed action or HTTP 403 with `{"success":false,"data":{"code":"wprus_ping_disabled"}}` when it is disabled.
 
 For `outgoing_meta`, return the metadata keys configured to be sent to the requesting site:
 
@@ -121,7 +128,7 @@ For `outgoing_meta`, return the metadata keys configured to be sent to the reque
 {"success":true,"data":["public_note","customer_preference"]}
 ```
 
-An invalid administrative request should return HTTP 400 with a JSON error.
+An invalid administrative request returns HTTP 400 with a specific code such as `wprus_invalid_admin_request`, `wprus_unknown_admin_action` or `wprus_invalid_outgoing_meta_request`.
 
 ## Handle browser sessions
 

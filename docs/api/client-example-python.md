@@ -52,7 +52,7 @@ def decrypt_message(encoded):
     return json.loads((unpadder.update(padded) + unpadder.finalize()).decode("utf-8"))
 ```
 
-The message consists of a random 16-byte IV, 32-byte HMAC-SHA-256 signature, and AES-256-CBC ciphertext. Base64 encoding replaces `/` with `_` and leaves `+` and `=` unchanged. Use the [fixed test message](protocol.md#encryption-test-values) to verify decryption.
+The message consists of a random 16-byte IV, 32-byte HMAC-SHA-256 signature, and AES-256-CBC ciphertext. Base64 encoding replaces `/` with `_` and leaves `+` and `=` unchanged. Use the [fixed test message](protocol.md#encryption-test-message) to verify decryption.
 
 ## Request a token
 
@@ -112,6 +112,38 @@ available = (
 ```
 
 For an update, supply `username`, the account's current `identity_email`, and any fields to change. Use the old email in `identity_email` and the new email in `user_email`. A successful account-changing request returns HTTP 200 with `{"success":true,"data":true}`. Check the HTTP status and returned JSON errors for unsuccessful operations.
+
+## Handle errors
+
+A failed request returns JSON with a specific `data.code` and optional `data.details`. Inspect these fields before deciding whether to retry:
+
+```python
+def read_operation_response(response):
+    result = response.json()
+    if response.status_code == 200 and result.get("success") is True:
+        return result["data"]
+
+    error = result.get("data", {})
+    code = error.get("code")
+    details = error.get("details", {})
+
+    if not isinstance(code, str):
+        raise ValueError("Unrecognized WPRUS error response")
+
+    if code == "reassignment_user_not_found" and details.get("account_deleted"):
+        # The account is already deleted; do not repeat Delete.
+        pass
+    elif code in ("role_not_allowed", "role_sync_disabled"):
+        # Account changes may be saved; inspect the applied and rejected roles.
+        pass
+    elif code == "metadata_partial_failure":
+        # Check details["applied"] and details["rejected"] before retrying.
+        pass
+
+    raise RuntimeError(f"WPRUS HTTP {response.status_code}: {code}")
+```
+
+Other useful codes include `invalid_token` (HTTP 403), `identity_mismatch` (HTTP 409), `existing_user_login` (HTTP 409) and `existing_user_email` (HTTP 409). See the [error code reference](operations.md#error-responses-and-retries).
 
 ## Browser login and logout
 

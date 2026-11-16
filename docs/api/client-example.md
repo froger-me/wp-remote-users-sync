@@ -128,6 +128,42 @@ else:
 
 `identity_email` is the account's current email on the receiving site; during an email change it contains the old address. A successful account-changing operation normally returns `{"success":true,"data":true}`.
 
+## Handle unsuccessful operations
+
+Use the returned HTTP status and `data.code` to identify the failure. Do not decide what happened from HTTP 422 alone:
+
+```text
+function readOperationResult(response):
+    body = ParseJSON(response.body)
+
+    if response.status == 200 and body.success == true:
+        return body.data
+
+    if body.success != false or not IsNonemptyString(body.data.code):
+        fail("Unrecognized WPRUS response")
+
+    code = body.data.code
+    details = body.data.details if present else {}
+
+    if code == "reassignment_user_not_found":
+        # details.account_deleted is true: do not delete the account again.
+        RecordDeletionCompleted(details)
+
+    if code == "role_not_allowed" or code == "role_sync_disabled":
+        # details.account_saved reports whether the profile was saved.
+        # details.applied_roles and details.rejected_roles describe role changes.
+        RecordRoleOutcome(details)
+
+    if code == "metadata_partial_failure":
+        # details.applied counts successful entries.
+        # details.rejected identifies entries that did not succeed.
+        RecordMetadataOutcome(details)
+
+    HandleError(response.status, code, details)
+```
+
+HTTP 403 with `invalid_token` means a new valid token is needed. HTTP 409 with `identity_mismatch` means the supplied login and current identifying email do not match. Account conflicts use `existing_user_login` or `existing_user_email`. See the [error code reference](operations.md#error-responses-and-retries).
+
 ## Create browser login and logout URLs
 
 Request a GET token, encrypt the account and sender details, and encode both values as URL query parameters:

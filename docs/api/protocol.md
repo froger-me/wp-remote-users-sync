@@ -126,25 +126,39 @@ Check both booleans independently. Account creation is available only when both 
 
 ## Read responses
 
-The receiving site returns an HTTP status code and, for server-to-server operations, a JSON response:
-
-- **200:** The operation succeeded. User-changing operations normally return `{"success":true,"data":true}`.
-- **400:** The request contains invalid or missing fields.
-- **403:** The token, sending connection, address or requested permission was rejected.
-- **404:** The targeted account was not found.
-- **409:** Account identifiers conflict or the requested session state conflicts with the current state.
-- **422:** The operation could not complete with the supplied data or allowed values.
-- **500:** The operation did not produce a usable result.
-
-Typical operation errors have the form:
+Server-to-server operations return an HTTP status and JSON. A successful account-changing request returns:
 
 ```json
-{"success":false,"data":{"code":"action_failed"}}
+{"success":true,"data":true}
 ```
 
-Some operations return more specific error information, such as `{"code":"invalid_identity_request"}` or an administrative error message. See [Operations and responses](operations.md) for the response shapes associated with each address.
+Errors return `success:false` and a specific error code in `data.code`:
 
-A metadata request can apply some entries and reject others; an error response therefore does not always mean that no entry changed. Check the result before retrying operations that may create duplicates or repeat a destructive change.
+```json
+{
+  "success": false,
+  "data": {
+    "code": "existing_user_email"
+  }
+}
+```
+
+The optional `data.message` is explanatory text. The optional `data.details` reports additional facts, including changes already applied before a failure. For example, a role error includes `account_saved`, `applied_roles` and `rejected_roles`. A failed content reassignment after account deletion includes `account_deleted` and `content_reassigned`.
+
+The status indicates the type of failure:
+
+- **400:** Invalid or incomplete request data.
+- **403:** Invalid security token, blocked sending address or an operation that is not permitted.
+- **404:** The account does not exist.
+- **409:** Username or email conflict, account identity mismatch or session-state conflict.
+- **422:** A requested change could not be completed, including rejected roles, unsuccessful content reassignment or metadata changes.
+- **500:** A token or administrative operation could not produce a result.
+
+The same HTTP status can describe different conditions. Always inspect `data.code`; use `data.details` to identify partial success. Common examples include `invalid_token` (403), `identity_mismatch` (409), `existing_user_email` (409), `role_not_allowed` (422) and `metadata_partial_failure` (422).
+
+The complete error code and status reference is in [Operations and responses](operations.md#error-responses-and-retries).
+
+For a metadata request, `details.applied` counts successful changes and `details.rejected` identifies unsuccessful entries. For a failed reassignment after deletion, `details.account_deleted` is `true`. Check these values before retrying any operation that can duplicate or destroy data.
 
 ## Browser login and logout
 

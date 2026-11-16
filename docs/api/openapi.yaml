@@ -28,11 +28,16 @@ paths:
         - "Tokens"
       operationId: "issueToken"
       summary: "Issue a security token"
-      description: "Send application/json with encrypted wprusdata and the issued token."
+      description: "Send application/json containing only encrypted wprusdata; the decrypted base_url identifies the receiver."
       x-wprus-decrypted-schema:
         "$ref": "#/components/schemas/TokenRequest"
       requestBody:
         "$ref": "#/components/requestBodies/TokenEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "invalid_token_request"
+        "500":
+          - "token_creation_failed"
       responses:
         "200":
           "$ref": "#/components/responses/TokenIssued"
@@ -51,6 +56,13 @@ paths:
         "$ref": "#/components/schemas/IdentityRequest"
       requestBody:
         "$ref": "#/components/requestBodies/ActionEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "invalid_identity_request"
+        "403":
+          - "invalid_token"
+          - "ip_not_allowed"
+          - "method_not_allowed"
       responses:
         "200":
           "$ref": "#/components/responses/IdentityChecked"
@@ -69,6 +81,27 @@ paths:
         "$ref": "#/components/schemas/CreateRequest"
       requestBody:
         "$ref": "#/components/requestBodies/ActionEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "invalid_create_request"
+        "403":
+          - "invalid_token"
+          - "ip_not_allowed"
+          - "method_not_allowed"
+          - "create_not_allowed"
+          - "role_sync_disabled"
+        "409":
+          - "identity_mismatch"
+          - "existing_user_login"
+          - "existing_user_email"
+        "422":
+          - "user_creation_failed"
+          - "role_not_allowed"
+      x-wprus-error-details:
+        role_sync_disabled:
+          "$ref": "#/components/schemas/RoleErrorDetails"
+        role_not_allowed:
+          "$ref": "#/components/schemas/RoleErrorDetails"
       responses:
         "200":
           "$ref": "#/components/responses/ActionSucceeded"
@@ -79,8 +112,6 @@ paths:
         "409":
           "$ref": "#/components/responses/RequestError"
         "422":
-          "$ref": "#/components/responses/RequestError"
-        "500":
           "$ref": "#/components/responses/RequestError"
   "/wprus/update/":
     post:
@@ -93,6 +124,29 @@ paths:
         "$ref": "#/components/schemas/UpdateRequest"
       requestBody:
         "$ref": "#/components/requestBodies/ActionEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "invalid_update_request"
+        "403":
+          - "invalid_token"
+          - "ip_not_allowed"
+          - "method_not_allowed"
+          - "update_not_allowed"
+          - "role_sync_disabled"
+        "404":
+          - "user_not_found"
+        "409":
+          - "identity_mismatch"
+          - "existing_user_login"
+          - "existing_user_email"
+        "422":
+          - "user_update_failed"
+          - "role_not_allowed"
+      x-wprus-error-details:
+        role_sync_disabled:
+          "$ref": "#/components/schemas/RoleErrorDetails"
+        role_not_allowed:
+          "$ref": "#/components/schemas/RoleErrorDetails"
       responses:
         "200":
           "$ref": "#/components/responses/ActionSucceeded"
@@ -106,8 +160,6 @@ paths:
           "$ref": "#/components/responses/RequestError"
         "422":
           "$ref": "#/components/responses/RequestError"
-        "500":
-          "$ref": "#/components/responses/RequestError"
   "/wprus/delete/":
     post:
       tags:
@@ -119,6 +171,24 @@ paths:
         "$ref": "#/components/schemas/DeleteRequest"
       requestBody:
         "$ref": "#/components/requestBodies/ActionEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "invalid_delete_request"
+        "403":
+          - "invalid_token"
+          - "ip_not_allowed"
+          - "method_not_allowed"
+          - "delete_not_allowed"
+        "404":
+          - "user_not_found"
+        "409":
+          - "identity_mismatch"
+        "422":
+          - "user_deletion_failed"
+          - "reassignment_user_not_found"
+      x-wprus-error-details:
+        reassignment_user_not_found:
+          "$ref": "#/components/schemas/ReassignmentErrorDetails"
       responses:
         "200":
           "$ref": "#/components/responses/ActionSucceeded"
@@ -143,6 +213,18 @@ paths:
         "$ref": "#/components/schemas/PasswordRequest"
       requestBody:
         "$ref": "#/components/requestBodies/ActionEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "invalid_password_request"
+        "403":
+          - "invalid_token"
+          - "ip_not_allowed"
+          - "method_not_allowed"
+          - "password_not_allowed"
+        "404":
+          - "user_not_found"
+        "409":
+          - "identity_mismatch"
       responses:
         "200":
           "$ref": "#/components/responses/ActionSucceeded"
@@ -153,8 +235,6 @@ paths:
         "404":
           "$ref": "#/components/responses/RequestError"
         "409":
-          "$ref": "#/components/responses/RequestError"
-        "422":
           "$ref": "#/components/responses/RequestError"
   "/wprus/meta/":
     post:
@@ -167,6 +247,34 @@ paths:
         "$ref": "#/components/schemas/MetadataRequest"
       requestBody:
         "$ref": "#/components/requestBodies/ActionEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "invalid_metadata_request"
+        "403":
+          - "invalid_token"
+          - "ip_not_allowed"
+          - "method_not_allowed"
+          - "metadata_not_allowed"
+          - "metadata_not_configured"
+        "404":
+          - "user_not_found"
+        "409":
+          - "identity_mismatch"
+        "422":
+          - "invalid_metadata_request"
+          - "metadata_key_invalid"
+          - "metadata_key_not_allowed"
+          - "metadata_change_failed"
+          - "metadata_partial_failure"
+      x-wprus-error-details:
+        metadata_key_invalid:
+          "$ref": "#/components/schemas/MetadataErrorDetails"
+        metadata_key_not_allowed:
+          "$ref": "#/components/schemas/MetadataErrorDetails"
+        metadata_change_failed:
+          "$ref": "#/components/schemas/MetadataErrorDetails"
+        metadata_partial_failure:
+          "$ref": "#/components/schemas/MetadataErrorDetails"
       responses:
         "200":
           "$ref": "#/components/responses/ActionSucceeded"
@@ -191,6 +299,20 @@ paths:
         "$ref": "#/components/schemas/AdminRequest"
       requestBody:
         "$ref": "#/components/requestBodies/ActionEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "wprus_invalid_admin_request"
+          - "wprus_unknown_admin_action"
+          - "wprus_invalid_ping"
+          - "wprus_invalid_outgoing_meta_request"
+          - "wprus_unknown_outgoing_meta_site"
+        "403":
+          - "invalid_token"
+          - "ip_not_allowed"
+          - "method_not_allowed"
+          - "wprus_ping_disabled"
+        "500":
+          - "wprus_admin_no_result"
       responses:
         "200":
           "$ref": "#/components/responses/AdminSucceeded"
@@ -264,6 +386,20 @@ paths:
         "$ref": "#/components/schemas/LogoutRequest"
       requestBody:
         "$ref": "#/components/requestBodies/ActionEnvelope"
+      x-wprus-error-codes:
+        "400":
+          - "invalid_logout_request"
+        "403":
+          - "invalid_token"
+          - "ip_not_allowed"
+          - "method_not_allowed"
+          - "logout_not_allowed"
+        "404":
+          - "user_not_found"
+        "409":
+          - "identity_mismatch"
+          - "already_logged_out"
+          - "session_mismatch"
       responses:
         "200":
           "$ref": "#/components/responses/ActionSucceeded"
@@ -274,8 +410,6 @@ paths:
         "404":
           "$ref": "#/components/responses/RequestError"
         "409":
-          "$ref": "#/components/responses/RequestError"
-        "422":
           "$ref": "#/components/responses/RequestError"
 components:
   parameters:
@@ -353,11 +487,52 @@ components:
           schema:
             "$ref": "#/components/schemas/AdminSuccessResponse"
     RequestError:
-      description: "Unsuccessful request; check HTTP status and response data"
+      description: "Unsuccessful request. Use data.code and optional data.details to determine the cause and any completed changes."
       content:
         "application/json":
           schema:
             "$ref": "#/components/schemas/ErrorResponse"
+          examples:
+            email_conflict:
+              summary: "Email address already belongs to an account (409)"
+              value:
+                success: false
+                data:
+                  code: "existing_user_email"
+            role_rejected:
+              summary: "The account was saved but one role was rejected (422)"
+              value:
+                success: false
+                data:
+                  code: "role_not_allowed"
+                  details:
+                    account_saved: true
+                    applied_roles:
+                      - "editor"
+                    rejected_roles:
+                      - "administrator"
+            reassignment_failed:
+              summary: "Account deleted without content reassignment (422)"
+              value:
+                success: false
+                data:
+                  code: "reassignment_user_not_found"
+                  details:
+                    account_deleted: true
+                    content_reassigned: false
+            metadata_partially_applied:
+              summary: "One metadata operation succeeded and another was rejected (422)"
+              value:
+                success: false
+                data:
+                  code: "metadata_partial_failure"
+                  details:
+                    applied: 1
+                    rejected:
+                      -
+                        operation: "add"
+                        key: "restricted_key"
+                        code: "metadata_key_not_allowed"
     BrowserProcessed:
       description: "Browser session response; may include session cookies"
     BrowserRedirect:
@@ -717,6 +892,74 @@ components:
               type: "array"
               items:
                 type: "string"
+    RoleErrorDetails:
+      type: "object"
+      required:
+        - "account_saved"
+        - "applied_roles"
+        - "rejected_roles"
+      properties:
+        account_saved:
+          type: "boolean"
+          const: true
+          description: "The account creation or update already succeeded."
+        applied_roles:
+          type: "array"
+          items:
+            type: "string"
+          description: "Roles that were successfully set or added."
+        rejected_roles:
+          type: "array"
+          items:
+            type: "string"
+          description: "Requested roles not accepted by the receiver."
+    ReassignmentErrorDetails:
+      type: "object"
+      required:
+        - "account_deleted"
+        - "content_reassigned"
+      properties:
+        account_deleted:
+          type: "boolean"
+          const: true
+        content_reassigned:
+          type: "boolean"
+          const: false
+    MetadataRejectedEntry:
+      type: "object"
+      required:
+        - "operation"
+        - "key"
+        - "code"
+      properties:
+        operation:
+          type: "string"
+          enum:
+            - "add"
+            - "update"
+            - "delete"
+        key:
+          type: "string"
+        code:
+          type: "string"
+          enum:
+            - "metadata_key_invalid"
+            - "metadata_key_not_allowed"
+            - "metadata_change_failed"
+    MetadataErrorDetails:
+      type: "object"
+      required:
+        - "applied"
+        - "rejected"
+      properties:
+        applied:
+          type: "integer"
+          minimum: 0
+          description: "Number of metadata operations that succeeded."
+        rejected:
+          type: "array"
+          items:
+            "$ref": "#/components/schemas/MetadataRejectedEntry"
     ErrorResponse:
       type: "object"
       required:
@@ -727,15 +970,17 @@ components:
           type: "boolean"
           const: false
         data:
-          oneOf:
-            -
-              type: "object"
-              required:
-                - "code"
-              properties:
-                code:
-                  type: "string"
-                message:
-                  type: "string"
-            -
+          type: "object"
+          required:
+            - "code"
+          properties:
+            code:
               type: "string"
+              description: "Machine-readable cause of the failure. See x-wprus-error-codes on the operation."
+            message:
+              type: "string"
+              description: "Optional human-readable explanation."
+            details:
+              type: "object"
+              description: "Optional information about changes completed before the error. See x-wprus-error-details on the operation."
+              additionalProperties: true

@@ -37,6 +37,7 @@ For encryption, token expiration, and browser requests, see [Message format and 
 - [Node.js example](client-example-nodejs.md)
 - [Laravel example](client-example-laravel.md)
 - [Operation reference and request examples](operations.md)
+- [HTTP error codes and partial-success details](operations.md#error-responses-and-retries)
 - [Receive WPRUS requests](implementing-a-peer.md)
 - [OpenAPI 3.1 specification](openapi.yaml)
 
