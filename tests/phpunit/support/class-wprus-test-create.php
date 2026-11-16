@@ -41,6 +41,11 @@ trait Wprus_Test_Incoming_Input {
 		$this->data[ $method ] = $payload;
 		$this->handle_request();
 	}
+
+	/** Return the status and body prepared for a failed request. */
+	public function response_error() {
+		return array( $this->response_status, $this->response_error );
+	}
 }
 
 /** Test access to the Create action. */
@@ -130,6 +135,19 @@ abstract class Wprus_Feature_Test_Case extends \AnyapeWPTestTools\IntegrationTes
 	 */
 	protected function reload_settings() {
 		$this->settings = new Wprus_Settings( array( 'login', 'logout', 'create', 'update', 'delete', 'password', 'role', 'meta' ) );
+	}
+
+	/**
+	 * Check the prepared HTTP status and error code.
+	 *
+	 * @param object $api Action handler.
+	 * @param string $code Expected error code.
+	 * @param int    $status Expected HTTP status.
+	 */
+	protected function assert_response_error( $api, $code, $status ) {
+		list( $actual_status, $error ) = $api->response_error();
+		$this->assertSame( $status, $actual_status );
+		$this->assertSame( $code, $error['code'] );
 	}
 
 	/**

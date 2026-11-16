@@ -51,7 +51,9 @@ class LogoutActionTest extends Wprus_Feature_Test_Case {
 		$bob   = self::factory()->user->create( array( 'user_login' => 'bob' ) );
 		WP_Session_Tokens::get_instance( $bob )->create( time() + HOUR_IN_SECONDS );
 		wp_set_current_user( $bob );
-		$this->assertFalse( $this->action( 'logout' )->receive( $this->payload( 'alice' ), 'get' ) );
+		$api = $this->action( 'logout' );
+		$this->assertFalse( $api->receive( $this->payload( 'alice' ), 'get' ) );
+		$this->assert_response_error( $api, 'session_mismatch', 409 );
 		$this->assertSame( $bob, get_current_user_id() );
 		$this->assertNotEmpty( WP_Session_Tokens::get_instance( $bob )->get_all() );
 		$this->assertInstanceOf( WP_User::class, get_userdata( $alice ) );
@@ -60,6 +62,8 @@ class LogoutActionTest extends Wprus_Feature_Test_Case {
 	/** A logout request for an unknown user fails. */
 	public function test_unknown_user_is_not_logged_out() {
 		wp_set_current_user( 0 );
-		$this->assertFalse( $this->action( 'logout' )->receive( $this->payload( 'unknown_user' ), 'get' ) );
+		$api = $this->action( 'logout' );
+		$this->assertFalse( $api->receive( $this->payload( 'unknown_user' ), 'get' ) );
+		$this->assert_response_error( $api, 'already_logged_out', 409 );
 	}
 }

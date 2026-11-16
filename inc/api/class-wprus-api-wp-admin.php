@@ -112,12 +112,12 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 			if ( $status < 400 || $status > 599 ) {
 				$status = 400;
 			}
-
-			wp_send_json_error( $result->get_error_message(), $status );
 		}
 
 		if ( null === $result ) {
-			wp_send_json_error( __( 'Administrative action did not return a result.', 'wprus' ), 500 );
+			$this->set_response_error( 'wprus_admin_no_result', 500 );
+
+			$status = 500;
 		}
 
 		parent::send_response( $result, $status );

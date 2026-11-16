@@ -57,7 +57,9 @@ class UpdateActionTest extends Wprus_Feature_Test_Case {
 	public function test_missing_user_requires_create_permission() {
 		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_actions']['create'] = false;
 		$this->reload_settings();
-		$this->assertFalse( (bool) $this->action( 'update' )->receive( $this->payload( 'missing' ) + array( 'user_email' => 'missing@example.test' ) ) );
+		$api = $this->action( 'update' );
+		$this->assertFalse( (bool) $api->receive( $this->payload( 'missing' ) + array( 'user_email' => 'missing@example.test' ) ) );
+		$this->assert_response_error( $api, 'user_not_found', 404 );
 		$this->assertFalse( get_user_by( 'login', 'missing' ) );
 		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_actions']['create'] = true;
 		$this->reload_settings();
@@ -75,7 +77,25 @@ class UpdateActionTest extends Wprus_Feature_Test_Case {
 		);
 		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_actions']['update'] = false;
 		$this->reload_settings();
-		$this->assertFalse( $this->action( 'update' )->receive( $this->payload( 'alice' ) + array( 'user_email' => 'after@example.test' ) ) );
+		$api = $this->action( 'update' );
+		$this->assertFalse( $api->receive( $this->payload( 'alice' ) + array( 'user_email' => 'after@example.test' ) ) );
+		$this->assert_response_error( $api, 'update_not_allowed', 403 );
 		$this->assertSame( 'before@example.test', get_userdata( $id )->user_email );
+	}
+
+	/** Other WordPress update failures use the general update code. */
+	public function test_other_update_failure_is_reported() {
+		self::factory()->user->create( array( 'user_login' => 'alice' ) );
+		$empty_login = static function () {
+			return '';
+		};
+		add_filter( 'pre_user_login', $empty_login, PHP_INT_MAX );
+		try {
+			$api = $this->action( 'update' );
+			$this->assertFalse( $api->receive( $this->payload( 'alice' ) ) );
+			$this->assert_response_error( $api, 'user_update_failed', 422 );
+		} finally {
+			remove_filter( 'pre_user_login', $empty_login, PHP_INT_MAX );
+		}
 	}
 }

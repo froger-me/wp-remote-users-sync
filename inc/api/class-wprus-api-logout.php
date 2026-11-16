@@ -47,8 +47,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 		$data   = $this->get_data();
 
 		if ( ! $this->validate( $data ) ) {
-			$this->response_status = 400;
-
+			$this->set_response_error( 'invalid_logout_request', 400 );
 			Wprus_Logger::log(
 				__( 'Logout action failed - received invalid data.', 'wprus' ),
 				'alert',
@@ -81,8 +80,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 		}
 
 		if ( ! get_current_user_id() ) {
-			$this->response_status = 409;
-
+			$this->set_response_error( 'already_logged_out', 409 );
 			Wprus_Logger::log(
 				__( 'Logout action failed - the user is already logged out.', 'wprus' ),
 				'warning',
@@ -128,8 +126,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			} elseif ( ! $user ) {
-				$this->response_status = 404;
-
+				$this->set_response_error( 'user_not_found', 404 );
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller.
@@ -141,8 +138,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			} else {
-				$this->response_status = 409;
-
+				$this->set_response_error( 'session_mismatch', 409 );
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller.
@@ -155,8 +151,7 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 				);
 			}
 		} elseif ( ! $site ) {
-			$this->response_status = 403;
-
+			$this->set_response_error( 'logout_not_allowed', 403 );
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller.
@@ -233,16 +228,6 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 	/*******************************************************************
 	 * Protected methods
 	 *******************************************************************/
-
-	/**
-	 * Check required fields for an incoming logout action.
-	 *
-	 * @param array $data Received request data.
-	 * @return bool Whether the logout request is valid.
-	 */
-	protected function validate( $data ) {
-		return parent::validate( $data ) && username_exists( $data['username'] );
-	}
 
 	/**
 	 * Check whether the logout began by clearing a login cookie.

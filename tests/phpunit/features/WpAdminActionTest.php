@@ -107,9 +107,23 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 		try {
 			$cases = array(
 				array( 'ok', true, 'ok' ),
-				array( new WP_Error( 'disabled', 'Disabled', array( 'status' => 200 ) ), false, 'Disabled' ),
-				array( new WP_Error( 'invalid', 'Invalid', array( 'status' => 422 ) ), false, 'Invalid' ),
-				array( null, false, 'Administrative action did not return a result.' ),
+				array(
+					new WP_Error( 'disabled', 'Disabled', array( 'status' => 200 ) ),
+					false,
+					array(
+						'code'    => 'disabled',
+						'message' => 'Disabled',
+					),
+				),
+				array(
+					new WP_Error( 'invalid', 'Invalid', array( 'status' => 422 ) ),
+					false,
+					array(
+						'code'    => 'invalid',
+						'message' => 'Invalid',
+					),
+				),
+				array( null, false, array( 'code' => 'wprus_admin_no_result' ) ),
 			);
 			foreach ( $cases as $case ) {
 				ob_start();
