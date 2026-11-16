@@ -52,4 +52,4 @@ For encryption, token expiration, and browser requests, see [Message format and 
 - [HTTP error codes and partial-success details](operations.md#error-responses-and-retries)
 - [OpenAPI 3.1 specification](openapi.yaml)
 
-The OpenAPI specification describes the HTTP request and response bodies. Each operation also has an `x-wprus-decrypted-schema` reference describing the JSON that must be encrypted into `wprusdata`.
+The OpenAPI specification describes the HTTP request and response bodies. Its `x-wprus-decrypted-schema` entries are **documentation-only OpenAPI extensions** that describe the JSON inside the encrypted `wprusdata` value. They are not part of the WPRUS protocol or PHP implementation, and they are neither sent in requests nor processed by WPRUS.
