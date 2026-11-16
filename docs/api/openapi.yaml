@@ -1,0 +1,741 @@
+openapi: "3.1.0"
+info:
+  title: "WPRUS communication API"
+  version: "2.4.0"
+  description: "Send encrypted JSON through HTTPS. Server-to-server POST requests use JSON with wprusdata and token, except token requests which use wprusdata alone. Browser login and logout use GET query parameters. The x-wprus-decrypted-schema field describes the JSON to encrypt."
+externalDocs:
+  description: "Connection setup, examples and protocol"
+  url: "https://github.com/froger-me/wp-remote-users-sync/blob/main/docs/api/README.md"
+servers:
+  -
+    url: "https://receiver.example"
+    description: "Replace with full receiving site base URL, including any subdirectory"
+tags:
+  -
+    name: "Tokens"
+  -
+    name: "Identity"
+  -
+    name: "Accounts"
+  -
+    name: "Administration"
+  -
+    name: "Browser sessions"
+paths:
+  "/wprus/token/":
+    post:
+      tags:
+        - "Tokens"
+      operationId: "issueToken"
+      summary: "Issue a security token"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/TokenRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/TokenEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/TokenIssued"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "500":
+          "$ref": "#/components/responses/RequestError"
+  "/wprus/identity/":
+    post:
+      tags:
+        - "Identity"
+      operationId: "checkIdentity"
+      summary: "Check username and email existence"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/IdentityRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/ActionEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/IdentityChecked"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "403":
+          "$ref": "#/components/responses/RequestError"
+  "/wprus/create/":
+    post:
+      tags:
+        - "Accounts"
+      operationId: "createAccount"
+      summary: "Create an account"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/CreateRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/ActionEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/ActionSucceeded"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "403":
+          "$ref": "#/components/responses/RequestError"
+        "409":
+          "$ref": "#/components/responses/RequestError"
+        "422":
+          "$ref": "#/components/responses/RequestError"
+        "500":
+          "$ref": "#/components/responses/RequestError"
+  "/wprus/update/":
+    post:
+      tags:
+        - "Accounts"
+      operationId: "updateAccount"
+      summary: "Update an account"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/UpdateRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/ActionEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/ActionSucceeded"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "403":
+          "$ref": "#/components/responses/RequestError"
+        "404":
+          "$ref": "#/components/responses/RequestError"
+        "409":
+          "$ref": "#/components/responses/RequestError"
+        "422":
+          "$ref": "#/components/responses/RequestError"
+        "500":
+          "$ref": "#/components/responses/RequestError"
+  "/wprus/delete/":
+    post:
+      tags:
+        - "Accounts"
+      operationId: "deleteAccount"
+      summary: "Delete an account"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/DeleteRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/ActionEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/ActionSucceeded"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "403":
+          "$ref": "#/components/responses/RequestError"
+        "404":
+          "$ref": "#/components/responses/RequestError"
+        "409":
+          "$ref": "#/components/responses/RequestError"
+        "422":
+          "$ref": "#/components/responses/RequestError"
+  "/wprus/password/":
+    post:
+      tags:
+        - "Accounts"
+      operationId: "setPassword"
+      summary: "Change account password"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/PasswordRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/ActionEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/ActionSucceeded"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "403":
+          "$ref": "#/components/responses/RequestError"
+        "404":
+          "$ref": "#/components/responses/RequestError"
+        "409":
+          "$ref": "#/components/responses/RequestError"
+        "422":
+          "$ref": "#/components/responses/RequestError"
+  "/wprus/meta/":
+    post:
+      tags:
+        - "Accounts"
+      operationId: "changeMetadata"
+      summary: "Change account metadata"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/MetadataRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/ActionEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/ActionSucceeded"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "403":
+          "$ref": "#/components/responses/RequestError"
+        "404":
+          "$ref": "#/components/responses/RequestError"
+        "409":
+          "$ref": "#/components/responses/RequestError"
+        "422":
+          "$ref": "#/components/responses/RequestError"
+  "/wprus/wp-admin/":
+    post:
+      tags:
+        - "Administration"
+      operationId: "adminRequest"
+      summary: "Check permissions or outgoing metadata"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/AdminRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/ActionEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/AdminSucceeded"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "403":
+          "$ref": "#/components/responses/RequestError"
+        "500":
+          "$ref": "#/components/responses/RequestError"
+  "/wprus/login/":
+    get:
+      tags:
+        - "Browser sessions"
+      operationId: "browserLogin"
+      summary: "Establish browser login"
+      description: "Use a single-use GET token and open in the visiting browser."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/LoginRequest"
+      parameters:
+        -
+          "$ref": "#/components/parameters/EncryptedQuery"
+        -
+          "$ref": "#/components/parameters/TokenQuery"
+      responses:
+        "200":
+          "$ref": "#/components/responses/BrowserProcessed"
+        "303":
+          "$ref": "#/components/responses/BrowserRedirect"
+        "400":
+          "$ref": "#/components/responses/BrowserProcessed"
+        "403":
+          "$ref": "#/components/responses/BrowserProcessed"
+        "404":
+          "$ref": "#/components/responses/BrowserProcessed"
+        "409":
+          "$ref": "#/components/responses/BrowserProcessed"
+  "/wprus/logout/":
+    get:
+      tags:
+        - "Browser sessions"
+      operationId: "browserLogout"
+      summary: "End browser session"
+      description: "Use a single-use GET token and open in the visiting browser."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/LogoutRequest"
+      parameters:
+        -
+          "$ref": "#/components/parameters/EncryptedQuery"
+        -
+          "$ref": "#/components/parameters/TokenQuery"
+      responses:
+        "200":
+          "$ref": "#/components/responses/BrowserProcessed"
+        "303":
+          "$ref": "#/components/responses/BrowserRedirect"
+        "400":
+          "$ref": "#/components/responses/BrowserProcessed"
+        "403":
+          "$ref": "#/components/responses/BrowserProcessed"
+        "404":
+          "$ref": "#/components/responses/BrowserProcessed"
+        "409":
+          "$ref": "#/components/responses/BrowserProcessed"
+    post:
+      tags:
+        - "Browser sessions"
+      operationId: "postLogout"
+      summary: "Process logout notification"
+      description: "Send application/json with encrypted wprusdata and the issued token."
+      x-wprus-decrypted-schema:
+        "$ref": "#/components/schemas/LogoutRequest"
+      requestBody:
+        "$ref": "#/components/requestBodies/ActionEnvelope"
+      responses:
+        "200":
+          "$ref": "#/components/responses/ActionSucceeded"
+        "400":
+          "$ref": "#/components/responses/RequestError"
+        "403":
+          "$ref": "#/components/responses/RequestError"
+        "404":
+          "$ref": "#/components/responses/RequestError"
+        "409":
+          "$ref": "#/components/responses/RequestError"
+        "422":
+          "$ref": "#/components/responses/RequestError"
+components:
+  parameters:
+    EncryptedQuery:
+      name: "wprusdata"
+      in: "query"
+      required: true
+      schema:
+        type: "string"
+    TokenQuery:
+      name: "token"
+      in: "query"
+      required: true
+      schema:
+        type: "string"
+  requestBodies:
+    TokenEnvelope:
+      required: true
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "wprusdata"
+            properties:
+              wprusdata:
+                type: "string"
+                description: "Encrypted JSON message"
+          example:
+            wprusdata: "<encrypted-token-request>"
+    ActionEnvelope:
+      required: true
+      content:
+        "application/json":
+          schema:
+            type: "object"
+            additionalProperties: false
+            required:
+              - "wprusdata"
+              - "token"
+            properties:
+              wprusdata:
+                type: "string"
+                description: "Encrypted JSON message"
+              token:
+                type: "string"
+                description: "Nonce issued by /wprus/token/"
+          example:
+            wprusdata: "<encrypted-message>"
+            token: "<issued-nonce>"
+  responses:
+    TokenIssued:
+      description: "Token and expiration time"
+      content:
+        "application/json":
+          schema:
+            "$ref": "#/components/schemas/TokenResponse"
+    IdentityChecked:
+      description: "Username and email existence results"
+      content:
+        "application/json":
+          schema:
+            "$ref": "#/components/schemas/IdentityResponse"
+    ActionSucceeded:
+      description: "Operation completed"
+      content:
+        "application/json":
+          schema:
+            "$ref": "#/components/schemas/ActionSuccessResponse"
+    AdminSucceeded:
+      description: "Administrative request completed"
+      content:
+        "application/json":
+          schema:
+            "$ref": "#/components/schemas/AdminSuccessResponse"
+    RequestError:
+      description: "Unsuccessful request; check HTTP status and response data"
+      content:
+        "application/json":
+          schema:
+            "$ref": "#/components/schemas/ErrorResponse"
+    BrowserProcessed:
+      description: "Browser session response; may include session cookies"
+    BrowserRedirect:
+      description: "Redirect to browser destination"
+      headers:
+        Location:
+          schema:
+            type: "string"
+  schemas:
+    TokenRequest:
+      type: "object"
+      required:
+        - "method"
+        - "base_url"
+      properties:
+        action:
+          type: "string"
+          description: "Operation name"
+        method:
+          type: "string"
+          enum:
+            - "post"
+            - "get"
+        base_url:
+          type: "string"
+          description: "Receiver base URL"
+          format: "uri"
+    TokenResponse:
+      type: "object"
+      required:
+        - "nonce"
+        - "expiry"
+      properties:
+        nonce:
+          type: "string"
+          minLength: 1
+        expiry:
+          type: "integer"
+          description: "Expiration in Unix seconds"
+    BaseRequest:
+      type: "object"
+      required:
+        - "username"
+        - "base_url"
+      properties:
+        username:
+          type: "string"
+          description: "Account login at receiver"
+          minLength: 1
+        base_url:
+          type: "string"
+          description: "Registered sender base URL"
+          format: "uri"
+        identity_email:
+          type: "string"
+          description: "Existing account email; previous email when changing address"
+          format: "email"
+    IdentityRequest:
+      type: "object"
+      required:
+        - "username"
+        - "user_email"
+        - "base_url"
+      properties:
+        username:
+          type: "string"
+          minLength: 1
+        user_email:
+          type: "string"
+          format: "email"
+        base_url:
+          type: "string"
+          description: "Registered sender base URL"
+          format: "uri"
+    IdentityResponse:
+      type: "object"
+      required:
+        - "success"
+        - "data"
+      properties:
+        success:
+          type: "boolean"
+          const: true
+        data:
+          type: "object"
+          required:
+            - "username_exists"
+            - "email_exists"
+          properties:
+            username_exists:
+              type: "boolean"
+            email_exists:
+              type: "boolean"
+    UserFields:
+      type: "object"
+      properties:
+        user_nicename:
+          type: "string"
+        user_url:
+          type: "string"
+        user_email:
+          type: "string"
+          format: "email"
+        display_name:
+          type: "string"
+        nickname:
+          type: "string"
+        first_name:
+          type: "string"
+        last_name:
+          type: "string"
+        description:
+          type: "string"
+        rich_editing:
+          type: "string"
+        syntax_highlighting:
+          type: "string"
+        comment_shortcuts:
+          type: "string"
+        admin_color:
+          type: "string"
+        user_registered:
+          type: "string"
+        locale:
+          type: "string"
+        use_ssl:
+          type:
+            - "string"
+            - "boolean"
+            - "integer"
+        show_admin_bar_front:
+          type:
+            - "string"
+            - "boolean"
+        user_pass:
+          type: "string"
+          description: "New password inside encrypted wprusdata"
+        roles:
+          "$ref": "#/components/schemas/RoleChanges"
+    RoleChanges:
+      type: "object"
+      properties:
+        set:
+          oneOf:
+            -
+              type: "string"
+            -
+              const: false
+        add:
+          oneOf:
+            -
+              type: "array"
+              items:
+                type: "string"
+            -
+              const: false
+    CreateRequest:
+      allOf:
+        -
+          "$ref": "#/components/schemas/BaseRequest"
+        -
+          "$ref": "#/components/schemas/UserFields"
+        -
+          type: "object"
+          required:
+            - "user_email"
+    UpdateRequest:
+      allOf:
+        -
+          "$ref": "#/components/schemas/BaseRequest"
+        -
+          "$ref": "#/components/schemas/UserFields"
+        -
+          type: "object"
+          properties:
+            user_activation_key:
+              type: "string"
+    DeleteRequest:
+      allOf:
+        -
+          "$ref": "#/components/schemas/BaseRequest"
+        -
+          type: "object"
+          properties:
+            reassign_username:
+              oneOf:
+                -
+                  type: "string"
+                -
+                  const: false
+              description: "Account to receive deleted content"
+    PasswordRequest:
+      allOf:
+        -
+          "$ref": "#/components/schemas/BaseRequest"
+        -
+          type: "object"
+          required:
+            - "user_pass"
+          properties:
+            user_pass:
+              type: "string"
+              description: "New password inside encrypted wprusdata"
+              minLength: 1
+    MetadataAddEntry:
+      type: "object"
+      required:
+        - "meta_value"
+        - "unique"
+      properties:
+        meta_value: {}
+        unique:
+          type: "boolean"
+    MetadataUpdateEntry:
+      type: "object"
+      required:
+        - "meta_value"
+        - "prev_value"
+      properties:
+        meta_value: {}
+        prev_value: {}
+    MetadataDeleteEntry:
+      type: "object"
+      required:
+        - "meta_value"
+        - "delete_all"
+      properties:
+        meta_value: {}
+        delete_all:
+          type: "boolean"
+    MetadataRequest:
+      allOf:
+        -
+          "$ref": "#/components/schemas/BaseRequest"
+        -
+          type: "object"
+          properties:
+            add:
+              type: "object"
+              additionalProperties:
+                type: "array"
+                items:
+                  "$ref": "#/components/schemas/MetadataAddEntry"
+            update:
+              type: "object"
+              additionalProperties:
+                type: "array"
+                items:
+                  "$ref": "#/components/schemas/MetadataUpdateEntry"
+            delete:
+              type: "object"
+              additionalProperties:
+                type: "array"
+                items:
+                  "$ref": "#/components/schemas/MetadataDeleteEntry"
+    AdminRequest:
+      allOf:
+        -
+          "$ref": "#/components/schemas/BaseRequest"
+        -
+          type: "object"
+          required:
+            - "action"
+            - "data"
+          properties:
+            action:
+              type: "string"
+              enum:
+                - "ping"
+                - "outgoing_meta"
+            data:
+              oneOf:
+                -
+                  "$ref": "#/components/schemas/PingData"
+                -
+                  "$ref": "#/components/schemas/OutgoingMetaData"
+    PingData:
+      type: "object"
+      required:
+        - "base_url"
+        - "target_action"
+        - "direction"
+      properties:
+        base_url:
+          type: "string"
+          description: "Registered sender URL"
+          format: "uri"
+        target_action:
+          type: "string"
+          enum:
+            - "login"
+            - "logout"
+            - "create"
+            - "update"
+            - "delete"
+            - "password"
+            - "role"
+            - "meta"
+        direction:
+          type: "string"
+          enum:
+            - "incoming"
+            - "outgoing"
+    OutgoingMetaData:
+      type: "object"
+      required:
+        - "base_url"
+      properties:
+        base_url:
+          type: "string"
+          description: "Registered sender URL"
+          format: "uri"
+    LoginRequest:
+      allOf:
+        -
+          "$ref": "#/components/schemas/BaseRequest"
+        -
+          type: "object"
+          properties:
+            remember:
+              type:
+                - "boolean"
+                - "integer"
+                - "string"
+            callback_url:
+              type: "string"
+              description: "Redirect destination when required"
+              format: "uri"
+    LogoutRequest:
+      "$ref": "#/components/schemas/BaseRequest"
+    ActionSuccessResponse:
+      type: "object"
+      required:
+        - "success"
+        - "data"
+      properties:
+        success:
+          type: "boolean"
+          const: true
+        data:
+          type: "boolean"
+          const: true
+    AdminSuccessResponse:
+      type: "object"
+      required:
+        - "success"
+        - "data"
+      properties:
+        success:
+          type: "boolean"
+          const: true
+        data:
+          oneOf:
+            -
+              type: "string"
+            -
+              type: "array"
+              items:
+                type: "string"
+    ErrorResponse:
+      type: "object"
+      required:
+        - "success"
+        - "data"
+      properties:
+        success:
+          type: "boolean"
+          const: false
+        data:
+          oneOf:
+            -
+              type: "object"
+              required:
+                - "code"
+              properties:
+                code:
+                  type: "string"
+                message:
+                  type: "string"
+            -
+              type: "string"

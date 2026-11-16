@@ -2,6 +2,8 @@
 
 Current version: **2.4.0**.
 
+[Integrating applications with WPRUS: protocol, OpenAPI specification, and client examples](docs/api/README.md)
+
 * [General Description](#user-content-general-description)
     * [Overview](#user-content-overview)
     * [Trust Model](#user-content-trust-model)
