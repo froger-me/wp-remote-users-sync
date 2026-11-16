@@ -183,12 +183,13 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	 * @return bool Whether the metadata action succeeded.
 	 */
 	public function handle_notification() {
-		$result    = false;
-		$had_error = false;
-		$data      = $this->get_data();
+		$result   = false;
+		$applied  = 0;
+		$rejected = array();
+		$data     = $this->get_data();
 
 		if ( ! $this->validate( $data ) ) {
-			$this->response_status = 400;
+			$this->set_response_error( 'invalid_metadata_request', 400 );
 
 			return $result;
 		}
@@ -199,7 +200,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 		if ( $site ) {
 
 			if ( empty( $site['incoming_meta'] ) || ! is_array( $site['incoming_meta'] ) ) {
-				$this->response_status = 403;
+				$this->set_response_error( 'metadata_not_configured', 403 );
 
 				return false;
 			}
@@ -207,7 +208,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 			$user = get_user_by( 'login', $data['username'] );
 
 			if ( ! $user ) {
-				$this->response_status = 404;
+				$this->set_response_error( 'user_not_found', 404 );
 
 				return false;
 			}
@@ -235,13 +236,21 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 						wp_unslash( $meta_key ) !== $meta_key ||
 						sanitize_key( $meta_key ) !== $meta_key
 					) {
-						$had_error = true;
+						$rejected[] = array(
+							'operation' => $change_type,
+							'key'       => (string) $meta_key,
+							'code'      => 'metadata_key_invalid',
+						);
 
 						continue;
 					}
 
 					if ( $this->is_excluded_meta_key( $meta_key ) ) {
-						$had_error = true;
+						$rejected[] = array(
+							'operation' => $change_type,
+							'key'       => $meta_key,
+							'code'      => 'metadata_key_not_allowed',
+						);
 
 						Wprus_Logger::log(
 							sprintf(
@@ -321,6 +330,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 								}
 
 								$result = true;
+								++$applied;
 
 								if ( $message ) {
 									Wprus_Logger::log(
@@ -330,7 +340,11 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 									);
 								}
 							} else {
-								$had_error = true;
+								$rejected[] = array(
+									'operation' => $change_type,
+									'key'       => $meta_key,
+									'code'      => 'metadata_change_failed',
+								);
 
 								switch ( $change_type ) {
 									case 'add':
@@ -366,7 +380,11 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 							}
 						}
 					} else {
-						$had_error = true;
+						$rejected[] = array(
+							'operation' => $change_type,
+							'key'       => $meta_key,
+							'code'      => 'metadata_key_not_allowed',
+						);
 
 						Wprus_Logger::log(
 							sprintf(
@@ -386,8 +404,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 				}
 			}
 		} else {
-			$this->response_status = 403;
-
+			$this->set_response_error( 'metadata_not_allowed', 403 );
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the URL of the caller.
@@ -399,7 +416,20 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 			);
 		}
 
-		return $result && ! $had_error;
+		if ( $rejected ) {
+			$this->set_response_error(
+				$applied ? 'metadata_partial_failure' : $rejected[0]['code'],
+				422,
+				array(
+					'applied'  => $applied,
+					'rejected' => $rejected,
+				)
+			);
+		} elseif ( ! $result && $site ) {
+			$this->set_response_error( 'invalid_metadata_request', 422 );
+		}
+
+		return $result && ! $rejected;
 	}
 
 	/**

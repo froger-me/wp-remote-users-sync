@@ -128,8 +128,7 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 		$result = false;
 
 		if ( ! $this->validate( $data ) ) {
-			$this->response_status = 400;
-
+			$this->set_response_error( 'invalid_password_request', 400 );
 			Wprus_Logger::log(
 				__( 'Password action failed - received invalid data.', 'wprus' ),
 				'alert',
@@ -160,7 +159,7 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			} else {
-				$this->response_status = 404;
+				$this->set_response_error( 'user_not_found', 404 );
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller.
@@ -173,8 +172,7 @@ class Wprus_Api_Password extends Wprus_Api_Abstract {
 				);
 			}
 		} else {
-			$this->response_status = 403;
-
+			$this->set_response_error( 'password_not_allowed', 403 );
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller.

@@ -194,8 +194,9 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 		$id = self::factory()->user->create( array( 'user_login' => 'alice' ) );
 		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_meta'] = array();
 		$this->reload_settings();
+		$api = $this->action( 'meta' );
 		$this->assertFalse(
-			$this->action( 'meta' )->receive(
+			$api->receive(
 				$this->payload( 'alice' ) + array(
 					'update' => array(
 						'allowed_key' => array(
@@ -208,6 +209,7 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 				)
 			)
 		);
+		$this->assert_response_error( $api, 'metadata_not_configured', 403 );
 		$this->assertFalse( metadata_exists( 'user', $id, 'allowed_key' ) );
 	}
 
@@ -535,7 +537,12 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 				),
 			),
 		);
-		$this->assertFalse( $this->action( 'meta' )->receive( $this->payload( 'alice' ) + array( 'add' => $changes ) ) );
+		$api     = $this->action( 'meta' );
+		$this->assertFalse( $api->receive( $this->payload( 'alice' ) + array( 'add' => $changes ) ) );
+		$this->assert_response_error( $api, 'metadata_partial_failure', 422 );
+		list( , $error ) = $api->response_error();
+		$this->assertSame( 1, $error['details']['applied'] );
+		$this->assertSame( 'metadata_key_not_allowed', $error['details']['rejected'][0]['code'] );
 		$this->assertSame( 'yes', get_user_meta( $id, 'allowed_key', true ) );
 		$this->assertFalse( metadata_exists( 'user', $id, 'other_key' ) );
 	}

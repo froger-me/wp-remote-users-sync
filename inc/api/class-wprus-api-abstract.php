@@ -81,6 +81,12 @@ abstract class Wprus_Api_Abstract {
 	 */
 	protected $response_status = 422;
 	/**
+	 * Error returned when an action fails.
+	 *
+	 * @var array
+	 */
+	protected $response_error = array();
+	/**
 	 * The user ID used to save and fire async actions.
 	 *
 	 * @var int
@@ -348,6 +354,7 @@ abstract class Wprus_Api_Abstract {
 	 */
 	public function handle_request() {
 		$this->response_status = 422;
+		$this->response_error  = array();
 		$data                  = $this->get_data();
 		$is_remote_post        = $this->doing_remote_action && 'post' === $this->method;
 
@@ -357,6 +364,7 @@ abstract class Wprus_Api_Abstract {
 		) {
 
 			if ( $is_remote_post ) {
+				$this->set_response_error( 'invalid_' . $this->endpoint . '_request', 400 );
 				$this->send_response( false, 400 );
 			} else {
 				status_header( 400 );
@@ -372,6 +380,7 @@ abstract class Wprus_Api_Abstract {
 			);
 
 			if ( $is_remote_post ) {
+				$this->set_response_error( 'identity_mismatch', 409 );
 				$this->send_response( false, 409 );
 			} else {
 				status_header( 409 );
@@ -379,13 +388,13 @@ abstract class Wprus_Api_Abstract {
 		} elseif ( 'wp-admin' !== $this->endpoint && isset( $data['ping'] ) ) {
 
 			if ( $is_remote_post ) {
+				$this->set_response_error( 'invalid_' . $this->endpoint . '_request', 400 );
 				$this->send_response( false, 400 );
 			} else {
 				status_header( 400 );
 			}
 		} elseif ( method_exists( $this, 'handle_notification' ) ) {
 			do_action( 'wprus_before_handle_action_notification', $this->endpoint, $data );
-
 			Wprus_Api_Identity::set_handling_incoming( true );
 
 			try {
@@ -423,6 +432,7 @@ abstract class Wprus_Api_Abstract {
 		$token_filter         = FILTER_UNSAFE_RAW;
 		$token                = 'post' === $this->method ? ( $this->request_body['token'] ?? null ) : filter_input( INPUT_GET, 'token', $token_filter );
 		$is_authorized_remote = false;
+		$error_code           = 'method_not_allowed';
 		$origin               = false;
 		$remote_data          = $this->get_data();
 		$remote_addr          = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
@@ -436,7 +446,8 @@ abstract class Wprus_Api_Abstract {
 		}
 
 		if ( ! is_string( $token ) || ! Wprus_Nonce::validate_nonce( $token ) ) {
-			$message = __( 'Unauthorized access (invalid token)', 'wprus' );
+			$error_code = 'invalid_token';
+			$message    = __( 'Unauthorized access (invalid token)', 'wprus' );
 		} else {
 
 			if ( 'get' === $this->method ) {
@@ -449,6 +460,7 @@ abstract class Wprus_Api_Abstract {
 
 						if ( $this->cidr_match( $remote_addr, $range ) ) {
 							$is_authorized_remote = true;
+
 							break;
 						}
 					}
@@ -468,10 +480,12 @@ abstract class Wprus_Api_Abstract {
 			if ( $is_authorized_remote ) {
 				$message = __( 'Access granted', 'wprus' );
 			} elseif ( 'post' === $this->method && self::$ip_whitelist ) {
+				$error_code = 'ip_not_allowed';
 				// translators: %s is the remote IP address.
 				$message = sprintf( __( 'Unauthorized access (invalid remote IP address %s)', 'wprus' ), $remote_addr );
 			} else {
-				$message = __( 'Unauthorized access (invalid method)', 'wprus' );
+				$error_code = 'method_not_allowed';
+				$message    = __( 'Unauthorized access (invalid method)', 'wprus' );
 			}
 		}
 
@@ -489,13 +503,15 @@ abstract class Wprus_Api_Abstract {
 			do_action( 'wprus_unauthorized_access', $this->endpoint, $remote_data, $token, $this );
 
 			if ( 'post' === $this->method ) {
-				$message = __( 'The remote website encountered the following error: ', 'wprus' ) . $message;
-
-				wp_send_json_error( $message, 403 );
+				wp_send_json_error(
+					array(
+						'code'    => $error_code,
+						'message' => __( 'The remote website encountered the following error: ', 'wprus' ) . $message,
+					),
+					403
+				);
 			} elseif ( $this->needs_redirect() ) {
-				$url = isset( $remote_data['callback_url'] ) ? $remote_data['callback_url'] : home_url();
-
-				wp_redirect( $url, 303 ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+				wp_redirect( isset( $remote_data['callback_url'] ) ? $remote_data['callback_url'] : home_url(), 303 ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 
 				exit();
 			} else {
@@ -517,15 +533,12 @@ abstract class Wprus_Api_Abstract {
 		$init_notification_hooks = apply_filters( 'wprus_init_notification_hooks', true );
 
 		if ( ! $init_notification_hooks ) {
-
 			return;
 		}
 
 		if ( method_exists( $this, 'init_notification_hooks' ) ) {
 			do_action( 'wprus_before_init_notification_hooks', $this->endpoint, $this );
-
 			$this->init_notification_hooks();
-
 			do_action( 'wprus_after_init_notification_hooks', $this->endpoint, $this );
 		}
 	}
@@ -631,9 +644,11 @@ abstract class Wprus_Api_Abstract {
 	 */
 	public function init_data() {
 		$data_get           = filter_input( INPUT_GET, 'wprusdata', FILTER_UNSAFE_RAW );
+		$request_method     = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_key( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : '';
+		$content_type       = isset( $_SERVER['CONTENT_TYPE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['CONTENT_TYPE'] ) ) : '';
 		$this->request_body = array();
-		$this->method       = 'POST' === ( $_SERVER['REQUEST_METHOD'] ?? '' ) ? 'post' : 'get';
-		$is_json            = 'post' === $this->method && false !== stripos( $_SERVER['CONTENT_TYPE'] ?? '', 'application/json' );
+		$this->method       = 'post' === strtolower( $request_method ) ? 'post' : 'get';
+		$is_json            = 'post' === $this->method && false !== stripos( $content_type, 'application/json' );
 
 		if ( $is_json ) {
 			$decoded = json_decode( file_get_contents( 'php://input' ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Read the incoming HTTP request.
@@ -1010,6 +1025,23 @@ abstract class Wprus_Api_Abstract {
 	}
 
 	/**
+	 * Set the error returned when an action fails.
+	 *
+	 * @param string $code Error code.
+	 * @param int    $status HTTP status.
+	 * @param array  $details Optional result details.
+	 * @return void
+	 */
+	protected function set_response_error( $code, $status, $details = array() ) {
+		$this->response_status = $status;
+		$this->response_error  = array( 'code' => $code );
+
+		if ( $details ) {
+			$this->response_error['details'] = $details;
+		}
+	}
+
+	/**
 	 * Send a JSON response and end the request.
 	 *
 	 * @param mixed    $result Action result.
@@ -1024,16 +1056,27 @@ abstract class Wprus_Api_Abstract {
 		}
 
 		if ( is_wp_error( $result ) ) {
-			wp_send_json_error(
-				array(
-					'code'    => $result->get_error_code(),
-					'message' => $result->get_error_message(),
-				),
-				$status
+			$error_data = $result->get_error_data();
+			$details    = is_array( $error_data ) ? ( $error_data['details'] ?? array_diff_key( $error_data, array( 'status' => true ) ) ) : array();
+			$error      = array(
+				'code'    => $result->get_error_code(),
+				'message' => $result->get_error_message(),
 			);
+
+			if ( $details ) {
+				$error['details'] = $details;
+			}
+
+			wp_send_json_error( $error, $status );
 		}
 
-		wp_send_json_error( array( 'code' => 'action_failed' ), $status );
+		$error = $this->response_error;
+
+		if ( ! $error ) {
+			$error = array( 'code' => 'action_failed' );
+		}
+
+		wp_send_json_error( $error, $status );
 	}
 
 	/**

@@ -39,7 +39,10 @@ class RequestValidationTest extends Wprus_Feature_Test_Case {
 		unset( $request[ $missing ] );
 		wp_set_current_user( 0 );
 		$method = in_array( $action, array( 'login', 'logout' ), true ) ? 'get' : 'post';
-		$this->action( $action )->receive( $request, $method );
+		$api    = $this->action( $action );
+		$api->receive( $request, $method );
+		$error_action = 'meta' === $action ? 'metadata' : $action;
+		$this->assert_response_error( $api, 'invalid_' . $error_action . '_request', 400 );
 		$this->assertInstanceOf( WP_User::class, get_userdata( $id ) );
 		$this->assertSame( 'before@example.test', get_userdata( $id )->user_email );
 		$this->assertSame( 0, get_current_user_id() );

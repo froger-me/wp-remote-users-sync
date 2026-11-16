@@ -315,12 +315,15 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 
 		if ( ! empty( self::$approved_creations[ $key ] ) ) {
 			--self::$approved_creations[ $key ];
+
 			return $data;
 		}
 
 		if ( has_action( 'wprus_validate_user_creation' ) ) {
 			$result = $this->check_remote_identity( $username, $email );
+
 			do_action( 'wprus_validate_user_creation', $username, $email, $data, $result );
+
 			return $data;
 		}
 
@@ -351,6 +354,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 
 		if ( is_wp_error( $result ) ) {
 			self::$blocked_creations[ $user_id ] = true;
+
 			Wprus_Logger::log(
 				sprintf( 'Outgoing Create action for user %d was skipped: %s.', $user_id, $result->get_error_code() ),
 				'alert',

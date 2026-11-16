@@ -110,8 +110,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 		$data   = $this->get_data_get();
 
 		if ( ! $this->validate( $data ) ) {
-			$this->response_status = 400;
-
+			$this->set_response_error( 'invalid_login_request', 400 );
 			Wprus_Logger::log(
 				array(
 					'message' => __( 'Login action failed - received invalid data.', 'wprus' ),
@@ -147,8 +146,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			} else {
-				$this->response_status = 404;
-
+				$this->set_response_error( 'user_not_found', 404 );
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller.
@@ -161,8 +159,7 @@ class Wprus_Api_Login extends Wprus_Api_Abstract {
 				);
 			}
 		} elseif ( ! $site ) {
-			$this->response_status = 403;
-
+			$this->set_response_error( 'login_not_allowed', 403 );
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller.

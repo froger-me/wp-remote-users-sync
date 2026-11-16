@@ -41,11 +41,23 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 	 * @param array   $site           Sending site settings.
 	 * @param WP_User $user           Local user to update.
 	 * @param array   $incoming_roles Roles requested by the sending site.
+	 * @param array   $error          Error information returned by reference.
 	 * @return bool Whether every requested role change was accepted.
 	 */
-	public function handle_notification_roles( $site, $user, $incoming_roles ) {
+	public function handle_notification_roles( $site, $user, $incoming_roles, &$error = array() ) {
+		$applied  = array();
+		$rejected = array();
 
 		if ( ! $user || ! $site || empty( $incoming_roles ) ) {
+			$error = array(
+				'code'    => 'role_not_allowed',
+				'status'  => 422,
+				'details' => array(
+					'applied_roles'  => $applied,
+					'rejected_roles' => $rejected,
+				),
+			);
+
 			return false;
 		}
 
@@ -57,7 +69,7 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 			$this->incoming_roles = $incoming_roles;
 
 			if ( $this->site['incoming_roles_merge'] ) {
-					$this->incoming_roles = $this->merge_roles();
+				$this->incoming_roles = $this->merge_roles();
 			}
 
 			if ( ! empty( $this->incoming_roles['set'] ) ) {
@@ -70,8 +82,10 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 					)
 				) {
 					$this->user->set_role( $this->incoming_roles['set'] );
+					$applied[] = $this->incoming_roles['set'];
 				} else {
-					$result = false;
+					$result     = false;
+					$rejected[] = $this->incoming_roles['set'];
 
 					Wprus_Logger::log(
 						sprintf(
@@ -102,8 +116,10 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 						)
 					) {
 						$this->user->add_role( $role );
+						$applied[] = $role;
 					} else {
-						$result = false;
+						$result     = false;
+						$rejected[] = $role;
 
 						Wprus_Logger::log(
 							sprintf(
@@ -123,8 +139,28 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 				}
 			}
 
+			if ( ! $result ) {
+				$error = array(
+					'code'    => 'role_not_allowed',
+					'status'  => 422,
+					'details' => array(
+						'applied_roles'  => $applied,
+						'rejected_roles' => $rejected,
+					),
+				);
+			}
+
 			return $result;
 		} else {
+			$error = array(
+				'code'    => 'role_sync_disabled',
+				'status'  => 403,
+				'details' => array(
+					'applied_roles'  => array(),
+					'rejected_roles' => array_values( array_filter( array_merge( array( $incoming_roles['set'] ?? false ), (array) ( $incoming_roles['add'] ?? array() ) ) ) ),
+				),
+			);
+
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller.

@@ -90,16 +90,22 @@ class RoleActionTest extends Wprus_Feature_Test_Case {
 				'role'       => 'subscriber',
 			)
 		);
-		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_roles'] = array( 'subscriber' );
+		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_roles'] = array( 'editor' );
 		$this->reload_settings();
 		$request = $this->payload( 'alice' ) + array(
 			'roles' => array(
-				'set' => 'administrator',
-				'add' => array(),
+				'set' => 'editor',
+				'add' => array( 'administrator' ),
 			),
 		);
-		$this->assertFalse( $this->action( 'update' )->receive( $request ) );
-		$this->assertSame( array( 'subscriber' ), get_userdata( $id )->roles );
+		$api     = $this->action( 'update' );
+		$this->assertFalse( $api->receive( $request ) );
+		$this->assert_response_error( $api, 'role_not_allowed', 422 );
+		list( , $error ) = $api->response_error();
+		$this->assertTrue( $error['details']['account_saved'] );
+		$this->assertSame( array( 'administrator' ), $error['details']['rejected_roles'] );
+		$this->assertSame( array( 'editor' ), $error['details']['applied_roles'] );
+		$this->assertSame( array( 'editor' ), get_userdata( $id )->roles );
 	}
 
 	/** Disabling Role keeps roles unchanged while allowing other updates. */
@@ -119,7 +125,9 @@ class RoleActionTest extends Wprus_Feature_Test_Case {
 				'add' => array(),
 			),
 		);
-		$this->assertFalse( $this->action( 'update' )->receive( $request ) );
+		$api     = $this->action( 'update' );
+		$this->assertFalse( $api->receive( $request ) );
+		$this->assert_response_error( $api, 'role_sync_disabled', 403 );
 		$this->assertSame( array( 'subscriber' ), get_userdata( $id )->roles );
 		$this->assertSame( 'Changed', get_userdata( $id )->display_name );
 	}

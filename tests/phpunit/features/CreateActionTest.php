@@ -57,21 +57,41 @@ class CreateActionTest extends Wprus_Feature_Test_Case {
 
 	/** An existing login is rejected and the original account remains unchanged. */
 	public function test_existing_login_is_not_overwritten() {
-		$id = self::factory()->user->create(
+		$id  = self::factory()->user->create(
 			array(
 				'user_login' => 'existing_user',
 				'user_email' => 'before@example.test',
 			)
 		);
-		$this->assertFalse( $this->action( 'create' )->receive( $this->payload( 'existing_user' ) + array( 'user_email' => 'after@example.test' ) ) );
+		$api = $this->action( 'create' );
+		$this->assertFalse( $api->receive( $this->payload( 'existing_user' ) + array( 'user_email' => 'after@example.test' ) ) );
+		$this->assert_response_error( $api, 'existing_user_login', 409 );
 		$this->assertSame( 'before@example.test', get_userdata( $id )->user_email );
+	}
+
+	/** An existing email is reported separately from an existing login. */
+	public function test_existing_email_is_not_reused() {
+		self::factory()->user->create( array( 'user_email' => 'existing@example.test' ) );
+		$api = $this->action( 'create' );
+		$this->assertFalse( $api->receive( $this->payload( 'new_user' ) + array( 'user_email' => 'existing@example.test' ) ) );
+		$this->assert_response_error( $api, 'existing_user_email', 409 );
+		$this->assertFalse( get_user_by( 'login', 'new_user' ) );
+	}
+
+	/** Other WordPress creation failures use the general creation code. */
+	public function test_other_creation_failure_is_reported() {
+		$api = $this->action( 'create' );
+		$this->assertFalse( $api->receive( $this->payload( '!!!' ) ) );
+		$this->assert_response_error( $api, 'user_creation_failed', 422 );
 	}
 
 	/** Disabled incoming Create does not create an account. */
 	public function test_disabled_create_is_ignored() {
 		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_actions']['create'] = false;
 		$this->reload_settings();
-		$this->assertFalse( $this->action( 'create' )->receive( $this->payload( 'disabled_user' ) + array( 'user_email' => 'disabled@example.test' ) ) );
+		$api = $this->action( 'create' );
+		$this->assertFalse( $api->receive( $this->payload( 'disabled_user' ) + array( 'user_email' => 'disabled@example.test' ) ) );
+		$this->assert_response_error( $api, 'create_not_allowed', 403 );
 		$this->assertFalse( get_user_by( 'login', 'disabled_user' ) );
 	}
 }

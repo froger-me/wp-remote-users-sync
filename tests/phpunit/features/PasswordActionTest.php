@@ -38,7 +38,9 @@ class PasswordActionTest extends Wprus_Feature_Test_Case {
 		);
 		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_actions']['password'] = false;
 		$this->reload_settings();
-		$this->assertFalse( $this->action( 'password' )->receive( $this->payload( 'alice' ) + array( 'user_pass' => 'new-password' ) ) );
+		$api = $this->action( 'password' );
+		$this->assertFalse( $api->receive( $this->payload( 'alice' ) + array( 'user_pass' => 'new-password' ) ) );
+		$this->assert_response_error( $api, 'password_not_allowed', 403 );
 		$this->assertTrue( wp_check_password( 'old-password', get_userdata( $id )->user_pass, $id ) );
 	}
 
