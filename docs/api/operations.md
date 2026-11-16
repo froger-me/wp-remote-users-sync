@@ -66,7 +66,14 @@ A successful HTTP 200 response contains:
 }
 ```
 
-The sender URL must identify a configured connection. Check that both properties are actual booleans. If either is `true`, that identifier is already taken. An invalid request returns HTTP 400 with `data.code` set to `invalid_identity_request`. Treat any failed check as unavailable until a valid response is received.
+**Interpreting the response:**
+- Check `data.username_exists` and `data.email_exists` separately. Both must be `false` before creating an account.
+- Treat a failed identity check as unavailable, not as confirmation that the identifiers are free.
+
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 400 | `invalid_identity_request` | Request is invalid or the sending connection is not recognized |
+| 403 | `invalid_token`, `ip_not_allowed`, `method_not_allowed` | Request authorization failed |
 
 ## Fields shared by account operations
 
@@ -84,7 +91,12 @@ For operations involving an account, include:
 - `base_url` is the **sender's** registered base URL. This differs from the URL used in a token request.
 - `identity_email` identifies an **existing** account by its current email. Matching is case-insensitive. Include it when changing, deleting or otherwise acting on an existing account.
 
-For an email change, send the previous email address in `identity_email` and the desired new address in `user_email`. Use the account's current login name for all account operations. **When that login already exists but the supplied identifying email is missing or different, the receiver returns HTTP 409 with `identity_mismatch` before running the requested operation.**
+For email changes:
+- `username`: current login name.
+- `identity_email`: previous email address.
+- `user_email`: new email address.
+
+**Identity error:** HTTP **409**, `identity_mismatch` — the login exists, but the supplied identifying email is missing or does not match. The operation is rejected before any changes are made.
 
 ## Create: POST /wprus/create/
 
@@ -104,7 +116,17 @@ Supply `username` and `user_email` for a new account. The receiving site accepts
 
 Include `user_pass` within the encrypted operation message when password synchronization is permitted. Include `roles` when role synchronization is permitted. The receiver may limit which roles are accepted.
 
-A successful creation returns HTTP 200 with `data:true`. An existing username returns HTTP **409** with `existing_user_login`; an existing email returns HTTP **409** with `existing_user_email`. An invalid request returns **400** with `invalid_create_request`; another account creation failure returns **422** with `user_creation_failed`. A disabled incoming Create action returns **403** with `create_not_allowed`. If creating the account succeeds but a requested role is rejected, the response identifies the role error and includes `details.account_saved: true`.
+**Success:** HTTP 200, `{"success":true,"data":true}`.
+
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 400 | `invalid_create_request` | Invalid request |
+| 403 | `create_not_allowed` | Incoming Create is disabled |
+| 409 | `existing_user_login` | Login already exists |
+| 409 | `existing_user_email` | Email already exists |
+| 422 | `user_creation_failed` | Account creation failed for another reason |
+
+Role errors are listed under [Roles in Create and Update](#roles-in-create-and-update). If role processing fails after the account is created, `details.account_saved` is `true`.
 
 ## Update: POST /wprus/update/
 
@@ -120,7 +142,20 @@ A successful creation returns HTTP 200 with `data:true`. An existing username re
 
 The receiver identifies the account by `username` and checks `identity_email`. Supply only the profile fields to change. Password changes in `user_pass` and role changes in `roles` depend on the corresponding permissions. The Update operation also accepts `user_activation_key`.
 
-When the account is missing, Update creates it if incoming Create is also permitted. Otherwise the receiver returns **404** with `user_not_found`. Invalid requests return **400** with `invalid_update_request`; disabled incoming Update returns **403** with `update_not_allowed`. Existing username or email conflicts return **409** with `existing_user_login` or `existing_user_email`. Other update failures return **422** with `user_update_failed`. Role errors include `details.account_saved: true` when the profile changes have already been saved.
+If the account does not exist, Update creates it only when incoming Create is permitted.
+
+**Success:** HTTP 200, `{"success":true,"data":true}`.
+
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 400 | `invalid_update_request` | Invalid request |
+| 403 | `update_not_allowed` | Incoming Update is disabled |
+| 404 | `user_not_found` | Account does not exist and incoming Create is disabled |
+| 409 | `existing_user_login` | Login conflict |
+| 409 | `existing_user_email` | Email conflict |
+| 422 | `user_update_failed` | Update failed for another reason |
+
+Role errors are listed below. A role error can occur after the account changes have already been saved; `details.account_saved` is then `true`.
 
 ### Roles in Create and Update
 
@@ -128,7 +163,24 @@ When the account is missing, Update creates it if incoming Create is also permit
 {"roles":{"set":"subscriber","add":["customer"]}}
 ```
 
-`set` specifies a role to set; `add` specifies an array of roles to add. Either can be `false` when unused. If role synchronization is disabled, the response is **403** with `role_sync_disabled`. If role synchronization is enabled but a requested role does not exist or is not permitted, the response is **422** with `role_not_allowed`. Both errors include `details.account_saved`, `details.applied_roles` and `details.rejected_roles`. Any accepted changes to the account or its roles can already have taken effect.
+**Role fields:**
+- `set`: role to set; `false` when unused.
+- `add`: array of roles to add; `false` when unused.
+
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 403 | `role_sync_disabled` | Incoming role synchronization is disabled |
+| 422 | `role_not_allowed` | A requested role does not exist or is not permitted |
+
+**Both errors include these details:**
+
+| Field | Meaning |
+| --- | --- |
+| `account_saved` | `true` — the account was created or updated |
+| `applied_roles` | Roles successfully set or added |
+| `rejected_roles` | Roles that were rejected |
+
+Account changes and accepted roles are not rolled back when another role is rejected.
 
 ## Delete: POST /wprus/delete/
 
@@ -141,7 +193,23 @@ When the account is missing, Update creates it if incoming Create is also permit
 }
 ```
 
-`reassign_username` names the account that receives the deleted account's content. Use `false` when no reassignment is needed. If the requested reassignment account is missing but the account being deleted exists, the receiver **deletes the account** and returns **422** with `reassignment_user_not_found`, `details.account_deleted: true` and `details.content_reassigned: false`. If deletion itself fails, the response is **422** with `user_deletion_failed`. An unknown account returns **404** with `user_not_found`. Invalid requests return **400** with `invalid_delete_request`; a disabled Delete action returns **403** with `delete_not_allowed`.
+`reassign_username` identifies the account that receives the deleted account's content. Use `false` if no reassignment is requested.
+
+**Success:** HTTP 200, `{"success":true,"data":true}`.
+
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 400 | `invalid_delete_request` | Invalid request |
+| 403 | `delete_not_allowed` | Incoming Delete is disabled |
+| 404 | `user_not_found` | Account to delete does not exist |
+| 422 | `user_deletion_failed` | Account deletion failed |
+| 422 | `reassignment_user_not_found` | Account was deleted, but the requested reassignment account does not exist |
+
+For `reassignment_user_not_found`:
+- `details.account_deleted` = `true`
+- `details.content_reassigned` = `false`
+
+**Do not repeat the deletion:** the account has already been deleted.
 
 ## Password: POST /wprus/password/
 
@@ -154,7 +222,13 @@ When the account is missing, Update creates it if incoming Create is also permit
 }
 ```
 
-`user_pass` is the new password in plaintext **inside the encrypted JSON message**. Protect the original value and never send it outside `wprusdata`. Invalid requests return **400** with `invalid_password_request`; disabled incoming Password returns **403** with `password_not_allowed`; an unknown account returns **404** with `user_not_found`.
+`user_pass` contains the new password **inside the encrypted JSON message**. Never send the password outside `wprusdata`.
+
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 400 | `invalid_password_request` | Invalid request |
+| 403 | `password_not_allowed` | Incoming Password is disabled |
+| 404 | `user_not_found` | Account does not exist |
 
 ## Metadata: POST /wprus/meta/
 
@@ -183,9 +257,24 @@ When the account is missing, Update creates it if incoming Create is also permit
 
 Each of `add`, `update` and `delete` is optional. Each metadata key maps to an **array** of entries. Supply the operation-specific fields shown in the example. Values can contain strings, numbers, booleans, lists or JSON objects.
 
-Metadata keys must be permitted by the receiver and use lowercase letters, digits, underscores or hyphens. A malformed request returns **400** with `invalid_metadata_request`. A disabled Metadata action returns **403** with `metadata_not_allowed`; missing incoming metadata configuration returns **403** with `metadata_not_configured`; an unknown account returns **404** with `user_not_found`.
+Metadata keys must be permitted by the receiver and contain only lowercase letters, digits, underscores or hyphens.
 
-Rejected entries return **422**. If some metadata entries succeeded, `data.code` is `metadata_partial_failure`; if none succeeded, it is the code of the first rejection: `metadata_key_invalid`, `metadata_key_not_allowed` or `metadata_change_failed`. In both cases, `data.details.applied` gives the number of successful changes and `data.details.rejected` lists each rejected operation, key and error code. A request with no successful changes and no rejection entries returns **422** with `invalid_metadata_request`.
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 400 | `invalid_metadata_request` | Malformed request |
+| 403 | `metadata_not_allowed` | Incoming Metadata is disabled |
+| 403 | `metadata_not_configured` | No incoming metadata keys are configured |
+| 404 | `user_not_found` | Account does not exist |
+| 422 | `metadata_key_invalid` | Metadata key name is invalid; no entries were applied |
+| 422 | `metadata_key_not_allowed` | Metadata key is protected or not permitted; no entries were applied |
+| 422 | `metadata_change_failed` | Metadata change failed; no entries were applied |
+| 422 | `metadata_partial_failure` | At least one entry was applied and at least one was rejected |
+| 422 | `invalid_metadata_request` | No entries were applied and no individual entries were rejected |
+
+**For metadata entry errors (HTTP 422):**
+- `data.details.applied`: number of successful changes.
+- `data.details.rejected`: array of rejected entries, each with `operation`, `key` and `code`.
+- When none succeeded, `data.code` identifies the **first** rejection; the full list remains in `details.rejected`.
 
 ## Administration: POST /wprus/wp-admin/
 
@@ -208,7 +297,13 @@ Use the same encrypted POST format as other operations. Both the outer `base_url
 
 `target_action` can be `login`, `logout`, `create`, `update`, `delete`, `password`, `role` or `meta`. The `direction` is `incoming` or `outgoing` **on the receiving site**.
 
-For a permitted action, the receiver returns HTTP 200 and `{"success":true,"data":"..."}`. A disabled action returns **403** with `wprus_ping_disabled`. Invalid connection tests return **400** with `wprus_invalid_ping`.
+**Connection test results:**
+
+| HTTP | Code | Condition |
+| --- | --- | --- |
+| 200 | — | Allowed: `{"success":true,"data":"..."}` |
+| 400 | `wprus_invalid_ping` | Invalid test request |
+| 403 | `wprus_ping_disabled` | Tested action or direction is disabled |
 
 ### List outgoing metadata keys
 
@@ -227,7 +322,15 @@ A successful HTTP 200 response contains the keys selected to be sent **from the 
 {"success":true,"data":["public_note","customer_preference"]}
 ```
 
-Administrative failures return structured `data.code` values. Invalid request fields return **400** with `wprus_invalid_admin_request`; an unknown administrative action returns **400** with `wprus_unknown_admin_action`. Invalid outgoing metadata arguments return **400** with `wprus_invalid_outgoing_meta_request`; an unrecognized requesting site returns **400** with `wprus_unknown_outgoing_meta_site`. An administrative operation with no result returns **500** with `wprus_admin_no_result`.
+**Administrative errors:**
+
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 400 | `wprus_invalid_admin_request` | Invalid request fields |
+| 400 | `wprus_unknown_admin_action` | Unknown administrative action |
+| 400 | `wprus_invalid_outgoing_meta_request` | Invalid outgoing metadata arguments |
+| 400 | `wprus_unknown_outgoing_meta_site` | Sending site is not configured |
+| 500 | `wprus_admin_no_result` | Operation returned no result |
 
 ## Browser login: GET /wprus/login/
 
@@ -259,7 +362,16 @@ For POST, use the same JSON body as other server-to-server operations with a POS
 }
 ```
 
-The POST logout result depends on the receiving session. Success returns HTTP 200 with `data:true`. If no session is active, the response is **409** with `already_logged_out`; if the active session belongs to a different account, it is **409** with `session_mismatch`. Invalid requests return **400** with `invalid_logout_request`, disabled Logout returns **403** with `logout_not_allowed`, and an unknown account returns **404** with `user_not_found`.
+**POST logout results:**
+
+| HTTP | Error code | Condition |
+| --- | --- | --- |
+| 200 | — | Success: `{"success":true,"data":true}` |
+| 400 | `invalid_logout_request` | Invalid request |
+| 403 | `logout_not_allowed` | Incoming Logout is disabled |
+| 404 | `user_not_found` | Account does not exist |
+| 409 | `already_logged_out` | No active session |
+| 409 | `session_mismatch` | Active session belongs to another account |
 
 ## Error responses and retries
 
@@ -279,7 +391,11 @@ Every unsuccessful server-to-server action returns an HTTP status and a JSON res
 }
 ```
 
-`code` is a stable identifier for the failure. `message` can also be present for a human-readable explanation. `details` is present when the result requires more information. A message is not needed to determine the error.
+| Response field | Purpose |
+| --- | --- |
+| `data.code` | Required error identifier; use this to determine the cause |
+| `data.message` | Optional human-readable explanation |
+| `data.details` | Optional information about changes already completed |
 
 ### Errors shared by operations
 
@@ -290,52 +406,46 @@ Every unsuccessful server-to-server action returns an HTTP status and a JSON res
 | 403 | `method_not_allowed` | The request method or its authorization was not accepted |
 | 409 | `identity_mismatch` | An existing account's login and identifying email do not match the request |
 
-The receiver verifies tokens and sender permissions before processing the operation. Browser GET errors use HTTP statuses and can redirect or return a page rather than this JSON response format.
+**Request validation order:**
+1. Token and sender authorization are checked.
+2. Existing-account identity is checked.
+3. The requested operation is processed.
+
+Browser GET requests return HTTP status codes or redirects, not these JSON error objects.
 
 ### Error codes by operation
 
-| Operation | HTTP | Error code | Condition |
-| --- | --- | --- | --- |
-| Token | 400 | `invalid_token_request` | Missing or invalid token request |
-| Token | 500 | `token_creation_failed` | Token could not be issued |
-| Identity | 400 | `invalid_identity_request` | Missing, invalid or unregistered identity check details |
-| Create | 400 | `invalid_create_request` | Invalid account creation request |
-| Create | 403 | `create_not_allowed` | Incoming Create permission disabled |
-| Create / Update | 409 | `existing_user_login` | Login name already belongs to an account |
-| Create / Update | 409 | `existing_user_email` | Email address already belongs to an account |
-| Create | 422 | `user_creation_failed` | Account creation failed for another reason |
-| Update | 400 | `invalid_update_request` | Invalid account update request |
-| Update | 403 | `update_not_allowed` | Incoming Update permission disabled |
-| Update | 404 | `user_not_found` | Account is missing and Create is not permitted |
-| Update | 422 | `user_update_failed` | Account update failed for another reason |
-| Create / Update | 403 | `role_sync_disabled` | Role synchronization is disabled |
-| Create / Update | 422 | `role_not_allowed` | A requested role does not exist or is not permitted |
-| Delete | 400 | `invalid_delete_request` | Invalid deletion request |
-| Delete | 403 | `delete_not_allowed` | Incoming Delete permission disabled |
-| Delete | 422 | `user_deletion_failed` | Account could not be deleted |
-| Delete | 422 | `reassignment_user_not_found` | Account deleted; requested reassignment account missing |
-| Password | 400 | `invalid_password_request` | Invalid password request |
-| Password | 403 | `password_not_allowed` | Incoming Password permission disabled |
-| Metadata | 400 / 422 | `invalid_metadata_request` | Invalid metadata request or no valid changes to process |
-| Metadata | 403 | `metadata_not_allowed` | Incoming Metadata permission disabled |
-| Metadata | 403 | `metadata_not_configured` | No incoming metadata keys configured |
-| Metadata | 422 | `metadata_key_invalid` | Metadata key has an invalid name |
-| Metadata | 422 | `metadata_key_not_allowed` | Metadata key is protected or not permitted |
-| Metadata | 422 | `metadata_change_failed` | A metadata addition, update or deletion failed |
-| Metadata | 422 | `metadata_partial_failure` | Some metadata changes succeeded and others failed |
-| Logout POST | 400 | `invalid_logout_request` | Invalid logout request |
-| Logout POST | 403 | `logout_not_allowed` | Incoming Logout permission disabled |
-| Logout POST | 409 | `already_logged_out` | The receiving session is already logged out |
-| Logout POST | 409 | `session_mismatch` | The receiving session belongs to another account |
-| Administrative | 400 | `wprus_invalid_admin_request` | Invalid administrative request |
-| Administrative | 400 | `wprus_unknown_admin_action` | Unrecognized administrative action |
-| Administrative | 400 | `wprus_invalid_ping` | Invalid connection test |
-| Administrative | 403 | `wprus_ping_disabled` | The tested action or direction is disabled |
-| Administrative | 400 | `wprus_invalid_outgoing_meta_request` | Invalid outgoing metadata request |
-| Administrative | 400 | `wprus_unknown_outgoing_meta_site` | Requesting site is not configured |
-| Administrative | 500 | `wprus_admin_no_result` | Administrative action returned no result |
+Each operation lists its error codes, HTTP statuses and failure conditions alongside its request example.
 
-`user_not_found` (HTTP 404) is also returned by Delete, Password, Metadata and POST Logout when the account cannot be found. The shared `identity_mismatch` error applies to an existing account across the account-changing POST operations. **Browser GET login and logout return HTTP statuses rather than JSON error codes:** invalid input returns 400, a disabled operation returns 403, a missing account returns 404, and an identity or session conflict returns 409. When the request requires a redirect, the browser can instead receive HTTP 303 with a destination URL.
+| Operation | Error reference |
+| --- | --- |
+| Token | [Token](#token-post-wprustoken) |
+| Identity | [Identity](#identity-post-wprusidentity) |
+| Create | [Create](#create-post-wpruscreate) |
+| Update | [Update](#update-post-wprusupdate) |
+| Roles | [Roles in Create and Update](#roles-in-create-and-update) |
+| Delete | [Delete](#delete-post-wprusdelete) |
+| Password | [Password](#password-post-wpruspassword) |
+| Metadata | [Metadata](#metadata-post-wprusmeta) |
+| Connection test | [Check a connection](#check-a-connection) |
+| Administration | [List outgoing metadata keys](#list-outgoing-metadata-keys) |
+| Logout POST | [Browser logout](#browser-logout-get-wpruslogout-or-post-wpruslogout) |
+
+**Additional cases:**
+- `user_not_found` (HTTP 404): also applies to Delete, Password, Metadata and POST Logout.
+- `identity_mismatch` (HTTP 409): applies to an existing account across account-changing POST operations.
+
+**Browser GET login and logout:**
+
+| HTTP | Condition |
+| --- | --- |
+| 400 | Invalid request |
+| 403 | Operation not permitted |
+| 404 | Account missing |
+| 409 | Identity or session conflict |
+| 303 | Redirect to the browser destination when required |
+
+Browser GET responses do not use JSON error codes.
 
 ### Role changes after the account was saved
 
@@ -355,7 +465,10 @@ When Create or Update saves the account before a role error, both `role_sync_dis
 }
 ```
 
-`applied_roles` lists accepted changes and `rejected_roles` lists rejected role names. The account and accepted roles have already been saved. Do not resend the entire request without checking its effects.
+- `account_saved: true`: account creation or update completed.
+- `applied_roles`: roles accepted and applied.
+- `rejected_roles`: roles not accepted.
+- **Retry:** Check the saved account and roles before sending another request.
 
 ### Deletion with unsuccessful reassignment
 
@@ -374,7 +487,9 @@ A missing reassignment account returns:
 }
 ```
 
-The account has been deleted. The requested content transfer did not take place. Do not repeat the Delete request as if the account still exists.
+- `account_deleted: true`: the account no longer exists.
+- `content_reassigned: false`: the requested content transfer failed.
+- **Retry:** Do not send Delete again for that account.
 
 ### Metadata with rejected entries
 
@@ -399,6 +514,9 @@ For metadata changes, the response describes the number of applied changes and i
 }
 ```
 
-The `applied` value is the number of successful metadata operations, not the number of keys. `rejected` lists entries with `operation`, `key` and `code`. When none succeeded, the top-level `code` identifies the first rejected entry, and the full `rejected` list remains available.
+- `details.applied`: number of successful metadata operations, **not** the number of keys.
+- `details.rejected`: array of rejected operations; each entry contains `operation`, `key` and `code`.
+- If nothing succeeded, `data.code` is the first rejection's code; the full list remains in `details.rejected`.
+- **Retry:** Correct rejected entries without repeating successful changes.
 
-Use the returned error code and details to decide whether to correct the request, update local records or retry. Account creation, account deletion and metadata additions must not be retried blindly after an uncertain result.
+For any uncertain result, check the existing data before retrying account creation, deletion or metadata additions.

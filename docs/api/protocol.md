@@ -143,7 +143,11 @@ Errors return `success:false` and a specific error code in `data.code`:
 }
 ```
 
-The optional `data.message` is explanatory text. The optional `data.details` reports additional facts, including changes already applied before a failure. For example, a role error includes `account_saved`, `applied_roles` and `rejected_roles`. A failed content reassignment after account deletion includes `account_deleted` and `content_reassigned`.
+| Error field | Meaning |
+| --- | --- |
+| `data.code` | Required identifier for the failure |
+| `data.message` | Optional explanation for readers |
+| `data.details` | Optional information about changes that were already completed |
 
 The status indicates the type of failure:
 
@@ -154,11 +158,22 @@ The status indicates the type of failure:
 - **422:** A requested change could not be completed, including rejected roles, unsuccessful content reassignment or metadata changes.
 - **500:** A token or administrative operation could not produce a result.
 
-The same HTTP status can describe different conditions. Always inspect `data.code`; use `data.details` to identify partial success. Common examples include `invalid_token` (403), `identity_mismatch` (409), `existing_user_email` (409), `role_not_allowed` (422) and `metadata_partial_failure` (422).
+**Examples of specific failures:**
+
+| HTTP | `data.code` | Meaning |
+| --- | --- | --- |
+| 403 | `invalid_token` | Token is missing, invalid or expired |
+| 409 | `identity_mismatch` | Account identity does not match |
+| 409 | `existing_user_email` | Email already belongs to an account |
+| 422 | `role_not_allowed` | Requested role was rejected |
+| 422 | `metadata_partial_failure` | Some metadata changes succeeded and others failed |
 
 The complete error code and status reference is in [Operations and responses](operations.md#error-responses-and-retries).
 
-For a metadata request, `details.applied` counts successful changes and `details.rejected` identifies unsuccessful entries. For a failed reassignment after deletion, `details.account_deleted` is `true`. Check these values before retrying any operation that can duplicate or destroy data.
+**Before retrying a partially completed operation:**
+- **Roles:** Check `details.account_saved`, `details.applied_roles` and `details.rejected_roles`.
+- **Deletion:** If `details.account_deleted` is `true`, do not repeat the deletion.
+- **Metadata:** Use `details.applied` and `details.rejected` to avoid repeating successful entries.
 
 ## Browser login and logout
 

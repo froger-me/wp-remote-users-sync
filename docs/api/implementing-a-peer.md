@@ -110,9 +110,29 @@ when the operation succeeds. When an operation fails, return an HTTP status and 
 }
 ```
 
-The `code` identifies the exact failure. Include an optional `message` for a human-readable explanation and an optional `details` object when a change partly succeeded. Use the codes and statuses in [Operations and responses](operations.md#error-responses-and-retries). For example, invalid input returns HTTP 400, disabled actions return HTTP 403, unknown accounts return HTTP 404, identity conflicts return HTTP 409, and rejected changes return HTTP 422.
+**Error response fields:**
+- `data.code` — required identifier for the failure.
+- `data.message` — optional human-readable explanation.
+- `data.details` — optional information about partial success.
 
-If a profile is saved before a role error, report `account_saved`, `applied_roles` and `rejected_roles`. If deletion succeeds but content reassignment fails, report `account_deleted` and `content_reassigned`. For metadata failures, report the number of applied changes and identify each rejected operation and key. These details let the sender decide what needs to be corrected without repeating changes that already succeeded.
+**HTTP statuses:**
+
+| HTTP | Meaning |
+| --- | --- |
+| 400 | Invalid input |
+| 403 | Permission denied |
+| 404 | Account not found |
+| 409 | Account identity or identifier conflict |
+| 422 | Requested change could not be completed |
+
+Use the [error code reference](operations.md#error-responses-and-retries) for specific codes and conditions.
+
+**Partial-success details:**
+- **Role failure:** `account_saved`, `applied_roles`, `rejected_roles`.
+- **Deleted account, failed reassignment:** `account_deleted`, `content_reassigned`.
+- **Metadata failures:** `applied` count and `rejected` entries with operation, key and code.
+
+Report completed changes accurately so the sender does not repeat them.
 
 The permitted profile fields, role structure and metadata entry formats are described in [Operations and responses](operations.md).
 
@@ -128,7 +148,12 @@ For `outgoing_meta`, return the metadata keys configured to be sent to the reque
 {"success":true,"data":["public_note","customer_preference"]}
 ```
 
-An invalid administrative request returns HTTP 400 with a specific code such as `wprus_invalid_admin_request`, `wprus_unknown_admin_action` or `wprus_invalid_outgoing_meta_request`.
+**Invalid administrative requests:** HTTP 400, with the appropriate error code:
+- `wprus_invalid_admin_request`
+- `wprus_unknown_admin_action`
+- `wprus_invalid_outgoing_meta_request`
+
+See the [administrative error table](operations.md#error-codes-by-operation) for the other administrative cases.
 
 ## Handle browser sessions
 

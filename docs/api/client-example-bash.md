@@ -108,7 +108,14 @@ else
 fi
 ```
 
-Use the same response handling for Create, Update, Delete and Metadata requests. For `role_not_allowed` and `role_sync_disabled`, inspect `details.account_saved` and the role lists. For `reassignment_user_not_found`, `details.account_deleted` is `true`. For `metadata_partial_failure`, `details.applied` and `details.rejected` identify completed and rejected changes. See the [error code reference](operations.md#error-responses-and-retries).
+Use the same response handling for Create, Update, Delete and Metadata.
+
+**Check partial-success details before retrying:**
+- `role_not_allowed` / `role_sync_disabled`: `account_saved`, `applied_roles`, `rejected_roles`.
+- `reassignment_user_not_found`: `account_deleted` is `true`.
+- `metadata_partial_failure`: `applied` and `rejected` identify completed and rejected changes.
+
+See the [error code reference](operations.md#error-responses-and-retries).
 
 ## Browser login and logout
 

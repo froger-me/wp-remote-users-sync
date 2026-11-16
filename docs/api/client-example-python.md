@@ -143,7 +143,12 @@ def read_operation_response(response):
     raise RuntimeError(f"WPRUS HTTP {response.status_code}: {code}")
 ```
 
-Other useful codes include `invalid_token` (HTTP 403), `identity_mismatch` (HTTP 409), `existing_user_login` (HTTP 409) and `existing_user_email` (HTTP 409). See the [error code reference](operations.md#error-responses-and-retries).
+**Other common errors:**
+- **403:** `invalid_token` — invalid or expired token.
+- **409:** `identity_mismatch` — account identity does not match.
+- **409:** `existing_user_login` / `existing_user_email` — login or email already exists.
+
+See the [error code reference](operations.md#error-responses-and-retries).
 
 ## Browser login and logout
 

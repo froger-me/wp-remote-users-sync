@@ -162,7 +162,12 @@ function readOperationResult(response):
     HandleError(response.status, code, details)
 ```
 
-HTTP 403 with `invalid_token` means a new valid token is needed. HTTP 409 with `identity_mismatch` means the supplied login and current identifying email do not match. Account conflicts use `existing_user_login` or `existing_user_email`. See the [error code reference](operations.md#error-responses-and-retries).
+**Common errors:**
+- **403 — `invalid_token`:** Obtain a valid token.
+- **409 — `identity_mismatch`:** Check the login and current identifying email.
+- **409 — `existing_user_login` / `existing_user_email`:** The login or email is already taken.
+
+See the [complete error code reference](operations.md#error-responses-and-retries).
 
 ## Create browser login and logout URLs
 
