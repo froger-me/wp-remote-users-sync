@@ -69,6 +69,18 @@ abstract class Wprus_Api_Abstract {
 	 */
 	protected $data;
 	/**
+	 * Fields decoded from a server-to-server JSON request.
+	 *
+	 * @var array
+	 */
+	protected $request_body = array();
+	/**
+	 * HTTP status to use when an action returns false.
+	 *
+	 * @var int
+	 */
+	protected $response_status = 422;
+	/**
 	 * The user ID used to save and fire async actions.
 	 *
 	 * @var int
@@ -104,7 +116,6 @@ abstract class Wprus_Api_Abstract {
 	 * @var bool
 	 */
 	protected $is_authorized_remote;
-
 
 	/**
 	 * Constructor
@@ -260,10 +271,11 @@ abstract class Wprus_Api_Abstract {
 	 * @return void No value is returned.
 	 */
 	public function handle_token_request() {
-		$data       = $this->get_data_post();
-		$token_info = false;
+		$data          = $this->get_data_post();
+		$token_info    = false;
+		$valid_request = is_array( $data ) && isset( $data['method'] );
 
-		if ( $data && isset( $data['method'] ) ) {
+		if ( $valid_request ) {
 			$token_info = Wprus_Nonce::create_nonce( true );
 		}
 
@@ -287,7 +299,7 @@ abstract class Wprus_Api_Abstract {
 
 		Wprus_Logger::log( __( 'Failed to create token - invalid payload', 'wprus' ), 'alert', 'db_log' );
 
-		exit();
+		wp_send_json_error( array( 'code' => $valid_request ? 'token_creation_failed' : 'invalid_token_request' ), $valid_request ? 500 : 400 );
 	}
 
 	/**
@@ -335,9 +347,21 @@ abstract class Wprus_Api_Abstract {
 	 * @return void No value is returned.
 	 */
 	public function handle_request() {
-		$data = $this->get_data();
+		$this->response_status = 422;
+		$data                  = $this->get_data();
+		$is_remote_post        = $this->doing_remote_action && 'post' === $this->method;
 
 		if (
+			! in_array( $this->endpoint, array( 'identity', 'wp-admin' ), true ) &&
+			( ! isset( $this->data[ $this->method ] ) || ! is_array( $this->data[ $this->method ] ) || ! $this->data[ $this->method ] )
+		) {
+
+			if ( $is_remote_post ) {
+				$this->send_response( false, 400 );
+			} else {
+				status_header( 400 );
+			}
+		} elseif (
 			! in_array( $this->endpoint, array( 'identity', 'wp-admin' ), true ) &&
 			! Wprus_Api_Identity::verify_incoming_identity( $data, $this->endpoint )
 		) {
@@ -346,18 +370,20 @@ abstract class Wprus_Api_Abstract {
 				'alert',
 				'db_log'
 			);
-			status_header( 409 );
 
-			return;
-		}
+			if ( $is_remote_post ) {
+				$this->send_response( false, 409 );
+			} else {
+				status_header( 409 );
+			}
+		} elseif ( 'wp-admin' !== $this->endpoint && isset( $data['ping'] ) ) {
 
-		if ( 'wp-admin' !== $this->endpoint && isset( $data['ping'] ) ) {
-			status_header( 400 );
-
-			return;
-		}
-
-		if ( method_exists( $this, 'handle_notification' ) ) {
+			if ( $is_remote_post ) {
+				$this->send_response( false, 400 );
+			} else {
+				status_header( 400 );
+			}
+		} elseif ( method_exists( $this, 'handle_notification' ) ) {
 			do_action( 'wprus_before_handle_action_notification', $this->endpoint, $data );
 
 			Wprus_Api_Identity::set_handling_incoming( true );
@@ -377,9 +403,15 @@ abstract class Wprus_Api_Abstract {
 
 				exit();
 			}
-		}
 
-		add_filter( 'wprus_api_needs_redirect', array( $this, 'needs_redirect' ), 10, 0 );
+			add_filter( 'wprus_api_needs_redirect', array( $this, 'needs_redirect' ), 10, 0 );
+
+			if ( $is_remote_post ) {
+				$this->send_response( $result );
+			} elseif ( $this->doing_remote_action ) {
+				status_header( $this->get_response_status( $result ) );
+			}
+		}
 	}
 
 	/**
@@ -389,8 +421,7 @@ abstract class Wprus_Api_Abstract {
 	 */
 	public function authorize_notification() {
 		$token_filter         = FILTER_UNSAFE_RAW;
-		$token                = filter_input( INPUT_GET, 'token', $token_filter );
-		$token                = ( ! $token ) ? filter_input( INPUT_POST, 'token', $token_filter ) : $token;
+		$token                = 'post' === $this->method ? ( $this->request_body['token'] ?? null ) : filter_input( INPUT_GET, 'token', $token_filter );
 		$is_authorized_remote = false;
 		$origin               = false;
 		$remote_data          = $this->get_data();
@@ -404,7 +435,7 @@ abstract class Wprus_Api_Abstract {
 			Wprus_Nonce::init( true, false, self::$encryption_settings['token_expiry'] );
 		}
 
-		if ( ! Wprus_Nonce::validate_nonce( $token ) ) {
+		if ( ! is_string( $token ) || ! Wprus_Nonce::validate_nonce( $token ) ) {
 			$message = __( 'Unauthorized access (invalid token)', 'wprus' );
 		} else {
 
@@ -457,7 +488,7 @@ abstract class Wprus_Api_Abstract {
 		if ( ! $is_authorized_remote ) {
 			do_action( 'wprus_unauthorized_access', $this->endpoint, $remote_data, $token, $this );
 
-			if ( 'wp-admin' === $this->endpoint ) {
+			if ( 'post' === $this->method ) {
 				$message = __( 'The remote website encountered the following error: ', 'wprus' ) . $message;
 
 				wp_send_json_error( $message, 403 );
@@ -468,6 +499,8 @@ abstract class Wprus_Api_Abstract {
 
 				exit();
 			} else {
+				status_header( 403 );
+
 				exit();
 			}
 		}
@@ -597,12 +630,23 @@ abstract class Wprus_Api_Abstract {
 	 * @return void No value is returned.
 	 */
 	public function init_data() {
-		$data_get     = filter_input( INPUT_GET, 'wprusdata', FILTER_UNSAFE_RAW );
-		$data_post    = filter_input( INPUT_POST, 'wprusdata', FILTER_UNSAFE_RAW );
-		$this->method = ( $data_post ) ? 'post' : 'get';
-		$this->data   = array(
-			'get'  => ( $data_get ) ? $this->decrypt_data( $data_get ) : null,
-			'post' => ( $data_post ) ? $this->decrypt_data( $data_post ) : null,
+		$data_get           = filter_input( INPUT_GET, 'wprusdata', FILTER_UNSAFE_RAW );
+		$this->request_body = array();
+		$this->method       = 'POST' === ( $_SERVER['REQUEST_METHOD'] ?? '' ) ? 'post' : 'get';
+		$is_json            = 'post' === $this->method && false !== stripos( $_SERVER['CONTENT_TYPE'] ?? '', 'application/json' );
+
+		if ( $is_json ) {
+			$decoded = json_decode( file_get_contents( 'php://input' ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Read the incoming HTTP request.
+
+			if ( is_array( $decoded ) ) {
+				$this->request_body = $decoded;
+			}
+		}
+
+		$data_post  = $this->request_body['wprusdata'] ?? null;
+		$this->data = array(
+			'get'  => is_string( $data_get ) && $data_get ? $this->decrypt_data( $data_get ) : null,
+			'post' => is_string( $data_post ) && $data_post ? $this->decrypt_data( $data_post ) : null,
 		);
 	}
 
@@ -613,12 +657,7 @@ abstract class Wprus_Api_Abstract {
 	 * @return array The list of endpoints
 	 */
 	public function add_action_endpoints( $endpoints ) {
-		$endpoints = array_merge(
-			$endpoints,
-			$this->get_endpoints()
-		);
-
-		return $endpoints;
+		return array_merge( $endpoints, $this->get_endpoints() );
 	}
 
 	/**
@@ -631,9 +670,8 @@ abstract class Wprus_Api_Abstract {
 	 */
 	public function get_active_site_for_action( $endpoint, $site_url = false, $direction = 'incoming' ) {
 		$site_url = ( $site_url ) ? $site_url : get_option( 'home' );
-		$site     = $this->settings->get_site( $site_url, $endpoint, $direction );
 
-		return $site;
+		return $this->settings->get_site( $site_url, $endpoint, $direction );
 	}
 
 	/**
@@ -693,7 +731,6 @@ abstract class Wprus_Api_Abstract {
 		$location_headers = preg_grep( '/^Location:/i', headers_list() );
 
 		if ( ! empty( $location_headers ) ) {
-
 			return;
 		}
 
@@ -776,7 +813,8 @@ abstract class Wprus_Api_Abstract {
 		$response = wp_safe_remote_post(
 			trailingslashit( $url ) . 'wprus/' . trailingslashit( $endpoint ),
 			array(
-				'body'     => $body,
+				'headers'  => array( 'Content-Type' => 'application/json' ),
+				'body'     => wp_json_encode( $body ),
 				'blocking' => $blocking,
 				'compress' => true,
 				'timeout'  => $timeout,
@@ -816,7 +854,6 @@ abstract class Wprus_Api_Abstract {
 		$tokens_info = ( null !== $tokens_info && ! $tokens_info ) ? array() : $tokens_info;
 
 		if ( null === $tokens_info ) {
-
 			return false;
 		}
 
@@ -873,9 +910,8 @@ abstract class Wprus_Api_Abstract {
 		$response   = wp_remote_post(
 			trailingslashit( $payload['base_url'] ) . 'wprus/token/',
 			array(
-				'body'     => array(
-					'wprusdata' => $this->encrypt_data( $payload ),
-				),
+				'headers'  => array( 'Content-Type' => 'application/json' ),
+				'body'     => wp_json_encode( array( 'wprusdata' => $this->encrypt_data( $payload ) ) ),
 				'compress' => true,
 				'timeout'  => $timeout,
 			)
@@ -951,6 +987,56 @@ abstract class Wprus_Api_Abstract {
 	}
 
 	/**
+	 * Choose an HTTP status from an action result.
+	 *
+	 * @param mixed    $result Action result.
+	 * @param int|null $status Status chosen before the action ran.
+	 * @return int HTTP status.
+	 */
+	protected function get_response_status( $result, $status = null ) {
+
+		if ( null === $status ) {
+
+			if ( is_wp_error( $result ) ) {
+				$error_data = $result->get_error_data();
+				$status     = is_array( $error_data ) && isset( $error_data['status'] ) ? absint( $error_data['status'] ) : 422;
+				$status     = $status >= 400 && $status <= 599 ? $status : 422;
+			} else {
+				$status = null === $result ? 500 : ( false === $result ? $this->response_status : 200 );
+			}
+		}
+
+		return $status;
+	}
+
+	/**
+	 * Send a JSON response and end the request.
+	 *
+	 * @param mixed    $result Action result.
+	 * @param int|null $status Status chosen before the action ran.
+	 * @return void This method ends the request.
+	 */
+	protected function send_response( $result, $status = null ) {
+		$status = $this->get_response_status( $result, $status );
+
+		if ( $status >= 200 && $status < 300 ) {
+			wp_send_json_success( $result, $status );
+		}
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error(
+				array(
+					'code'    => $result->get_error_code(),
+					'message' => $result->get_error_message(),
+				),
+				$status
+			);
+		}
+
+		wp_send_json_error( array( 'code' => 'action_failed' ), $status );
+	}
+
+	/**
 	 * Set cookie helper
 	 *
 	 * @param string $name The name of the cookie.
@@ -992,9 +1078,7 @@ abstract class Wprus_Api_Abstract {
 	 * @return mixed The data
 	 */
 	protected function get_data_get() {
-		$data_get = $this->data['get'];
-
-		return $data_get;
+		return $this->data['get'];
 	}
 
 	/**
@@ -1003,9 +1087,7 @@ abstract class Wprus_Api_Abstract {
 	 * @return mixed The data
 	 */
 	protected function get_data_post() {
-		$data_post = $this->data['post'];
-
-		return $data_post;
+		return $this->data['post'];
 	}
 
 	/**
@@ -1063,9 +1145,7 @@ abstract class Wprus_Api_Abstract {
 	 * @return array The instance's endpoint entries
 	 */
 	protected function get_endpoints() {
-		return array(
-			$this->endpoint => $this->endpoint,
-		);
+		return array( $this->endpoint => $this->endpoint );
 	}
 
 	/**
@@ -1231,9 +1311,7 @@ abstract class Wprus_Api_Abstract {
 			)
 		);
 
-		$output = ob_get_clean();
-
-		return $output;
+		return ob_get_clean();
 	}
 
 	/**

@@ -23,12 +23,12 @@ test('incoming requests follow the configured allowed IP addresses', async ({ pa
   };
   const update = async (displayName: string) => {
     const response = await client.post('/wprus/token/', {
-      form: { wprusdata: encryptMessage({ action: 'update', method: 'post', base_url: baseURL }) },
+      data: { wprusdata: encryptMessage({ action: 'update', method: 'post', base_url: baseURL }) },
     });
     expect(response.ok()).toBeTruthy();
     const { nonce } = await response.json() as { nonce: string };
     await client.post('/wprus/update/', {
-      form: { token: nonce, wprusdata: encryptMessage({ username: 'wprus_test_alice', identity_email: 'wprus-alice@example.test', user_email: 'wprus-alice@example.test', base_url: 'https://wprus-peer.test', display_name: displayName }) },
+      data: { token: nonce, wprusdata: encryptMessage({ username: 'wprus_test_alice', identity_email: 'wprus-alice@example.test', user_email: 'wprus-alice@example.test', base_url: 'https://wprus-peer.test', display_name: displayName }) },
     });
   };
   try {

@@ -48,6 +48,8 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 		$result = false;
 
 		if ( ! $this->validate( $data ) ) {
+			$this->response_status = 400;
+
 			Wprus_Logger::log(
 				__( 'Create action failed - received invalid data.', 'wprus' ),
 				'alert',
@@ -80,6 +82,8 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 				$data          = $this->password_handler->handle_notification_password_data( $data, $site, $user );
 				$maybe_user_id = wp_insert_user( $data );
 			} else {
+				$this->response_status = 404;
+
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username; %2$s is the caller.
@@ -91,7 +95,7 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 					'db_log'
 				);
 
-				return;
+				return false;
 			}
 
 			if ( isset( $data['user_pass'] ) ) {
@@ -99,6 +103,8 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 			}
 
 			if ( is_wp_error( $maybe_user_id ) ) {
+				$this->response_status = in_array( $maybe_user_id->get_error_code(), array( 'existing_user_login', 'existing_user_email' ), true ) ? 409 : 422;
+
 				Wprus_Logger::log(
 					array(
 						'message' => sprintf(
@@ -150,9 +156,14 @@ class Wprus_Api_Update extends Wprus_Api_Abstract {
 			if ( ! is_wp_error( $maybe_user_id ) && $incoming_roles ) {
 				$user = get_user_by( 'ID', $maybe_user_id );
 
-				$this->role_handler->handle_notification_roles( $site, $user, $incoming_roles );
+				if ( ! $this->role_handler->handle_notification_roles( $site, $user, $incoming_roles ) ) {
+					$result                = false;
+					$this->response_status = $site['incoming_actions']['role'] ? 422 : 403;
+				}
 			}
 		} else {
+			$this->response_status = 403;
+
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the URL of the caller.

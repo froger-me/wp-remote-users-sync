@@ -98,7 +98,7 @@ class RoleActionTest extends Wprus_Feature_Test_Case {
 				'add' => array(),
 			),
 		);
-		$this->assertTrue( $this->action( 'update' )->receive( $request ) );
+		$this->assertFalse( $this->action( 'update' )->receive( $request ) );
 		$this->assertSame( array( 'subscriber' ), get_userdata( $id )->roles );
 	}
 
@@ -119,7 +119,7 @@ class RoleActionTest extends Wprus_Feature_Test_Case {
 				'add' => array(),
 			),
 		);
-		$this->assertTrue( $this->action( 'update' )->receive( $request ) );
+		$this->assertFalse( $this->action( 'update' )->receive( $request ) );
 		$this->assertSame( array( 'subscriber' ), get_userdata( $id )->roles );
 		$this->assertSame( 'Changed', get_userdata( $id )->display_name );
 	}

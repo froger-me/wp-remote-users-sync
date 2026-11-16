@@ -48,7 +48,9 @@ class Wprus_Test_Peer {
 	 */
 	public function receive( $arguments, $url ) {
 		$path = (string) wp_parse_url( $url, PHP_URL_PATH );
-		$body = isset( $arguments['body'] ) && is_array( $arguments['body'] ) ? $arguments['body'] : array();
+		$body = $arguments['body'] ?? array();
+		$body = is_string( $body ) ? json_decode( $body, true ) : $body;
+		$body = is_array( $body ) ? $body : array();
 		if ( 'GET' === ( $arguments['method'] ?? '' ) ) {
 			parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $body );
 		}
@@ -59,8 +61,9 @@ class Wprus_Test_Peer {
 			return new WP_Error( 'wprus_test_invalid_message', 'The simulated site could not verify the message.' );
 		}
 		$this->requests[] = array(
-			'path' => $path,
-			'data' => $data,
+			'path'         => $path,
+			'data'         => $data,
+			'content_type' => $arguments['headers']['Content-Type'] ?? '',
 		);
 		if ( '/wprus/token/' === $path ) {
 			$token                  = 'peer-token-' . ( count( $this->tokens ) + 1 );

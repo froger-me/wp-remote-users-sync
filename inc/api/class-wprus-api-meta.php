@@ -183,10 +183,12 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 	 * @return bool Whether the metadata action succeeded.
 	 */
 	public function handle_notification() {
-		$result = false;
-		$data   = $this->get_data();
+		$result    = false;
+		$had_error = false;
+		$data      = $this->get_data();
 
 		if ( ! $this->validate( $data ) ) {
+			$this->response_status = 400;
 
 			return $result;
 		}
@@ -195,12 +197,18 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 		$site = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
 
 		if ( $site ) {
+
 			if ( empty( $site['incoming_meta'] ) || ! is_array( $site['incoming_meta'] ) ) {
+				$this->response_status = 403;
+
 				return false;
 			}
+
 			$user = get_user_by( 'login', $data['username'] );
 
 			if ( ! $user ) {
+				$this->response_status = 404;
+
 				return false;
 			}
 
@@ -227,10 +235,14 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 						wp_unslash( $meta_key ) !== $meta_key ||
 						sanitize_key( $meta_key ) !== $meta_key
 					) {
+						$had_error = true;
+
 						continue;
 					}
 
 					if ( $this->is_excluded_meta_key( $meta_key ) ) {
+						$had_error = true;
+
 						Wprus_Logger::log(
 							sprintf(
 								// translators: %1$s is the metadata key, %2$s is the username, %3$s is the sending site.
@@ -318,6 +330,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 									);
 								}
 							} else {
+								$had_error = true;
 
 								switch ( $change_type ) {
 									case 'add':
@@ -353,6 +366,8 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 							}
 						}
 					} else {
+						$had_error = true;
+
 						Wprus_Logger::log(
 							sprintf(
 								// translators: %1$s is the metadata key, %2$s is the username, %3$s is the caller.
@@ -371,6 +386,8 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 				}
 			}
 		} else {
+			$this->response_status = 403;
+
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the URL of the caller.
@@ -382,7 +399,7 @@ class Wprus_Api_Meta extends Wprus_Api_Abstract {
 			);
 		}
 
-		return $result;
+		return $result && ! $had_error;
 	}
 
 	/**

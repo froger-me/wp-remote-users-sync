@@ -116,17 +116,16 @@ class WooCommerceIdentityTest extends Wprus_Feature_Test_Case {
 		};
 
 		add_filter( 'option_active_plugins', $active_plugins );
-		add_action( 'wprus_integration', $capture, 10, 2 );
+		add_action( 'wprus_did_register_integration', $capture, 10, 2 );
 		try {
 			Wprus_Integration::init();
 		} finally {
-			remove_action( 'wprus_integration', $capture, 10 );
+			remove_action( 'wprus_did_register_integration', $capture, 10 );
 			remove_filter( 'option_active_plugins', $active_plugins );
 		}
 
 		$this->assertInstanceOf( Wprus_Integration_WooCommerce::class, $integration );
 		$this->assertSame( 10, has_action( 'wprus_integration_run', array( $integration, 'wprus_integration_run' ) ) );
-		$this->assertSame( 10, has_filter( 'woocommerce_registration_errors', array( $integration, 'woocommerce_registration_errors' ) ) );
 		$contexts        = array();
 		$capture_context = static function ( $context ) use ( &$contexts ) {
 			if ( $context instanceof Wprus_Integration && get_class( $context ) === Wprus_Integration::class ) {
@@ -142,6 +141,7 @@ class WooCommerceIdentityTest extends Wprus_Feature_Test_Case {
 			$GLOBALS['wprus_test_ready'] = $previous_ready;
 		}
 		$this->assertNotEmpty( $contexts );
+		$this->assertSame( 10, has_filter( 'woocommerce_registration_errors', array( $integration, 'woocommerce_registration_errors' ) ) );
 		foreach ( $contexts as $context ) {
 			$this->assertSame( $identity, $context->api['identity'] );
 			remove_action( 'wprus_ready', array( $context, 'run' ), 10 );

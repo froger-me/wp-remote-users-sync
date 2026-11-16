@@ -40,10 +40,6 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 		$this->assertArrayHasKey( 'wp-admin', apply_filters( 'wprus_wp_endpoints', array( 'token' => 'token' ) ) );
 		$admin = new Wprus_Test_Wp_Admin( 'wp-admin', new Wprus_Settings( array( 'identity' ) ) );
 		$this->assertSame( 'wprus_unknown_admin_action', $admin->receive( $this->request( 'custom' ) )->get_error_code() );
-		$callback = array( $GLOBALS['wprus_test_ready'][1]['wp-admin'], 'send_response' );
-		$this->assertSame( 10, has_action( 'wprus_after_handle_action_notification', $callback ) );
-		$id = _wp_filter_build_unique_id( 'wprus_after_handle_action_notification', $callback, 10 );
-		$this->assertSame( 3, $GLOBALS['wp_filter']['wprus_after_handle_action_notification']->callbacks[10][ $id ]['accepted_args'] );
 		$this->assertNotWPError( $admin->receive( $this->request( 'outgoing_meta' ) ) );
 	}
 
@@ -118,7 +114,7 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 			foreach ( $cases as $case ) {
 				ob_start();
 				try {
-					$this->admin()->send_response( 'wp-admin', array(), $case[0] );
+					$this->admin()->send_response( $case[0] );
 				} catch ( RuntimeException $error ) {
 					$this->assertSame( 'Response sent.', $error->getMessage() );
 				}
@@ -126,9 +122,6 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 				$this->assertSame( $case[1], $body['success'] );
 				$this->assertSame( $case[2], $body['data'] );
 			}
-			ob_start();
-			$this->admin()->send_response( 'create', array(), 'ignored' );
-			$this->assertSame( '', ob_get_clean() );
 		} finally {
 			remove_filter( 'wp_die_ajax_handler', $die_handler );
 			remove_filter( 'wp_doing_ajax', $doing_ajax );
@@ -190,7 +183,7 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 		}
 	}
 
-	/** The original response hook receives returned values before JSON is sent. */
+	/** The result hook receives returned values before JSON is sent. */
 	public function test_after_action_hook_receives_result() {
 		$admin          = $this->admin();
 		$received       = null;
@@ -204,8 +197,6 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 		$listener       = static function ( $endpoint, $data, $result ) use ( &$received ) {
 			$received = array( $endpoint, $data, $result );
 		};
-		$live_admin     = $GLOBALS['wprus_test_ready'][1]['wp-admin'];
-		remove_action( 'wprus_after_handle_action_notification', array( $live_admin, 'send_response' ), 10 );
 		add_filter( 'wprus_wp_admin_handlers', $filter );
 		add_action( 'wprus_after_handle_action_notification', $listener, 9, 3 );
 		try {
@@ -220,7 +211,6 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 		} finally {
 			remove_action( 'wprus_after_handle_action_notification', $listener, 9 );
 			remove_filter( 'wprus_wp_admin_handlers', $filter );
-			add_action( 'wprus_after_handle_action_notification', array( $live_admin, 'send_response' ), 10, 3 );
 		}
 	}
 
@@ -243,7 +233,7 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 			$admin  = $this->admin();
 			$result = $admin->receive( $this->request() );
 			$this->assertSame( 'wprus_ping_disabled', $result->get_error_code() );
-			$this->assertSame( 200, $result->get_error_data()['status'] );
+			$this->assertSame( 403, $result->get_error_data()['status'] );
 			$this->assertSame( array( array( 'success', 'create' ), array( 'failure', 'create' ) ), $events );
 		} finally {
 			remove_action( 'wprus_ping_success', $success );

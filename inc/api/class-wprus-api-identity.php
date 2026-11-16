@@ -127,15 +127,18 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 			trailingslashit( $site['url'] ) . 'wprus/identity/',
 			array(
 				'timeout' => 5,
-				'body'    => array(
-					'wprusdata' => $this->encrypt_data(
-						array(
-							'username'   => $username,
-							'user_email' => $email,
-							'base_url'   => home_url(),
-						)
-					),
-					'token'     => $token_info['nonce'],
+				'headers' => array( 'Content-Type' => 'application/json' ),
+				'body'    => wp_json_encode(
+					array(
+						'wprusdata' => $this->encrypt_data(
+							array(
+								'username'   => $username,
+								'user_email' => $email,
+								'base_url'   => home_url(),
+							)
+						),
+						'token'     => $token_info['nonce'],
+					)
 				),
 			)
 		);

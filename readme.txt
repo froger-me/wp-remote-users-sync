@@ -62,7 +62,6 @@ If such need for plugin integration arises, website administrators **MUST** cont
 == Upgrade Notice ==
 
 = 2.4.0 =
-
 Update WPRUS on all connected sites. All user Actions now check both **username and email address** to identify users. New user creation is rejected if a connected site already has an account with the same username or email address.
 Any plugin that allows multiple account per email address would introduce incompatibilities and must not be used. Plugins that allow user to change their login are also still incompatible.
 
@@ -195,6 +194,7 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 == Changelog ==
 
 = 2.4.0 =
+* Send requests between connected sites as JSON and return HTTP codes that distinguish successful Actions from invalid requests, denied access, missing users, conflicts, and failed operations. Browser login and logout requests keep their GET format.
 * Refactor integration mechanism. Rename the integration list filter to `wprus_registered_integrations`, and add `wprus_did_register_integration` and `wprus_did_register_integrations` so other code can respond when integrations are created.
 * Let administrators retrieve outgoing metadata keys from a connected site and select the keys to accept without removing their existing selections, using the `/wprus/wp-admin/` endpoint.
 * Introduce a new `/wprus/wp-admin/` endpoint and use it for existing ping.

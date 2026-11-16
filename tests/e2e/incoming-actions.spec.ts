@@ -8,12 +8,12 @@ test('identity endpoint reports only username and email existence', async ({ bas
   const client = await playwrightRequest.newContext({ baseURL, storageState: { cookies: [], origins: [] }, ignoreHTTPSErrors: true });
   try {
     const tokenResponse = await client.post('/wprus/token/', {
-      form: { wprusdata: encryptMessage({ action: 'identity', method: 'post', base_url: baseURL }) },
+      data: { wprusdata: encryptMessage({ action: 'identity', method: 'post', base_url: baseURL }) },
     });
     expect(tokenResponse.ok()).toBeTruthy();
     const { nonce } = await tokenResponse.json() as { nonce: string };
     const response = await client.post('/wprus/identity/', {
-      form: {
+      data: {
         token: nonce,
         wprusdata: encryptMessage({
           username: 'wprus_test_alice',
@@ -35,12 +35,12 @@ test('a different email cannot change an existing account password', async ({ ba
   const client = await playwrightRequest.newContext({ baseURL, storageState: { cookies: [], origins: [] }, ignoreHTTPSErrors: true });
   try {
     const tokenResponse = await client.post('/wprus/token/', {
-      form: { wprusdata: encryptMessage({ action: 'password', method: 'post', base_url: baseURL }) },
+      data: { wprusdata: encryptMessage({ action: 'password', method: 'post', base_url: baseURL }) },
     });
     expect(tokenResponse.ok()).toBeTruthy();
     const { nonce } = await tokenResponse.json() as { nonce: string };
     const response = await client.post('/wprus/password/', {
-      form: {
+      data: {
         token: nonce,
         wprusdata: encryptMessage({
           username: 'wprus_test_alice',
@@ -70,7 +70,7 @@ test('incoming Update changes the named user and keeps the login and role', asyn
   const client = await playwrightRequest.newContext({ baseURL, storageState: { cookies: [], origins: [] }, ignoreHTTPSErrors: true });
   try {
     const tokenResponse = await client.post('/wprus/token/', {
-      form: { wprusdata: encryptMessage({ action: 'update', method: 'post', base_url: baseURL }) },
+      data: { wprusdata: encryptMessage({ action: 'update', method: 'post', base_url: baseURL }) },
     });
     expect(tokenResponse.status()).toBe(200);
     const token = await tokenResponse.json() as { nonce: string; expiry: number };
@@ -78,8 +78,8 @@ test('incoming Update changes the named user and keeps the login and role', asyn
     expect(token.nonce.length).toBeGreaterThan(0);
     expect(token.expiry).toBeGreaterThan(Math.floor(Date.now() / 1000));
 
-    await client.post('/wprus/update/', {
-      form: {
+    const actionResponse = await client.post('/wprus/update/', {
+      data: {
         token: token.nonce,
         wprusdata: encryptMessage({
           username: 'wprus_test_alice',
@@ -91,6 +91,8 @@ test('incoming Update changes the named user and keeps the login and role', asyn
         }),
       },
     });
+    expect(actionResponse.status()).toBe(200);
+    expect((await actionResponse.json() as { success: boolean }).success).toBe(true);
     const response = await client.get('/wp-json/wprus-tests/v1/user/wprus_test_alice', {
       headers: { 'X-WPRUS-Test-Token': secret },
     });
@@ -123,13 +125,13 @@ test('incoming Create cannot overwrite an existing account by ID', async ({ base
     };
     const before = await readUser('wprus_test_alice');
     const response = await client.post('/wprus/token/', {
-      form: { wprusdata: encryptMessage({ action: 'create', method: 'post', base_url: baseURL }) },
+      data: { wprusdata: encryptMessage({ action: 'create', method: 'post', base_url: baseURL }) },
     });
     expect(response.ok()).toBeTruthy();
     const token = await response.json() as { nonce: string };
     const username = `wprus_test_new_${Date.now()}`;
     await client.post('/wprus/create/', {
-      form: {
+      data: {
         token: token.nonce,
         wprusdata: encryptMessage({
           username,

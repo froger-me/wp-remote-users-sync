@@ -11,7 +11,7 @@ test('a connected-site request logs the user in and out with real WordPress cook
     const page = await context.newPage();
     const tokenFor = async (action: string) => {
       const response = await context.request.post('/wprus/token/', {
-        form: { wprusdata: encryptMessage({ action, method: 'get', base_url: baseURL }) },
+        data: { wprusdata: encryptMessage({ action, method: 'get', base_url: baseURL }) },
       });
       expect(response.ok()).toBeTruthy();
       return (await response.json() as { nonce: string }).nonce;

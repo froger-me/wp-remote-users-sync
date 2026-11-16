@@ -10,12 +10,12 @@ test('metadata requests accept selected keys and reject protected key variants',
   const client = await playwrightRequest.newContext({ baseURL, storageState: { cookies: [], origins: [] }, ignoreHTTPSErrors: true });
   try {
     const tokenResponse = await client.post('/wprus/token/', {
-      form: { wprusdata: encryptMessage({ action: 'meta', method: 'post', base_url: baseURL }) },
+      data: { wprusdata: encryptMessage({ action: 'meta', method: 'post', base_url: baseURL }) },
     });
     expect(tokenResponse.ok()).toBeTruthy();
     const { nonce } = await tokenResponse.json() as { nonce: string };
-    await client.post('/wprus/meta/', {
-      form: {
+    const actionResponse = await client.post('/wprus/meta/', {
+      data: {
         token: nonce,
         wprusdata: encryptMessage({
           username: 'wprus_test_alice', identity_email: 'wprus-alice@example.test', base_url: 'https://wprus-peer.test',
@@ -27,6 +27,8 @@ test('metadata requests accept selected keys and reject protected key variants',
         }),
       },
     });
+    expect(actionResponse.status()).toBe(422);
+    expect((await actionResponse.json() as { success: boolean }).success).toBe(false);
     const response = await client.get('/wp-json/wprus-tests/v1/user/wprus_test_alice', {
       headers: { 'X-WPRUS-Test-Token': secret },
     });
@@ -48,13 +50,15 @@ test('a connected site can create, change, and delete an allowed user', async ({
   try {
     const send = async (action: string, data: Record<string, unknown>) => {
       const response = await client.post('/wprus/token/', {
-        form: { wprusdata: encryptMessage({ action, method: 'post', base_url: baseURL }) },
+        data: { wprusdata: encryptMessage({ action, method: 'post', base_url: baseURL }) },
       });
       expect(response.ok()).toBeTruthy();
       const { nonce } = await response.json() as { nonce: string };
-      await client.post(`/wprus/${action}/`, {
-        form: { token: nonce, wprusdata: encryptMessage({ username, identity_email: 'features@example.test', base_url: 'https://wprus-peer.test', ...data }) },
+      const result = await client.post(`/wprus/${action}/`, {
+        data: { token: nonce, wprusdata: encryptMessage({ username, identity_email: 'features@example.test', base_url: 'https://wprus-peer.test', ...data }) },
       });
+      expect(result.status(), action).toBe(200);
+      expect((await result.json() as { success: boolean }).success, action).toBe(true);
     };
     const readUser = async () => {
       const response = await client.get(`/wp-json/wprus-tests/v1/user/${username}`, {

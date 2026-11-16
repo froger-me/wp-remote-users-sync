@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 
 	/**
-	 * Register the response and local connection-test hooks.
+	 * Register local connection-test hooks.
 	 *
 	 * @param string         $endpoint Endpoint name.
 	 * @param Wprus_Settings $settings Plugin settings.
@@ -23,7 +23,6 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 		parent::__construct( $endpoint, $settings, $init_hooks );
 
 		if ( $init_hooks ) {
-			add_action( 'wprus_after_handle_action_notification', array( $this, 'send_response' ), 10, 3 );
 
 			if ( ! $this->doing_remote_action ) {
 				add_action( 'wp_ajax_wprus_wp_admin_notify_ping_remote', array( $this, 'notify_ping_remote' ), 10, 0 );
@@ -95,24 +94,22 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 	}
 
 	/**
-	 * Send the final administrative response.
+	 * Send the final administrative JSON response and end the request.
 	 *
-	 * @param string $endpoint Request endpoint.
-	 * @param array  $data Complete request data.
-	 * @param mixed  $result Returned action result.
-	 * @return void
+	 * @param mixed    $result Returned action result.
+	 * @param int|null $status Status chosen before the action ran.
+	 * @return void This method ends the request.
 	 */
-	public function send_response( $endpoint, $data, $result ) {
-
-		if ( 'wp-admin' !== $endpoint ) {
-			return;
-		}
+	public function send_response( $result, $status = null ) {
 
 		if ( is_wp_error( $result ) ) {
-			$error_data = $result->get_error_data();
-			$status     = is_array( $error_data ) && isset( $error_data['status'] ) ? absint( $error_data['status'] ) : 400;
 
-			if ( $status < 200 || $status > 599 ) {
+			if ( null === $status ) {
+				$error_data = $result->get_error_data();
+				$status     = is_array( $error_data ) && isset( $error_data['status'] ) ? absint( $error_data['status'] ) : 400;
+			}
+
+			if ( $status < 400 || $status > 599 ) {
 				$status = 400;
 			}
 
@@ -123,7 +120,7 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 			wp_send_json_error( __( 'Administrative action did not return a result.', 'wprus' ), 500 );
 		}
 
-		wp_send_json_success( $result );
+		parent::send_response( $result, $status );
 	}
 
 	/**
@@ -231,7 +228,7 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 			$direction_label
 		);
 
-		return new WP_Error( 'wprus_ping_disabled', $message, array( 'status' => 200 ) );
+		return new WP_Error( 'wprus_ping_disabled', $message, array( 'status' => 403 ) );
 	}
 
 	/**
@@ -279,15 +276,15 @@ class Wprus_Api_Wp_Admin extends Wprus_Api_Abstract {
 
 		do_action( 'wprus_ping_fired', $target_action, $payload['data'], $response );
 
-		if ( 200 === absint( $response['response_code'] ) ) {
+		if ( ! empty( $response['body'] ) ) {
 			$data = json_decode( $response['body'], true );
 
 			if ( JSON_ERROR_NONE !== json_last_error() ) {
 				$payload  = __( 'Error contacting the remote site: ', 'wprus' );
 				$payload .= __( 'Payload error - ' ) . json_last_error_msg();
-			} else {
+			} elseif ( is_array( $data ) && isset( $data['success'], $data['data'] ) ) {
 
-				if ( $data['success'] ) {
+				if ( 200 === absint( $response['response_code'] ) && true === $data['success'] ) {
 					$success = true;
 				}
 

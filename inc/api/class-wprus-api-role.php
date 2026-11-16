@@ -41,16 +41,16 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 	 * @param array   $site           Sending site settings.
 	 * @param WP_User $user           Local user to update.
 	 * @param array   $incoming_roles Roles requested by the sending site.
-	 * @return void No value is returned.
+	 * @return bool Whether every requested role change was accepted.
 	 */
 	public function handle_notification_roles( $site, $user, $incoming_roles ) {
 
 		if ( ! $user || ! $site || empty( $incoming_roles ) ) {
-
-			return;
+			return false;
 		}
 
 		if ( $site['incoming_actions']['role'] ) {
+			$result               = true;
 			$wp_roles             = wp_roles();
 			$this->site           = $site;
 			$this->user           = $user;
@@ -71,6 +71,8 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 				) {
 					$this->user->set_role( $this->incoming_roles['set'] );
 				} else {
+					$result = false;
+
 					Wprus_Logger::log(
 						sprintf(
 							// translators: %1$s is the meta_key, %2$s is the username, %3$s is the caller.
@@ -101,6 +103,8 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 					) {
 						$this->user->add_role( $role );
 					} else {
+						$result = false;
+
 						Wprus_Logger::log(
 							sprintf(
 								// translators: %1$s is the meta_key, %2$s is the username, %3$s is the caller.
@@ -118,6 +122,8 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 					}
 				}
 			}
+
+			return $result;
 		} else {
 			Wprus_Logger::log(
 				sprintf(
@@ -128,6 +134,8 @@ class Wprus_Api_Role extends Wprus_Api_Abstract {
 				'alert',
 				'db_log'
 			);
+
+			return false;
 		}
 	}
 

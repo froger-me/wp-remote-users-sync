@@ -28,23 +28,27 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 	/**
 	 * Receive a user deletion allowed by this site's settings.
 	 *
-	 * @return void No value is returned.
+	 * @return bool Whether the user was deleted.
 	 */
 	public function handle_notification() {
 		$data = $this->get_data_post();
 
 		if ( ! $this->validate( $data ) ) {
+			$this->response_status = 400;
+
 			Wprus_Logger::log(
 				__( 'Delete action failed - received invalid data.', 'wprus' ),
 				'alert',
 				'db_log'
 			);
 
-			return;
+			return false;
 		}
 
-		$data = $this->sanitize( $data );
-		$site = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
+		$data          = $this->sanitize( $data );
+		$site          = $this->get_active_site_for_action( $this->endpoint, $data['base_url'] );
+		$user          = null;
+		$user_reassign = null;
 
 		if ( $site ) {
 			$reassign      = null;
@@ -56,10 +60,15 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 			}
 
 			if ( $user ) {
-				wp_delete_user( $user->ID, $reassign );
+
+				if ( ! wp_delete_user( $user->ID, $reassign ) ) {
+					return false;
+				}
 			}
 
 			if ( ! $user ) {
+				$this->response_status = 404;
+
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username ; %2$s is the caller.
@@ -71,6 +80,8 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			} elseif ( ! $user_reassign && $data['reassign_username'] ) {
+				$this->response_status = 422;
+
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller, %3$s is the reassign username.
@@ -107,6 +118,8 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 				);
 			}
 		} else {
+			$this->response_status = 403;
+
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller.
@@ -117,6 +130,8 @@ class Wprus_Api_Delete extends Wprus_Api_Abstract {
 				'db_log'
 			);
 		}
+
+		return $site && $user && ( $user_reassign || ! $data['reassign_username'] );
 	}
 
 	/**

@@ -47,6 +47,8 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 		$data   = $this->get_data();
 
 		if ( ! $this->validate( $data ) ) {
+			$this->response_status = 400;
+
 			Wprus_Logger::log(
 				__( 'Logout action failed - received invalid data.', 'wprus' ),
 				'alert',
@@ -79,6 +81,8 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 		}
 
 		if ( ! get_current_user_id() ) {
+			$this->response_status = 409;
+
 			Wprus_Logger::log(
 				__( 'Logout action failed - the user is already logged out.', 'wprus' ),
 				'warning',
@@ -124,6 +128,8 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			} elseif ( ! $user ) {
+				$this->response_status = 404;
+
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller.
@@ -135,6 +141,8 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 					'db_log'
 				);
 			} else {
+				$this->response_status = 409;
+
 				Wprus_Logger::log(
 					sprintf(
 						// translators: %1$s is the username, %2$s is the caller.
@@ -147,6 +155,8 @@ class Wprus_Api_Logout extends Wprus_Api_Abstract {
 				);
 			}
 		} elseif ( ! $site ) {
+			$this->response_status = 403;
+
 			Wprus_Logger::log(
 				sprintf(
 					// translators: %s is the url of the caller.

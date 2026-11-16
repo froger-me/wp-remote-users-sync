@@ -57,7 +57,7 @@ test('a trusted peer cannot reset a different same-login Administrator password'
 
     const sendPeerPassword = async (username: string, password: string, identityEmail?: string) => {
       const tokenResponse = await attacker.post('/wprus/token/', {
-        form: { wprusdata: encryptMessage({ method: 'post', action: 'password', base_url: peerUrl }) },
+        data: { wprusdata: encryptMessage({ method: 'post', action: 'password', base_url: peerUrl }) },
       });
       expect(tokenResponse.status()).toBe(200);
       const { nonce } = await tokenResponse.json() as { nonce: string };
@@ -69,7 +69,7 @@ test('a trusted peer cannot reset a different same-login Administrator password'
       };
       if (identityEmail !== undefined) payload.identity_email = identityEmail;
       return attacker.post('/wprus/password/', {
-        form: { wprusdata: encryptMessage(payload), token: nonce },
+        data: { wprusdata: encryptMessage(payload), token: nonce },
       });
     };
 

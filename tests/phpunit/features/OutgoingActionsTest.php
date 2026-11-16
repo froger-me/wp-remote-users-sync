@@ -58,6 +58,8 @@ class OutgoingActionsTest extends Wprus_Feature_Test_Case {
 		$this->assertCount( 2, $peer->requests );
 		$this->assertSame( '/wprus/token/', $peer->requests[0]['path'] );
 		$this->assertSame( '/wprus/create/', $peer->requests[1]['path'] );
+		$this->assertSame( 'application/json', $peer->requests[0]['content_type'] );
+		$this->assertSame( 'application/json', $peer->requests[1]['content_type'] );
 		$this->assertSame( 'alice@example.test', $peer->requests[1]['data']['identity_email'] );
 	}
 

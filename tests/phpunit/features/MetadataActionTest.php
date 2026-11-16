@@ -235,10 +235,10 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 				),
 			),
 		);
-		$this->assertTrue( $this->action( 'meta' )->receive( $this->payload( 'alice' ) + array( 'update' => $changes ) ) );
+		$this->assertFalse( $this->action( 'meta' )->receive( $this->payload( 'alice' ) + array( 'update' => $changes ) ) );
 		$this->assertSame( 'first', get_user_meta( $id, 'first_site_key', true ) );
 		$this->assertFalse( metadata_exists( 'user', $id, 'second_site_key' ) );
-		$this->assertTrue(
+		$this->assertFalse(
 			$this->action( 'meta' )->receive(
 				array(
 					'username' => 'alice',
@@ -256,7 +256,7 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 		update_user_meta( $id, 'private_value', 'unchanged' );
 		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_meta'] = array( 'private_válue', 'allowed_key' );
 		$this->reload_settings();
-		$this->assertTrue(
+		$this->assertFalse(
 			$this->action( 'meta' )->receive(
 				$this->payload( 'alice' ) + array(
 					'update' => array(
@@ -291,7 +291,7 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 		$id = self::factory()->user->create( array( 'user_login' => 'alice' ) );
 		$GLOBALS['wprus_test_settings']['sites'][0]['incoming_meta'] = array( $key, 'allowed_key' );
 		$this->reload_settings();
-		$this->assertTrue(
+		$this->assertFalse(
 			$this->action( 'meta' )->receive(
 				$this->payload( 'alice' ) + array(
 					'update' => array(
@@ -361,7 +361,7 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 				);
 			}
 		);
-		$this->assertTrue(
+		$this->assertFalse(
 			$this->action( 'meta' )->receive(
 				$this->payload( 'alice' ) + array(
 					'update' => array(
@@ -425,7 +425,7 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 				return array( 'private_key' );
 			}
 		);
-		$this->assertTrue(
+		$this->assertFalse(
 			$this->action( 'meta' )->receive(
 				$this->payload( 'alice' ) + array(
 					'update' => array(
@@ -535,7 +535,7 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 				),
 			),
 		);
-		$this->assertTrue( $this->action( 'meta' )->receive( $this->payload( 'alice' ) + array( 'add' => $changes ) ) );
+		$this->assertFalse( $this->action( 'meta' )->receive( $this->payload( 'alice' ) + array( 'add' => $changes ) ) );
 		$this->assertSame( 'yes', get_user_meta( $id, 'allowed_key', true ) );
 		$this->assertFalse( metadata_exists( 'user', $id, 'other_key' ) );
 	}
@@ -590,7 +590,7 @@ class MetadataActionTest extends Wprus_Feature_Test_Case {
 				),
 			),
 		);
-		$this->assertTrue( $this->action( 'meta' )->receive( $this->payload( 'alice' ) + array( 'update' => $changes ) ) );
+		$this->assertFalse( $this->action( 'meta' )->receive( $this->payload( 'alice' ) + array( 'update' => $changes ) ) );
 		$this->assertSame( $before_capabilities, get_user_meta( $id, $prefix . 'capabilities', true ) );
 		$this->assertSame( $before_level, get_user_meta( $id, $prefix . 'user_level', true ) );
 		$this->assertFalse( user_can( $id, 'manage_options' ) );

@@ -6,6 +6,7 @@ Current version: **2.4.0**.
     * [Overview](#user-content-overview)
     * [Trust Model](#user-content-trust-model)
 * [Adding User Actions](#user-content-adding-user-actions)
+* [Remote Action Requests](#user-content-remote-action-requests)
 * [Administrative Requests](#user-content-administrative-requests)
 * [Hooks - actions & filters](#user-content-hooks---actions--filters)
     * [Actions](#user-content-actions)
@@ -43,6 +44,24 @@ Other registration systems can handle validation by registering a callback for `
 
 ___
 
+## Remote Action Requests
+
+Requests sent from one site to another use an HTTP POST with `Content-Type: application/json`. The JSON object contains the encrypted `wprusdata` string and, for an Action, its `token` string. Token requests contain `wprusdata` without a token. Form submissions to these addresses are rejected. Login and logout requests started in a browser continue to use their existing GET address and query values.
+
+The site receiving a request returns these HTTP codes:
+
+* **200:** The Action succeeded.
+* **400:** The request data is invalid, including a token request sent without JSON data.
+* **403:** Access was denied, the Action is disabled, or an Action did not include a valid JSON token.
+* **404:** The target user does not exist.
+* **409:** The account identity conflicts or the requested session state already exists.
+* **422:** A valid Action could not be completed.
+* **500:** The Action did not return a result, or the server could not create a token.
+
+If a request asks for several metadata or role changes and any are refused, the response reports a failure even when other changes took effect. Action responses contain a JSON `success` value; callers should check both that value and the HTTP code. A connection test for a disabled Action returns HTTP 403.
+
+___
+
 ## Administrative Requests
 
 `/wprus/wp-admin/` is always available when the plugin's security settings are valid. The user action settings do not turn it off. It uses the plugin's existing security token, encryption, signature, and connected-site checks.
@@ -66,9 +85,9 @@ add_filter( 'wprus_wp_admin_handlers', function ( $handlers ) {
 } );
 ```
 
-The function receives only `data`. It must return a result on success or a `WP_Error` on failure. Returning `null` produces an HTTP 500 error. The `wprus_after_handle_action_notification` hook receives the result; the plugin sends the final JSON response from that hook at priority 10. Code that needs to inspect the result first should use a lower priority.
+The function receives only `data`. It must return a result on success or a `WP_Error` on failure. Returning `false` produces HTTP 422, and returning `null` produces HTTP 500. The `wprus_after_handle_action_notification` hook receives the result before the plugin sends the final JSON response.
 
-The existing `wprus_ping_fired`, `wprus_ping_success`, and `wprus_ping_failure` hooks still receive the user action being tested as their first argument. The next argument contains the connection test's `data` fields. A disabled user action produces a failed connection test with HTTP 200.
+The existing `wprus_ping_fired`, `wprus_ping_success`, and `wprus_ping_failure` hooks still receive the user action being tested as their first argument. The next argument contains the connection test's `data` fields. A disabled user action produces a failed connection test with HTTP 403.
 
 ___
 
@@ -610,7 +629,7 @@ do_action( 'wprus_after_handle_action_notification', (string) $endpoint, (mixed)
 ```
 
 **Description**  
-Fired after handling a request received from a connected site. For `wp-admin`, this hook receives the returned result before the plugin sends its JSON response at priority 10.
+Fired after handling a request received from a connected site. The hook receives the returned result before the plugin sends its JSON response.
 
 **Parameters**  
 `$endpoint`
@@ -1411,6 +1430,7 @@ ___
 
 ### 2.4.0
 
+* Send site-to-site token and Action requests as JSON, while keeping browser login and logout GET requests as they are. Return HTTP codes that distinguish successful Actions from invalid requests, disabled Actions, missing users, account conflicts, and failed operations.
 * List WooCommerce in the default integrations array. Rename `wprus_registered_integration` to `wprus_registered_integrations`, and add `wprus_did_register_integration` and `wprus_did_register_integrations` after integration classes are created. The shared plugin objects are passed through `wprus_integration_run` after settings are valid.
 * Let administrators retrieve and select outgoing metadata keys from a connected site's settings.
 * Reject ordinary user creation when a connected site already uses the username or email address, or when a connected site cannot be checked. Check again after creation and skip the outgoing Create action if that check fails.
