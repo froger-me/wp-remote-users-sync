@@ -153,7 +153,7 @@ For `outgoing_meta`, return the metadata keys configured to be sent to the reque
 - `wprus_unknown_admin_action`
 - `wprus_invalid_outgoing_meta_request`
 
-See the [administrative error table](operations.md#error-codes-by-operation) for the other administrative cases.
+See the [administrative error table](operations.md#error-responses-and-retries) for the other administrative cases.
 
 ## Handle browser sessions
 
