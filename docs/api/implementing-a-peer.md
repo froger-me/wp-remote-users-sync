@@ -128,9 +128,9 @@ when the operation succeeds. When an operation fails, return an HTTP status and 
 Use the [error code reference](operations.md#error-responses-and-retries) for specific codes and conditions.
 
 **Partial-success details:**
-- **Role failure:** `account_saved`, `applied_roles`, `rejected_roles`.
-- **Deleted account, failed reassignment:** `account_deleted`, `content_reassigned`.
-- **Metadata failures:** `applied` count and `rejected` entries with operation, key and code.
+- **Role failure:** `details.account_saved`, `details.applied_roles`, `details.rejected_roles`.
+- **Deleted account, failed reassignment:** `details.account_deleted`, `details.content_reassigned`.
+- **Metadata failures:** `details.applied` counts completed changes; `details.rejected` lists each rejected operation, key and code.
 
 Report completed changes accurately so the sender does not repeat them.
 

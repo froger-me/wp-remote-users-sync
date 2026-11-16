@@ -134,7 +134,7 @@ def read_operation_response(response):
         # The account is already deleted; do not repeat Delete.
         pass
     elif code in ("role_not_allowed", "role_sync_disabled"):
-        # Account changes may be saved; inspect the applied and rejected roles.
+        # Inspect details["account_saved"], details["applied_roles"], and details["rejected_roles"].
         pass
     elif code == "metadata_partial_failure":
         # Check details["applied"] and details["rejected"] before retrying.

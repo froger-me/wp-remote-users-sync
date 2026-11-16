@@ -33,9 +33,9 @@ All paths are relative to the receiving site's full HTTPS base URL. The examples
 
 | Error | Details | Action |
 | --- | --- | --- |
-| `role_not_allowed` / `role_sync_disabled` | `account_saved` = true; `applied_roles` and `rejected_roles` list outcomes | Do not repeat the account change without checking saved roles |
-| `reassignment_user_not_found` | `account_deleted` = true; `content_reassigned` = false | Do not retry deletion: the account is gone |
-| `metadata_partial_failure` / rejected metadata entries | `applied` counts successful changes; `rejected` lists `operation`, `key` and `code` | Retry only the unsuccessful entries, if appropriate |
+| `role_not_allowed` / `role_sync_disabled` | `details.account_saved` is `true`; `details.applied_roles` lists applied roles; `details.rejected_roles` lists rejected roles | Check the saved account and roles before retrying |
+| `reassignment_user_not_found` | `details.account_deleted` is `true`; `details.content_reassigned` is `false` | Do not retry deletion; the account is already deleted |
+| `metadata_partial_failure` / rejected metadata entries | `details.applied` counts successful changes; `details.rejected` identifies each rejected `operation`, `key` and `code` | Retry only unsuccessful entries, if appropriate |
 
 ## Token: POST /wprus/token/
 
@@ -156,12 +156,12 @@ Create an account on the receiving site.
 | 403 | `ip_not_allowed` | Sending IP address not permitted |
 | 403 | `method_not_allowed` | Request method or authorization rejected |
 | 403 | `create_not_allowed` | Incoming Create disabled |
-| 403 | `role_sync_disabled` | Account saved, incoming Role disabled; see `details.account_saved` and role lists |
+| 403 | `role_sync_disabled` | Account saved; role synchronization disabled. Check `details.account_saved`, `details.applied_roles`, and `details.rejected_roles`. |
 | 409 | `identity_mismatch` | Login and identifying email do not match an existing account |
 | 409 | `existing_user_login` | Login already exists |
 | 409 | `existing_user_email` | Email already exists |
 | 422 | `user_creation_failed` | Account creation failed for another reason |
-| 422 | `role_not_allowed` | Account saved; a requested role is invalid or not permitted; inspect `details.applied_roles` and `details.rejected_roles` |
+| 422 | `role_not_allowed` | Account saved; one or more requested roles rejected. Check `details.account_saved`, `details.applied_roles`, and `details.rejected_roles`. |
 
 ## Update: POST /wprus/update/
 
@@ -205,13 +205,13 @@ Update an existing account or create it when the incoming Create action is also 
 | 403 | `ip_not_allowed` | Sending IP address not permitted |
 | 403 | `method_not_allowed` | Request method or authorization rejected |
 | 403 | `update_not_allowed` | Incoming Update disabled |
-| 403 | `role_sync_disabled` | Account saved, incoming Role disabled; see role details |
+| 403 | `role_sync_disabled` | Account saved; role synchronization disabled. Check `details.account_saved`, `details.applied_roles`, and `details.rejected_roles`. |
 | 404 | `user_not_found` | Account missing and incoming Create disabled |
 | 409 | `identity_mismatch` | Login and identifying email do not match an existing account |
 | 409 | `existing_user_login` | Login already exists |
 | 409 | `existing_user_email` | Email already exists |
 | 422 | `user_update_failed` | Update failed for another reason |
-| 422 | `role_not_allowed` | Account saved; at least one requested role rejected; inspect role details |
+| 422 | `role_not_allowed` | Account saved; one or more requested roles rejected. Check `details.account_saved`, `details.applied_roles`, and `details.rejected_roles`. |
 
 ## Delete: POST /wprus/delete/
 
@@ -255,7 +255,7 @@ Delete an account, optionally transferring its content to another account.
 | 404 | `user_not_found` | Account to delete does not exist |
 | 409 | `identity_mismatch` | Login and identifying email do not match an existing account |
 | 422 | `user_deletion_failed` | Account deletion failed |
-| 422 | `reassignment_user_not_found` | Account **was deleted**, but destination account was missing; `details.account_deleted` is true and `details.content_reassigned` is false |
+| 422 | `reassignment_user_not_found` | Account deleted; reassignment account not found. `details.account_deleted` is `true`; `details.content_reassigned` is `false`. |
 
 ## Password: POST /wprus/password/
 

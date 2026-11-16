@@ -141,7 +141,7 @@ async function readOperationResponse(response) {
   if (code === 'reassignment_user_not_found' && details.account_deleted) {
     // The account has already been deleted.
   } else if (code === 'role_not_allowed' || code === 'role_sync_disabled') {
-    // Inspect details.account_saved, applied_roles and rejected_roles.
+    // Inspect details.account_saved, details.applied_roles and details.rejected_roles.
   } else if (code === 'metadata_partial_failure') {
     // Inspect details.applied and details.rejected before retrying.
   }

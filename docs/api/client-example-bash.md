@@ -111,9 +111,9 @@ fi
 Use the same response handling for Create, Update, Delete and Metadata.
 
 **Check partial-success details before retrying:**
-- `role_not_allowed` / `role_sync_disabled`: `account_saved`, `applied_roles`, `rejected_roles`.
-- `reassignment_user_not_found`: `account_deleted` is `true`.
-- `metadata_partial_failure`: `applied` and `rejected` identify completed and rejected changes.
+- `role_not_allowed` / `role_sync_disabled`: `details.account_saved`, `details.applied_roles`, `details.rejected_roles`.
+- `reassignment_user_not_found`: `details.account_deleted` is `true`; `details.content_reassigned` is `false`.
+- `metadata_partial_failure`: `details.applied` and `details.rejected` identify completed and rejected changes.
 
 See the [error code reference](operations.md#error-responses-and-retries).
 

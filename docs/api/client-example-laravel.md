@@ -161,8 +161,8 @@ function readWprusResponse(\Illuminate\Http\Client\Response $response): array
 
 **Check these details before retrying:**
 - `reassignment_user_not_found`: `details.account_deleted` is `true` — do not repeat the deletion.
-- `role_not_allowed` / `role_sync_disabled`: inspect `account_saved`, `applied_roles` and `rejected_roles`.
-- `metadata_partial_failure`: inspect `applied` and `rejected`.
+- `role_not_allowed` / `role_sync_disabled`: inspect `details.account_saved`, `details.applied_roles` and `details.rejected_roles`.
+- `metadata_partial_failure`: inspect `details.applied` and `details.rejected`.
 
 See the [error code reference](operations.md#error-responses-and-retries).
 
