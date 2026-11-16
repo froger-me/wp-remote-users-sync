@@ -87,6 +87,14 @@ Send the returned `nonce` in the outer `token` field of the next request. The `e
 
 Check that the token response is HTTP 200, that `nonce` is a nonempty string and that `expiry` is in the future.
 
+**When receiving token requests:**
+
+1. Require a JSON POST body containing `wprusdata`.
+2. Verify the encrypted message and its signature, then read the requested `method` and the receiver's `base_url`.
+3. Issue a cryptographically random, unpredictable `nonce` and record its `expiry` in Unix seconds.
+4. Accept a POST token until its expiration. Consume a GET token when it is validated so it cannot be used again.
+5. Return HTTP 200 with `nonce` and `expiry`. For an invalid token request, return HTTP 400 with `data.code` set to `invalid_token_request`.
+
 ## Send the operation
 
 For an identity check, encrypt:
@@ -123,6 +131,19 @@ A successful identity check returns HTTP 200 and:
 ```
 
 Check both booleans independently. Account creation is available only when both are `false`. Treat a failed identity check as an unknown result rather than proof of availability.
+
+## Validate incoming requests
+
+When your application receives a WPRUS request:
+
+1. **Read the request.** Require `Content-Type: application/json` for POST. Parse `wprusdata` from the JSON body (or the URL query string for browser GET). All operations other than the token endpoint also require `token`.
+2. **Verify the message.** Decode `wprusdata`, verify its HMAC-SHA-256 signature before decrypting, and parse the decrypted UTF-8 JSON.
+3. **Check the token.** For an operation other than token issuance, check that the token was issued by your application, is valid for the request method and has not expired. A browser GET token must be consumed on validation.
+4. **Check the sending site.** Match the decrypted `base_url` to a registered connection and verify that the requested incoming action is allowed. In the token request, `base_url` identifies the receiver instead.
+5. **Check the account request.** Validate required fields and, for an existing account, compare the supplied login and identifying email to the receiving account before applying changes. Email comparisons are case-insensitive.
+6. **Return the result.** Use the corresponding operation's success response or its HTTP error status and specific `data.code`. If some changes succeeded, include the relevant `data.details` values.
+
+See the [operations reference](operations.md) for operation-specific fields, responses and errors.
 
 ## Read responses
 
@@ -188,6 +209,19 @@ For logout, use `/wprus/logout/`.
 Navigate the visiting user's browser to the URL so its cookies and session can change. A browser action can return HTTP 200 or redirect with HTTP 303, depending on the request. A missing user, blocked action or identity mismatch may produce 400, 403, 404 or 409.
 
 `remember` controls a remembered browser login. `callback_url` specifies a destination when the action requires a redirect.
+
+**When receiving browser requests:** establish or clear the session using the visiting browser's cookies. If redirecting, return HTTP 303 with a `Location` header containing the destination. Logout can also arrive as an authenticated JSON POST notification; this does not replace the visiting browser's GET session change.
+
+## Verify compatibility
+
+Check a test connection before accepting live requests:
+
+- [ ] Decrypt the [fixed encryption test message](#encryption-test-message) and confirm the exact original text.
+- [ ] Verify that POST and one-use GET tokens expire and that an invalid token is rejected.
+- [ ] Confirm that username and email existence checks return separate, accurate booleans.
+- [ ] Test permitted and denied account operations, roles and metadata keys.
+- [ ] Check that rejected requests and partially completed changes return the expected error codes and details.
+- [ ] Test browser login, logout, session cookies and redirects.
 
 ## Keep credentials secure
 

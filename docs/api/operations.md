@@ -74,7 +74,7 @@ Request a token before calling a server operation or opening a browser login or 
 
 ## Identity: POST /wprus/identity/
 
-Check whether either identifier is already used before creating an account.
+Check whether either identifier is already used before creating an account. The receiver must check its own account records independently for both identifiers; if the check cannot be completed, return an error rather than reporting an identifier as available.
 
 ### Request
 
@@ -375,7 +375,7 @@ Add, change or delete approved account metadata.
 
 ## Administration: connection test — POST /wprus/wp-admin/
 
-Check whether an action is enabled for a connection and direction on the receiving site.
+Check whether an action is enabled for a connection and direction on the receiving site. Reject the request if `base_url` and `data.base_url` do not identify the same registered sender.
 
 ### Request
 
@@ -424,7 +424,7 @@ Check whether an action is enabled for a connection and direction on the receivi
 
 ## Administration: outgoing metadata — POST /wprus/wp-admin/
 
-Retrieve metadata keys the receiving site is configured to send to the requesting site.
+Retrieve metadata keys the receiving site is configured to send to the requesting site. Reject the request if `base_url` and `data.base_url` do not identify the same registered sender.
 
 ### Request
 
