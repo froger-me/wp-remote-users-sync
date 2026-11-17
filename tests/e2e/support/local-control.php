@@ -84,7 +84,7 @@ add_action(
 			array(
 				'logs'   => wp_create_nonce( 'wprus_logs_nonce' ),
 				'logout' => wp_create_nonce( 'log-out' ),
-				'ping'   => wp_create_nonce( 'wprus_ping_nonce' ),
+				'test'   => wp_create_nonce( 'wprus_test_nonce' ),
 			)
 		);
 	}
@@ -99,7 +99,7 @@ add_action(
 			wp_send_json_error( 'Invalid test secret.', 403 );
 		}
 		$mode = isset( $_POST['mode'] ) ? sanitize_key( wp_unslash( $_POST['mode'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- The per-run test secret is checked above.
-		if ( ! in_array( $mode, array( 'normal', 'timeout', 'malformed', 'disabled' ), true ) ) {
+		if ( ! in_array( $mode, array( 'normal', 'timeout', 'malformed', 'disabled', 'mismatch', 'unknown' ), true ) ) {
 			wp_send_json_error( 'Invalid peer mode.', 400 );
 		}
 		update_option( 'wprus_tests_peer_mode', $mode, false );
@@ -207,6 +207,40 @@ add_filter(
 					array(
 						'success' => false,
 						'data'    => 'The simulated action is disabled.',
+					)
+				);
+			} elseif ( 'unknown' === $mode ) {
+				$result['body'] = wp_json_encode(
+					array(
+						'success' => false,
+						'data'    => array(
+							'code'    => 'wprus_unknown_admin_action',
+							'message' => 'Unknown administrative action.',
+						),
+					)
+				);
+			} elseif ( 'mismatch' === $mode ) {
+				$result['body'] = wp_json_encode(
+					array(
+						'success' => false,
+						'data'    => array(
+							'code'    => 'wprus_configuration_mismatch',
+							'message' => 'Action settings differ between the two sites.',
+							'details' => array(
+								'failures' => array(
+									array(
+										'action'        => 'login',
+										'direction'     => 'incoming',
+										'local_enabled' => true,
+									),
+									array(
+										'action'        => 'create',
+										'direction'     => 'outgoing',
+										'local_enabled' => false,
+									),
+								),
+							),
+						),
 					)
 				);
 			}

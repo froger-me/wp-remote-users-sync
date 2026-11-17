@@ -35,19 +35,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</p>
 		<table class="wprus-actions">
 			<?php foreach ( $labels as $action_type => $label ) : ?>
-				<tr>
+				<tr data-direction="outgoing" data-action="<?php echo esc_attr( $action_type ); ?>">
 					<td class="action-checkbox">
 						<input type="checkbox" data-name="[outgoing_actions][<?php echo esc_attr( $action_type ); ?>]" value="1">
 					</td>
 					<td class="action-label">
 						<label for=""><?php echo esc_html( $label ); ?></label>
-					</td>
-					<td class="action-test-result">
-						<span class="dashicons dashicons-yes-alt success"></span>
-						<span class="dashicons dashicons-dismiss failure"></span>
-					</td>
-					<td data-direction="outgoing" data-action="<?php echo esc_attr( $action_type ); ?>" class="action-test">
-						<button disabled="disabled" class="button"><?php esc_html_e( 'Test', 'wprus' ); ?></button>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -82,19 +75,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</p>
 		<table class="wprus-actions">
 			<?php foreach ( $labels as $action_type => $label ) : ?>
-				<tr>
+				<tr data-direction="incoming" data-action="<?php echo esc_attr( $action_type ); ?>">
 					<td class="action-checkbox">
 						<input type="checkbox" data-name="[incoming_actions][<?php echo esc_attr( $action_type ); ?>]" value="1">
 					</td>
 					<td class="action-label">
 						<label for=""><?php echo esc_html( $label ); ?></label>
-					</td>
-					<td class="action-test-result">
-						<span class="dashicons dashicons-yes-alt success"></span>
-						<span class="dashicons dashicons-dismiss failure"></span>
-					</td>
-					<td data-direction="incoming" data-action="<?php echo esc_attr( $action_type ); ?>" class="action-test">
-						<button disabled="disabled" class="button"><?php esc_html_e( 'Test', 'wprus' ); ?></button>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -125,6 +111,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<div class="wprus-site-footer">
-		<a class="deletion" href="#"><?php esc_html_e( 'Remove site configuration', 'wprus' ); ?></a>
+		<div class="wprus-site-test">
+			<button type="button" class="button" disabled="disabled"><?php esc_html_e( 'Test', 'wprus' ); ?></button>
+			<span class="spinner"></span>
+		</div>
+		<div class="wprus-site-links">
+			<a class="deletion" href="#"><?php esc_html_e( 'Remove site configuration', 'wprus' ); ?></a>
+		</div>
+		<div class="wprus-site-test-result" aria-live="polite"></div>
 	</div>
 </div>

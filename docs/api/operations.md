@@ -13,8 +13,8 @@ All paths are relative to the receiving site's full HTTPS base URL. The examples
 | `POST` | `/wprus/delete/` | Delete an account, optionally transferring its content to another account. |
 | `POST` | `/wprus/password/` | Set an existing account's password. |
 | `POST` | `/wprus/meta/` | Add, change or delete approved account metadata. |
-| `POST` | `/wprus/wp-admin/` | Check whether an action is enabled for a connection and direction on the receiving site. |
-| `POST` | `/wprus/wp-admin/` | Retrieve metadata keys the receiving site is configured to send to the requesting site. |
+| `POST` | `/wprus/admin/` | Compare every incoming and outgoing Action setting between two sites. |
+| `POST` | `/wprus/admin/` | Retrieve metadata keys the receiving site is configured to send to the requesting site. |
 | `GET` | `/wprus/login/` | Establish a session in the visiting user's browser. |
 | `GET` | `/wprus/logout/` | End a session in the visiting user's browser. |
 | `POST` | `/wprus/logout/` | Apply a logout notification to the receiving session. |
@@ -373,9 +373,9 @@ Add, change or delete approved account metadata.
 | 422 | `metadata_partial_failure` | Some entries applied and some rejected |
 | 422 | `invalid_metadata_request` | Nothing applied and no individual rejection recorded |
 
-## Administration: connection test — POST /wprus/wp-admin/
+## Administration: connection test — POST /wprus/admin/
 
-Check whether an action is enabled for a connection and direction on the receiving site. Reject the request if `base_url` and `data.base_url` do not identify the same registered sender.
+Compare every incoming and outgoing Action setting between two connected sites. The receiver compares the sender's incoming settings with its own outgoing settings, and the sender's outgoing settings with its own incoming settings. Reject the request if `base_url` and `data.base_url` do not identify the same registered sender.
 
 ### Request
 
@@ -383,11 +383,19 @@ Check whether an action is enabled for a connection and direction on the receivi
 {
   "username": "example-user",
   "base_url": "https://sender.example",
-  "action": "ping",
+  "action": "test",
   "data": {
     "base_url": "https://sender.example",
-    "target_action": "create",
-    "direction": "incoming"
+    "actions": {
+      "incoming": {
+        "login": true,
+        "create": true
+      },
+      "outgoing": {
+        "logout": true,
+        "update": false
+      }
+    }
   }
 }
 ```
@@ -398,31 +406,31 @@ Check whether an action is enabled for a connection and direction on the receivi
 | --- | --- | --- |
 | `username` | Yes | Account login name at the receiving site |
 | `base_url` | Yes | Registered sender URL (not the token request's receiver URL) |
-| `action` | Yes | `ping` |
+| `action` | Yes | `test` |
 | `data.base_url` | Yes | Same registered sender URL as the top-level `base_url` |
-| `data.target_action` | Yes | One of `login`, `logout`, `create`, `update`, `delete`, `password`, `role`, `meta` |
-| `data.direction` | Yes | `incoming` or `outgoing`, from the receiver's perspective |
+| `data.actions.incoming` | Yes | Object containing the sender's incoming Action names and their enabled or disabled values |
+| `data.actions.outgoing` | Yes | Object containing the sender's outgoing Action names and their enabled or disabled values |
 
 ### Success
 
 | HTTP | Response | Meaning |
 | --- | --- | --- |
-| 200 | `{"success":true,"data":"<connection test result>"}` | Permitted action; `data` contains the receiver's text result |
+| 200 | `{"success":true,"data":{"failures":[]}}` | Every corresponding Action setting matches |
 
 ### Errors
 
 | HTTP | Error code | Condition |
 | --- | --- | --- |
 | 400 | `wprus_invalid_admin_request` | Invalid top-level request |
-| 400 | `wprus_invalid_ping` | Invalid target action, direction or connection |
+| 400 | `wprus_invalid_test` | Missing site or Action settings |
 | 400 | `wprus_unknown_admin_action` | Unknown action name |
 | 403 | `invalid_token` | Missing, invalid or expired token |
 | 403 | `ip_not_allowed` | Sending IP address not permitted |
 | 403 | `method_not_allowed` | Request method or authorization rejected |
-| 403 | `wprus_ping_disabled` | Tested action or direction is disabled |
+| 409 | `wprus_configuration_mismatch` | One or more corresponding Action settings differ; `details.failures` lists every difference |
 | 500 | `wprus_admin_no_result` | Administrative request returned no result |
 
-## Administration: outgoing metadata — POST /wprus/wp-admin/
+## Administration: outgoing metadata — POST /wprus/admin/
 
 Retrieve metadata keys the receiving site is configured to send to the requesting site. Reject the request if `base_url` and `data.base_url` do not identify the same registered sender.
 

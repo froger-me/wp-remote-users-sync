@@ -85,7 +85,7 @@ On HTTP 200, an identity response contains `success:true` and separate `data.use
 
 For an update, request a POST token for `update`, then send the same outer JSON structure to `/wprus/update/` with an encrypted message containing the account's `username`, current `identity_email` and changed fields. A successful user update returns HTTP 200 and `{"success":true,"data":true}`; inspect non-200 status codes and their JSON errors.
 
-For `wp-admin` requests, include both the sender's top-level `base_url` and `data.base_url` in the encrypted message.
+For `admin` requests, include both the sender's top-level `base_url` and `data.base_url` in the encrypted message.
 
 ## Handle errors
 

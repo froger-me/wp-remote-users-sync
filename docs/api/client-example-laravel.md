@@ -128,7 +128,7 @@ $available = ($result['success'] ?? false) === true
 
 For a user update, request a POST token for `update` and send encrypted JSON to `/wprus/update/`. Include `username`, the account's current `identity_email`, and the fields to change. For an email change, use the previous address in `identity_email` and the new one in `user_email`.
 
-Administrative requests use `/wprus/wp-admin/` with `action` set to `ping` or `outgoing_meta`. Include the sender URL in both `base_url` and `data.base_url`.
+Administrative requests use `/wprus/admin/` with `action` set to `test` or `outgoing_meta`. Include the sender URL in both `base_url` and `data.base_url`.
 
 A successful account-changing request returns HTTP 200 with `{"success":true,"data":true}`. Check the HTTP status and returned JSON errors for unsuccessful operations.
 

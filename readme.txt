@@ -11,6 +11,8 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Synchronise WordPress users across connected sites while checking account identities before registration and incoming changes.
 
+All sites connected through WPRUS **must** use the same plugin version.
+
 == Description ==
 
 If you run multiple websites and want to keep users separated, but synchronise them automatically and securely for specific user operations, then WP Remote Users Sync is the plugin to use.
@@ -28,8 +30,6 @@ This plugin adds the following major features to WordPress:
 * **Synchronise all user data:** compatible out of the box with WooCommerce, Ultimate Membership, Theme My Login, Gravity Forms, and all user-related plugins as long as they rely on WordPress user metadata and manipulate users with the WordPress user functions.
 * **Customizable:** developers can add their own User Actions using action and filter hooks, and more - see the [developers documentation](https://github.com/froger-me/wp-remote-users-sync).
 * **Unlimited websites, unlimited features:** there are no restrictions in the number of websites to connect together, and no premium version feature restrictions shenanigans - WP Remote Users Sync is fully-featured right out of the box.
-
-Install the same version on every connected site. Older versions cannot answer account identity checks or provide the identifying email address with outgoing actions. An updated site rejects ordinary registration when it cannot check an older connected site, and rejects actions from an older site that target existing users.
 
 Other registration systems can handle validation by registering a callback for `wprus_validate_user_creation`. The plugin checks connected sites and passes the result to the callback with the username, email address, and user data. The callback must stop creation through its registration system when the result reports a conflict or a failed check. Without such a callback, an ordinary user creation outside WordPress and WooCommerce registration is rejected with a standard WordPress error page.
 
@@ -104,6 +104,7 @@ There is no "Master Website": each site is working independently, firing and rec
 Before opening a new issue on <a href="https://github.com/froger-me/wp-remote-users-sync">Github</a> or contacting the author, please check the following:
 
 * The URLs used in settings of WP Remote Users Sync **exactly** match the URL in your WordPress settings: the protocol (`https` vs. `https`) and the subdomain (www vs. non-www) must be the same across the board. It is also worth checking the `home` option in the `wp_options` table of the WordPress databases, because in some cases the content of Settings > General > WordPress Address (URL) gets abusively overwritten by plugins or themes.
+* Click **Test** for each saved site. The result reports every Action setting difference or a connection error.
 * Visit the permalinks page of each connected site (Settings > Permalinks)
 * Activate and check the logs on both local and remote sites when testing (WP Remote Users Sync > Activity Logs > Enable Logs) ; try to find any discrepancies and adjust the settings
 * Make sure the feature you have issue with is NOT triggered by a third-party package (plugin or theme). If it is (for instance, data is not synced when updating a user from the front end, but works fine in the admin area), please contact the developer of the third-party package and ask them to follow best practices by triggering the appropriate actions like WordPress core does in the admin area when a user is updated.
@@ -194,11 +195,12 @@ Help is provided for previously unanswered general enquiries and bug fixes only:
 == Changelog ==
 
 = 2.4.0 =
+* Replace the separate Action test buttons with one test per connected site that reports every Action setting difference or connection error.
 * Send requests between connected sites as JSON and return HTTP codes that distinguish successful Actions from invalid requests, denied access, missing users, conflicts, and failed operations. Browser login and logout requests keep their GET format.
 * Refactor integration mechanism. Rename the integration list filter to `wprus_registered_integrations`, and add `wprus_did_register_integration` and `wprus_did_register_integrations` so other code can respond when integrations are created.
-* Let administrators retrieve outgoing metadata keys from a connected site and select the keys to accept without removing their existing selections, using the `/wprus/wp-admin/` endpoint.
-* Introduce a new `/wprus/wp-admin/` endpoint and use it for existing ping.
-* Let other plugins register administrative actions through `wprus_wp_admin_handlers`. Each action returns a result, which the plugin sends as a JSON response.
+* Let administrators retrieve outgoing metadata keys from a connected site and select the keys to accept without removing their existing selections, using the `/wprus/admin/` endpoint.
+* Add `/wprus/admin/` for administrative requests and complete connection tests.
+* Load included administrative handlers by file name, and let other plugins load, create, and register administrative handlers through `wprus_require_admin_handler_files`, `wprus_init_admin_handlers`, and `wprus_admin_handlers`.
 * Save the installed plugin version during activation and refresh WordPress's saved request rules when a registered address is missing, the version changes, or settings change.
 * Reject ordinary user creation when any connected site already uses the username or email address, or when a connected site cannot be checked. Recheck after creation and suppress the outgoing Create action if a conflict or check failure appears.
 * Reject the entire incoming synchronization action for an existing user when the sender's username or identifying email address does not match, protecting profile details, passwords, roles, metadata, sessions, and deletion.

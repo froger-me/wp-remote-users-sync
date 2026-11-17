@@ -77,7 +77,7 @@ function sendOperation(action, fields):
     message = Copy(fields)
     message["base_url"] = senderURL
 
-    if action == "wp-admin":
+    if action == "admin":
         message["data"]["base_url"] = senderURL
 
     response = HTTP_POST_JSON(

@@ -13,8 +13,12 @@ require_once dirname( __DIR__, 2 ) . '/support/class-wprus-test-peer.php';
 // phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound -- Keep this small test helper beside its tests.
 
 /** Give tests a decoded administrative request. */
-class Wprus_Test_Wp_Admin extends Wprus_Api_Wp_Admin {
+class Wprus_Test_Admin extends Wprus_Api_Admin {
 	use Wprus_Test_Incoming_Input;
+}
+
+/** Expose metadata filtering to its feature test. */
+class Wprus_Test_Admin_Meta extends Wprus_Admin_Meta {
 
 	/**
 	 * Expose the remote key filter to these tests.
@@ -28,17 +32,17 @@ class Wprus_Test_Wp_Admin extends Wprus_Api_Wp_Admin {
 }
 
 /**
- * Check administrative request dispatch and ping behavior.
+ * Check administrative requests and connection tests.
  *
  * @group wprus
  */
-class WpAdminActionTest extends Wprus_Feature_Test_Case {
+class AdminActionTest extends Wprus_Feature_Test_Case {
 	/** The endpoint is initialized independently of the user actions. */
 	public function test_endpoint_is_permanent() {
-		$this->assertArrayHasKey( 'wp-admin', $GLOBALS['wprus_test_ready'][1] );
-		$this->assertInstanceOf( Wprus_Api_Wp_Admin::class, $GLOBALS['wprus_test_ready'][1]['wp-admin'] );
-		$this->assertArrayHasKey( 'wp-admin', apply_filters( 'wprus_wp_endpoints', array( 'token' => 'token' ) ) );
-		$admin = new Wprus_Test_Wp_Admin( 'wp-admin', new Wprus_Settings( array( 'identity' ) ) );
+		$this->assertArrayHasKey( 'admin', $GLOBALS['wprus_test_ready'][1] );
+		$this->assertInstanceOf( Wprus_Api_Admin::class, $GLOBALS['wprus_test_ready'][1]['admin'] );
+		$this->assertArrayHasKey( 'admin', apply_filters( 'wprus_wp_endpoints', array( 'token' => 'token' ) ) );
+		$admin = new Wprus_Test_Admin( 'admin', new Wprus_Settings( array( 'identity' ) ) );
 		$this->assertSame( 'wprus_unknown_admin_action', $admin->receive( $this->request( 'custom' ) )->get_error_code() );
 		$this->assertNotWPError( $admin->receive( $this->request( 'outgoing_meta' ) ) );
 	}
@@ -89,7 +93,9 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 			'session_tokens',
 			'_application_passwords',
 		);
-		$this->assertSame( array( 'billing_address_1', 'test_note' ), $this->admin()->filter_keys( $keys ) );
+		$meta = new Wprus_Test_Admin_Meta( $this->admin(), $this->settings );
+
+		$this->assertSame( array( 'billing_address_1', 'test_note' ), $meta->filter_keys( $keys ) );
 	}
 
 	/** Returned values become JSON responses. */
@@ -167,7 +173,7 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 			'missing action'      => array( 'action', null ),
 			'missing data'        => array( 'data', null ),
 			'number action'       => array( 'action', 12 ),
-			'invalid action name' => array( 'action', '../ping' ),
+			'invalid action name' => array( 'action', '../test' ),
 			'string data'         => array( 'data', 'hello' ),
 			'unknown site'        => array( 'base_url', 'https://unknown.test' ),
 			'conflicting site'    => array( 'data', array( 'base_url' => 'https://unknown.test' ) ),
@@ -184,7 +190,7 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 			};
 			return $handlers;
 		};
-		add_filter( 'wprus_wp_admin_handlers', $filter );
+		add_filter( 'wprus_admin_handlers', $filter );
 		try {
 			$request                       = $this->request( 'status' );
 			$request['identity_email']     = 'admin@example.test';
@@ -193,7 +199,7 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 			$this->assertSame( array( 'status' => 'ok' ), $result );
 			$this->assertSame( $request['data'], $received );
 		} finally {
-			remove_filter( 'wprus_wp_admin_handlers', $filter );
+			remove_filter( 'wprus_admin_handlers', $filter );
 		}
 	}
 
@@ -211,12 +217,12 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 		$listener       = static function ( $endpoint, $data, $result ) use ( &$received ) {
 			$received = array( $endpoint, $data, $result );
 		};
-		add_filter( 'wprus_wp_admin_handlers', $filter );
+		add_filter( 'wprus_admin_handlers', $filter );
 		add_action( 'wprus_after_handle_action_notification', $listener, 9, 3 );
 		try {
 			$request = $this->request( 'status' );
 			$admin->receive_checked( $request );
-			$this->assertSame( 'wp-admin', $received[0] );
+			$this->assertSame( 'admin', $received[0] );
 			$this->assertSame( $request, $received[1] );
 			$this->assertSame( array( 'status' => 'ok' ), $received[2] );
 			$handler_result = new WP_Error( 'example', 'Example failure', array( 'status' => 422 ) );
@@ -224,63 +230,40 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 			$this->assertSame( 'example', $received[2]->get_error_code() );
 		} finally {
 			remove_action( 'wprus_after_handle_action_notification', $listener, 9 );
-			remove_filter( 'wprus_wp_admin_handlers', $filter );
+			remove_filter( 'wprus_admin_handlers', $filter );
 		}
 	}
 
-	/** Connection tests report enabled and disabled actions with the original hooks. */
-	public function test_ping_results_and_hooks() {
-		$events  = array();
-		$success = static function ( $action ) use ( &$events ) {
-			$events[] = array( 'success', $action );
-		};
-		$failure = static function ( $action ) use ( &$events ) {
-			$events[] = array( 'failure', $action );
-		};
-		add_action( 'wprus_ping_success', $success );
-		add_action( 'wprus_ping_failure', $failure );
-		try {
-			$admin = $this->admin();
-			$this->assertStringContainsString( 'create', $admin->receive( $this->request() ) );
-			$GLOBALS['wprus_test_settings']['sites'][0]['incoming_actions']['create'] = false;
-			$this->reload_settings();
-			$admin  = $this->admin();
-			$result = $admin->receive( $this->request() );
-			$this->assertSame( 'wprus_ping_disabled', $result->get_error_code() );
-			$this->assertSame( 403, $result->get_error_data()['status'] );
-			$this->assertSame( array( array( 'success', 'create' ), array( 'failure', 'create' ) ), $events );
-		} finally {
-			remove_action( 'wprus_ping_success', $success );
-			remove_action( 'wprus_ping_failure', $failure );
-		}
-	}
+	/** A single request reports every action-setting difference. */
+	public function test_full_connection_test_reports_all_differences() {
+		$actions                    = array( 'login', 'logout', 'create', 'update', 'delete', 'password', 'role', 'meta' );
+		$request                    = $this->request( 'test' );
+		$request['data']['actions'] = array(
+			'incoming' => array_fill_keys( $actions, false ),
+			'outgoing' => array_fill_keys( $actions, true ),
+		);
+		$this->assertSame( array( 'failures' => array() ), $this->admin()->receive( $request ) );
 
-	/** Unknown actions and directions are invalid connection tests. */
-	public function test_ping_rejects_unknown_action_and_direction() {
-		foreach ( array( array( 'target_action', 'unknown' ), array( 'direction', 'sideways' ) ) as $change ) {
-			$request                       = $this->request();
-			$request['data'][ $change[0] ] = $change[1];
-			$result                        = $this->admin()->receive( $request );
-			$this->assertSame( 'wprus_invalid_ping', $result->get_error_code() );
-			$this->assertSame( 400, $result->get_error_data()['status'] );
-		}
-	}
-
-	/** Old ping requests cannot run an ordinary account update. */
-	public function test_legacy_ping_does_not_update_a_user() {
-		$id      = self::factory()->user->create(
+		$request['data']['actions']['incoming']['login']  = true;
+		$request['data']['actions']['outgoing']['create'] = false;
+		$result = $this->admin()->receive( $request );
+		$this->assertSame( 'wprus_configuration_mismatch', $result->get_error_code() );
+		$this->assertSame( 409, $result->get_error_data()['status'] );
+		$this->assertSame(
 			array(
-				'user_login' => 'alice',
-				'user_email' => 'before@example.test',
-			)
+				array(
+					'action'        => 'login',
+					'direction'     => 'incoming',
+					'local_enabled' => true,
+				),
+				array(
+					'action'        => 'create',
+					'direction'     => 'outgoing',
+					'local_enabled' => false,
+				),
+			),
+			$result->get_error_data()['details']['failures']
 		);
-		$request = $this->payload( 'alice' ) + array(
-			'ping'           => 1,
-			'identity_email' => 'before@example.test',
-			'user_email'     => 'after@example.test',
-		);
-		$this->action( 'update' )->receive_checked( $request );
-		$this->assertSame( 'before@example.test', get_userdata( $id )->user_email );
 	}
 
 	/** An outgoing call keeps common fields and uses the shared encrypted transport. */
@@ -291,23 +274,27 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 			return $peer->receive( $arguments, $url );
 		};
 		HttpMock::queue( 'https://wprus-peer.test/wprus/token/', $reply );
-		HttpMock::queue( 'https://wprus-peer.test/wprus/wp-admin/', $reply );
+		HttpMock::queue( 'https://wprus-peer.test/wprus/admin/', $reply );
 		$filter = static function ( $data ) {
 			$data['identity_email'] = 'admin@example.test';
 			return $data;
 		};
 		add_filter( 'wprus_action_data', $filter );
 		try {
-			$request_data                     = $this->request();
+			$request_data                     = $this->request( 'test' );
 			$request_data['data']['base_url'] = get_option( 'home' );
+			$request_data['data']['actions']  = array(
+				'incoming' => array( 'create' => true ),
+				'outgoing' => array( 'create' => true ),
+			);
 			$this->admin()->fire_action( 'https://wprus-peer.test', $request_data, true, 5 );
 			$request = end( $peer->requests );
-			$this->assertSame( '/wprus/wp-admin/', $request['path'] );
+			$this->assertSame( '/wprus/admin/', $request['path'] );
 			$this->assertSame( 'administrator', $request['data']['username'] );
 			$this->assertSame( get_option( 'home' ), $request['data']['base_url'] );
 			$this->assertSame( 'admin@example.test', $request['data']['identity_email'] );
-			$this->assertSame( 'ping', $request['data']['action'] );
-			$this->assertSame( 'create', $request['data']['data']['target_action'] );
+			$this->assertSame( 'test', $request['data']['action'] );
+			$this->assertSame( $request_data['data']['actions'], $request['data']['data']['actions'] );
 		} finally {
 			remove_filter( 'wprus_action_data', $filter );
 		}
@@ -319,21 +306,23 @@ class WpAdminActionTest extends Wprus_Feature_Test_Case {
 	 * @param string $action Administrative action name.
 	 * @return array Request fields.
 	 */
-	private function request( $action = 'ping' ) {
+	private function request( $action = 'test' ) {
 		return array(
 			'username' => 'administrator',
 			'base_url' => 'https://wprus-peer.test',
 			'action'   => $action,
 			'data'     => array(
-				'base_url'      => 'https://wprus-peer.test',
-				'target_action' => 'create',
-				'direction'     => 'incoming',
+				'base_url' => 'https://wprus-peer.test',
+				'actions'  => array(
+					'incoming' => array(),
+					'outgoing' => array(),
+				),
 			),
 		);
 	}
 
 	/** Build the handler with the current test settings. */
 	private function admin() {
-		return new Wprus_Test_Wp_Admin( 'wp-admin', $this->settings );
+		return new Wprus_Test_Admin( 'admin', $this->settings );
 	}
 }

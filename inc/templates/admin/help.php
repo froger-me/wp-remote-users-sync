@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<strong><?php esc_html_e( 'Metadata', 'wprus' ); ?></strong><?php esc_html_e( ' - Fired when one or several user metadata are added / created / deleted, depending on specified transferred outgoing and accepted incoming metadata keys.', 'wprus' ); ?><br/>
 						<?php esc_html_e( 'This action is particularly useful to synchronise user data added by plugins (such as address information in WooCommerce).', 'wprus' ); ?>
 					</li>
-				</ul>	
+				</ul>
 			</div>
 		</div>
 		<div class="wprus-help">
@@ -77,6 +77,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						);
 						?>
 					</li>
+					<li><?php esc_html_e( 'Click Test for each saved site. The result reports every Action setting difference or a connection error.', 'wprus' ); ?></li>
 					<li><?php esc_html_e( 'Visit the permalinks page of each connected site (Settings > Permalinks)', 'wprus' ); ?></li>
 					<li><?php esc_html_e( 'Activate and check the logs on both local and remote sites when testing (WP Remote Users Sync > Activity Logs > Enable Logs) ; try to find any discrepancies and adjust the settings', 'wprus' ); ?></li>
 					<li><?php esc_html_e( 'Read the Resolved threads of the support forum - your issue might have already been addressed there', 'wprus' ); ?></li>

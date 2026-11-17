@@ -99,7 +99,7 @@ The operation message uses the **sender URL** in `base_url`.
 async function sendOperation(action, fields) {
   const token = await requestToken(action, 'post');
   const message = { ...fields, base_url: sender };
-  if (action === 'wp-admin' && message.data) {
+  if (action === 'admin' && message.data) {
     message.data = { ...message.data, base_url: sender };
   }
   return postJSON(action, {

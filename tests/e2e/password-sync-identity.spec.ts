@@ -84,7 +84,7 @@ test('a trusted peer cannot reset a different same-login Administrator password'
     expect(await passwordMatches(adminLogin, originalAdminPassword)).toBe(true);
     expect(await passwordMatches(adminLogin, attackerPassword)).toBe(false);
 
-    // The old request omitted the source account's email. It must leave the Administrator untouched.
+    // A request without the source account's email must leave the Administrator untouched.
     expect((await sendPeerPassword(adminLogin, attackerPassword)).status()).toBe(409);
     expect(await passwordMatches(adminLogin, originalAdminPassword)).toBe(true);
     expect(await passwordMatches(adminLogin, attackerPassword)).toBe(false);

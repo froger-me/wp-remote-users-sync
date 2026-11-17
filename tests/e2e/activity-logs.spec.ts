@@ -18,15 +18,15 @@ test('a subscriber with valid request values cannot clear logs or test connectio
       form: { action: 'wprus_tests_nonce' },
     });
     expect(nonceResponse.ok()).toBeTruthy();
-    const nonces = (await nonceResponse.json() as { data: { logs: string; ping: string } }).data;
+    const nonces = (await nonceResponse.json() as { data: { logs: string; test: string } }).data;
     for (const action of ['wprus_refresh_logs', 'wprus_clear_logs']) {
       const response = await context.request.post('/wp-admin/admin-ajax.php', { form: { action, nonce: nonces.logs } });
       expect(response.status(), action).toBe(403);
       expect((await response.json() as { success: boolean }).success, action).toBe(false);
     }
-    for (const action of ['wprus_wp_admin_notify_ping_remote', 'wprus_wp_admin_notify_outgoing_meta_remote']) {
+    for (const action of ['wprus_admin_notify_test_remote', 'wprus_admin_notify_outgoing_meta_remote']) {
       const response = await context.request.post('/wp-admin/admin-ajax.php', {
-        form: { action, nonce: nonces.ping, site_url: 'https://wprus-peer.test' },
+        form: { action, nonce: nonces.test, site_url: 'https://wprus-peer.test' },
       });
       expect(response.status(), action).toBe(403);
       expect((await response.json() as { success: boolean }).success, action).toBe(false);
@@ -38,8 +38,8 @@ test('a subscriber with valid request values cannot clear logs or test connectio
 
 test('metadata matching requires a valid administrator request and a saved site', async ({ page }) => {
   await page.goto('/wp-admin/options-general.php?page=wprus');
-  const nonce = await page.locator('#wprus_ping_nonce').inputValue();
-  const action = 'wprus_wp_admin_notify_outgoing_meta_remote';
+  const nonce = await page.locator('#wprus_test_nonce').inputValue();
+  const action = 'wprus_admin_notify_outgoing_meta_remote';
   const invalidNonce = await page.request.post('/wp-admin/admin-ajax.php', {
     form: { action, nonce: 'invalid', site_url: 'https://wprus-peer.test' },
   });

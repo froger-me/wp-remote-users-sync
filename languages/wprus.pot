@@ -58,8 +58,8 @@ msgid ""
 msgstr ""
 
 #. %s is the error code
+#: inc/api/admin/class-wprus-admin-test.php:191
 #, php-format
-#: inc/api/class-wprus-api-wp-admin.php:283
 msgid " - code: %s - "
 msgstr ""
 
@@ -126,12 +126,6 @@ msgid ""
 "bigger issues to worry about)."
 msgstr ""
 
-#. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#, php-format
-#: inc/api/class-wprus-api-wp-admin.php:191
-msgid "\"%1$s\" action is not activated on %2$s with remote IP %3$s (%4$s)."
-msgstr ""
-
 #: inc/templates/admin/help.php:219
 msgid ""
 "\"administrator\" and \"custom_role1\" are not part of the accepted roles ; "
@@ -147,16 +141,6 @@ msgstr ""
 
 #: inc/class-wprus-logger.php:213
 msgid "(No message)"
-msgstr ""
-
-#: inc/api/class-wprus-api-wp-admin.php:126
-msgid "A ping was received but the initiator did not send the proper data."
-msgstr ""
-
-#: inc/api/class-wprus-api-abstract.php:607
-msgid ""
-"A ping was received but the initiator did not use matching encryption and "
-"signature action keys"
 msgstr ""
 
 #: inc/templates/admin/help.php:162
@@ -245,7 +229,40 @@ msgid ""
 "try again."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:284
+#: inc/class-wprus-settings.php:302
+msgid "All action settings match."
+msgstr ""
+
+#: inc/class-wprus-settings.php:303
+#: inc/api/admin/class-wprus-admin-test.php:117
+msgid "Action settings differ between the two sites."
+msgstr ""
+
+#: inc/class-wprus-settings.php:304
+msgid "An action will not synchronize unless it is enabled as Outgoing on the sending site and Incoming on the receiving site."
+msgstr ""
+
+#: inc/class-wprus-settings.php:305
+msgid "The connection test could not be completed."
+msgstr ""
+
+#: inc/class-wprus-settings.php:306
+msgid "The remote site did not recognize the connection test request."
+msgstr ""
+
+#: inc/class-wprus-settings.php:307
+msgid "Enabled here but disabled on the remote site."
+msgstr ""
+
+#: inc/class-wprus-settings.php:308
+msgid "Disabled here but enabled on the remote site."
+msgstr ""
+
+#: inc/api/admin/class-wprus-admin-test.php:72
+msgid "Invalid connection test request."
+msgstr ""
+
+#: inc/api/admin/class-wprus-admin-test.php:192
 msgid ""
 "an undefined error occured. Please make sure the address is correct and try "
 "again."
@@ -348,7 +365,7 @@ msgstr ""
 
 #: inc/class-wprus-settings.php:89
 #: inc/templates/admin/help.php:30
-#: inc/api/class-wprus-api-wp-admin.php:107
+#: inc/api/admin/class-wprus-admin-test.php:82
 msgid "Create"
 msgstr ""
 
@@ -382,7 +399,7 @@ msgstr ""
 
 #: inc/class-wprus-settings.php:91
 #: inc/templates/admin/help.php:37
-#: inc/api/class-wprus-api-wp-admin.php:109
+#: inc/api/admin/class-wprus-admin-test.php:84
 msgid "Delete"
 msgstr ""
 
@@ -463,8 +480,8 @@ msgstr ""
 msgid "Enable Logs"
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:260
-#: inc/api/class-wprus-api-wp-admin.php:273
+#: inc/api/admin/class-wprus-admin-test.php:168
+#: inc/api/admin/class-wprus-admin-test.php:181
 msgid "Error contacting the remote site: "
 msgstr ""
 
@@ -487,8 +504,8 @@ msgid ""
 msgstr ""
 
 #: inc/class-wprus-logger.php:150
-#: inc/api/class-wprus-api-wp-admin.php:210
-#: inc/api/class-wprus-api-wp-admin.php:216
+#: inc/api/admin/class-wprus-api-admin.php:152
+#: inc/api/admin/class-wprus-api-admin.php:158
 msgid "Error: unauthorized access - please reload the page and try again."
 msgstr ""
 
@@ -729,10 +746,6 @@ msgid ""
 "doing synchronisation:"
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:134
-msgid "incoming"
-msgstr ""
-
 #: inc/templates/admin/site-metabox.php:57
 #: inc/templates/admin/site-metabox-template.php:57
 msgid "Incoming Actions"
@@ -808,7 +821,7 @@ msgstr ""
 
 #: inc/class-wprus-settings.php:87
 #: inc/templates/admin/help.php:22
-#: inc/api/class-wprus-api-wp-admin.php:105
+#: inc/api/admin/class-wprus-admin-test.php:80
 msgid "Login"
 msgstr ""
 
@@ -853,7 +866,7 @@ msgstr ""
 
 #: inc/class-wprus-settings.php:88
 #: inc/templates/admin/help.php:26
-#: inc/api/class-wprus-api-wp-admin.php:106
+#: inc/api/admin/class-wprus-admin-test.php:81
 msgid "Logout"
 msgstr ""
 
@@ -911,8 +924,7 @@ msgstr ""
 msgid "Logs"
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:127
-#: inc/api/class-wprus-api-wp-admin.php:233
+#: inc/api/admin/class-wprus-admin-test.php:149
 msgid ""
 "Malformed data - the test request was received but the data could not be "
 "extracted."
@@ -933,7 +945,7 @@ msgstr ""
 
 #: inc/class-wprus-settings.php:94
 #: inc/templates/admin/help.php:49
-#: inc/api/class-wprus-api-wp-admin.php:112
+#: inc/api/admin/class-wprus-admin-test.php:87
 msgid "Metadata"
 msgstr ""
 
@@ -1063,13 +1075,13 @@ msgid ""
 "useful when exporting users in batches."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:291
+#: inc/api/admin/class-wprus-admin-test.php:199
 msgid ""
 "On the remote site, please make sure the permalinks are not using the "
 "\"Plain\" option."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:286
+#: inc/api/admin/class-wprus-admin-test.php:194
 msgid ""
 "On the remote site, please make sure the plugin is activated and that the "
 "permalinks are up to date by visiting the permalinks settings page."
@@ -1092,10 +1104,6 @@ msgstr ""
 msgid "OpenSSL encryption"
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:134
-msgid "outgoing"
-msgstr ""
-
 #: inc/templates/admin/site-metabox.php:11
 #: inc/templates/admin/site-metabox-template.php:11
 msgid "Outgoing Actions"
@@ -1107,7 +1115,7 @@ msgstr ""
 
 #: inc/class-wprus-settings.php:92
 #: inc/templates/admin/help.php:40
-#: inc/api/class-wprus-api-wp-admin.php:110
+#: inc/api/admin/class-wprus-admin-test.php:85
 msgid "Password"
 msgstr ""
 
@@ -1158,28 +1166,6 @@ msgid ""
 "(blocking request) are saved for a period of time for synchronous actions, "
 "and by the fact that actions are fired ONLY when an operation has been "
 "performed on users (not on every page load)."
-msgstr ""
-
-#. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#, php-format
-#: inc/api/class-wprus-api-wp-admin.php:147
-msgid ""
-"Ping received for activated action \"%1$s\" from %2$s with remote IP %3$s "
-"(%4$s)"
-msgstr ""
-
-#. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#, php-format
-#: inc/api/class-wprus-api-wp-admin.php:176
-msgid ""
-"Ping received for deactivated action \"%1$s\" from %2$s with remote IP %3$s "
-"(%4$s)"
-msgstr ""
-
-#. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#, php-format
-#: inc/api/class-wprus-api-wp-admin.php:162
-msgid "Ping success for action \"%1$s\" from %2$s with remote IP %3$s (%4$s)"
 msgstr ""
 
 #: inc/templates/admin/help.php:105
@@ -1263,7 +1249,7 @@ msgstr ""
 
 #: inc/class-wprus-settings.php:93
 #: inc/templates/admin/help.php:44
-#: inc/api/class-wprus-api-wp-admin.php:111
+#: inc/api/admin/class-wprus-admin-test.php:86
 msgid "Roles"
 msgstr ""
 
@@ -1497,7 +1483,7 @@ msgstr ""
 
 #: inc/class-wprus-settings.php:90
 #: inc/templates/admin/help.php:33
-#: inc/api/class-wprus-api-wp-admin.php:108
+#: inc/api/admin/class-wprus-admin-test.php:83
 msgid "Update"
 msgstr ""
 
@@ -1578,7 +1564,11 @@ msgstr ""
 msgid "Users File"
 msgstr ""
 
-#: inc/templates/admin/help.php:75
+#: inc/templates/admin/help.php:80
+msgid "Click Test for each saved site. The result reports every Action setting difference or a connection error."
+msgstr ""
+
+#: inc/templates/admin/help.php:81
 msgid ""
 "Visit the permalinks page of each connected site (Settings > Permalinks)"
 msgstr ""
@@ -1706,17 +1696,12 @@ msgid ""
 "work."
 msgstr ""
 
-
-#: inc/api/class-wprus-api-wp-admin.php:49
+#: inc/api/admin/class-wprus-api-admin.php:78
 msgid "Invalid administrative request."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:59
+#: inc/api/admin/class-wprus-api-admin.php:108
 msgid "Unknown administrative action."
-msgstr ""
-
-#: inc/api/class-wprus-api-wp-admin.php:88
-msgid "Administrative action did not return a result."
 msgstr ""
 
 #: inc/templates/admin/site-metabox.php:123
@@ -1733,26 +1718,26 @@ msgstr ""
 msgid "No eligible outgoing metadata keys were returned."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:78
+#: inc/api/admin/class-wprus-admin-meta.php:66
 msgid "Invalid outgoing metadata request."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:84
+#: inc/api/admin/class-wprus-admin-meta.php:72
 msgid "The requesting site is not configured."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:397
+#: inc/api/admin/class-wprus-admin-meta.php:92
 msgid "The remote site is not configured."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:403
+#: inc/api/admin/class-wprus-admin-meta.php:98
 msgid "Unable to identify the current user."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:425
+#: inc/api/admin/class-wprus-admin-meta.php:120
 msgid "Unable to retrieve outgoing metadata from the remote site."
 msgstr ""
 
-#: inc/api/class-wprus-api-wp-admin.php:433
+#: inc/api/admin/class-wprus-admin-meta.php:128
 msgid "The remote site returned invalid metadata."
 msgstr ""

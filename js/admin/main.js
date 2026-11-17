@@ -162,8 +162,8 @@ jQuery(document).ready(function($) {
 			url: WPRUS.ajax_url,
 			type: 'POST',
 			data: {
-				action: 'wprus_wp_admin_notify_outgoing_meta_remote',
-				nonce: $('#wprus_ping_nonce').val(),
+				action: 'wprus_admin_notify_outgoing_meta_remote',
+				nonce: $('#wprus_test_nonce').val(),
 				site_url: site.data('url')
 			},
 			success: function(response) {
@@ -206,65 +206,84 @@ jQuery(document).ready(function($) {
 	});
 
 	$('#normal-sortables').on('change', '.action-checkbox input', function() {
-		var checkbox = $(this),
-			row      = checkbox.closest('tr'),
-			button   = row.find('.action-test button');
-
-		row.find('.action-test-result span').hide();
-
-		if ( checkbox.prop('checked') ) {
-			button.removeAttr('disabled');
-		} else {
-			button.attr('disabled', 'disabled');
-		}
+		$(this).closest('.wprus-container').find('.wprus-site-test-result').empty().removeClass('success warning failure');
 	});
 
-	$('#normal-sortables').on('click', '.action-test button', function(e) {
+	$('#normal-sortables').on('click', '.wprus-site-test button', function(e) {
 		e.preventDefault();
 
-		var button = $(this),
-			dataContainer = button.parent(),
-			row           = button.closest('tr'),
-			data          = {
-				nonce     : $('#wprus_ping_nonce').val(),
-				site_url  : button.closest('.wprus-container').data('url'),
-				direction : dataContainer.data('direction'),
-				data      : {
-					username      : WPRUS.username,
-					target_action : dataContainer.data('action')
-				},
-				action    : 'wprus_wp_admin_notify_ping_remote',
+		var button   = $(this),
+			container = button.closest('.wprus-container'),
+			result    = container.find('.wprus-site-test-result'),
+			spinner   = button.siblings('.spinner'),
+			actions   = {
+				incoming: {},
+				outgoing: {}
 			};
 
-		button.attr('disabled', 'disabled');
-		row.find('.failure').hide();
-		row.find('.success').hide();
+		container.find('.wprus-actions tr').each(function() {
+			var row = $(this);
+
+			actions[row.data('direction')][row.data('action')] = row.find('input').prop('checked') ? 1 : 0;
+		});
+
+		result.empty().removeClass('success warning failure');
+		button.prop('disabled', true);
+		spinner.addClass('is-active');
 
 		$.ajax({
 			url: WPRUS.ajax_url,
 			type: 'POST',
-			data: data,
+			data: {
+				nonce: $('#wprus_test_nonce').val(),
+				site_url: container.data('url'),
+				data: {
+					username: WPRUS.username,
+					actions: actions
+				},
+				action: 'wprus_admin_notify_test_remote'
+			},
 			success: function(response) {
+				if (response.success) {
+				result.addClass('success').text(WPRUS.test_success);
+					return;
+				}
 
-				if ( response.success ) {
-					row.find('.success').show();
+				var data     = response.data || {},
+					failures = data.details && data.details.failures,
+					list     = $('<ul>');
+
+				if (Array.isArray(failures)) {
+					result.addClass('warning').append($('<strong>').text(WPRUS.test_mismatches));
+					result.append($('<p>').text(WPRUS.test_mismatch_details));
+					$.each(failures, function(index, failure) {
+						var row = container.find('.wprus-actions tr').filter(function() {
+							return $(this).data('direction') === failure.direction && $(this).data('action') === failure.action;
+						}),
+							label = row.length ? row.closest('.incoming_actions, .outgoing_actions').find('h4').first().text() + ' — ' + row.find('.action-label').text() : failure.direction + ' — ' + failure.action,
+							message = failure.local_enabled ? WPRUS.test_remote_disabled : WPRUS.test_remote_enabled;
+
+						list.append($('<li>').append($('<strong>').text(label + ': ')).append(document.createTextNode(message)));
+					});
+					result.append(list);
 				} else {
-					row.find('.failure').show();
-					setTimeout(function() {
-						window.alert( response.data );
-					}, 10);	
+					var message = 'wprus_unknown_admin_action' === data.code ? WPRUS.test_unknown_action : data.message || data || WPRUS.undefined_error;
+
+					result.addClass('failure').append($('<strong>').text(WPRUS.test_unavailable));
+					result.append($('<p>').text(message));
 				}
 			},
 			error: function(jqXHR, textStatus) {
-				row.find('.success').hide();
-				row.find('.failure').show();
-				setTimeout(function() {
-					window.alert( WPRUS.undefined_error );
-				}, 10);
+				var data = jqXHR.responseJSON && jqXHR.responseJSON.data;
+				var message = data && data.message || data || WPRUS.undefined_error;
+
+				result.addClass('failure').append($('<strong>').text(WPRUS.test_unavailable));
+				result.append($('<p>').text(message));
 				WPRUS.debug && console.log(textStatus);
 			},
 			complete: function() {
-				button.removeAttr('disabled');
+				button.prop('disabled', false);
+				spinner.removeClass('is-active');
 				refreshLogs();
 			}
 		});

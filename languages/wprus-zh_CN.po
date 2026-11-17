@@ -169,16 +169,6 @@ msgstr "“shop_manager”是已接受角色的一部分，并且是站点2上�
 msgid "(No message)"
 msgstr "（无信息）"
 
-#: inc/api/class-wprus-api-abstract.php:619
-msgid "A ping was received but the initiator did not send the proper data."
-msgstr "收到ping命令，但发起方未发送正确的数据。"
-
-#: inc/api/class-wprus-api-abstract.php:607
-msgid ""
-"A ping was received but the initiator did not use matching encryption and "
-"signature action keys"
-msgstr "收到ping命令，但发起方未使用匹配的加密和签名操作密钥"
-
 #: inc/templates/admin/help.php:162
 msgid ""
 "A second token renewal request to try again (blocking as well ; token "
@@ -1188,28 +1178,6 @@ msgid ""
 "and by the fact that actions are fired ONLY when an operation has been "
 "performed on users (not on every page load)."
 msgstr "通过为同步操作保存一段时间的操作令牌（阻止请求）以及仅在对用户执行操作时才触发操作（而不是在每次页面加载时）才触发操作，可以缓解性能下降。"
-
-#. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:638
-#, php-format
-msgid ""
-"Ping received for activated action \"%1$s\" from %2$s with remote IP %3$s "
-"(%4$s)"
-msgstr "从远程IP为%3$s（%4$s）的%2$s收到针对激活操作“%1$s”的Ping"
-
-#. %1$s is the sync action name, %2$s is the remote site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:669
-#, php-format
-msgid ""
-"Ping received for deactivated action \"%1$s\" from %2$s with remote IP %3$s "
-"(%4$s)"
-msgstr "从远程IP为%3$s（%4$s）的%2$s取消操作“%1$s”收到的Ping"
-
-#. %1$s is the sync action name, %2$s is the current site URL, %3$s is the remote IP, %4$s is the direction
-#: inc/api/class-wprus-api-abstract.php:653
-#, php-format
-msgid "Ping success for action \"%1$s\" from %2$s with remote IP %3$s (%4$s)"
-msgstr "使用远程IP%3$s（%4$s）从%2$s ping操作“%1$s”成功"
 
 #: inc/templates/admin/help.php:105
 msgid ""

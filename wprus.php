@@ -50,7 +50,7 @@ function wprus_run() {
 	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-abstract.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/class-wprus-identity-creation-exception.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-identity.php';
-	require_once WPRUS_PLUGIN_PATH . 'inc/api/class-wprus-api-wp-admin.php';
+	require_once WPRUS_PLUGIN_PATH . 'inc/api/admin/class-wprus-api-admin.php';
 	require_once WPRUS_PLUGIN_PATH . 'inc/integration/class-wprus-integration.php';
 
 	do_action( 'wprus_init' );
@@ -86,11 +86,11 @@ function wprus_run() {
 
 		$api             = array();
 		$api['identity'] = new Wprus_Api_Identity( 'identity', $settings, true );
-		$api['wp-admin'] = new Wprus_Api_Wp_Admin( 'wp-admin', $settings, true );
+		$api['admin']    = new Wprus_Api_Admin( 'admin', $settings, true );
 
 		foreach ( $enabled_api_endpoints as $api_endpoint ) {
 
-			if ( in_array( $api_endpoint, array( 'identity', 'wp-admin' ), true ) ) {
+			if ( in_array( $api_endpoint, array( 'identity', 'admin' ), true ) ) {
 				continue;
 			}
 

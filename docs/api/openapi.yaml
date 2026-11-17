@@ -288,7 +288,7 @@ paths:
           "$ref": "#/components/responses/RequestError"
         "422":
           "$ref": "#/components/responses/RequestError"
-  "/wprus/wp-admin/":
+  "/wprus/admin/":
     post:
       tags:
         - "Administration"
@@ -303,14 +303,15 @@ paths:
         "400":
           - "wprus_invalid_admin_request"
           - "wprus_unknown_admin_action"
-          - "wprus_invalid_ping"
+          - "wprus_invalid_test"
           - "wprus_invalid_outgoing_meta_request"
           - "wprus_unknown_outgoing_meta_site"
         "403":
           - "invalid_token"
           - "ip_not_allowed"
           - "method_not_allowed"
-          - "wprus_ping_disabled"
+        "409":
+          - "wprus_configuration_mismatch"
         "500":
           - "wprus_admin_no_result"
       responses:
@@ -319,6 +320,8 @@ paths:
         "400":
           "$ref": "#/components/responses/RequestError"
         "403":
+          "$ref": "#/components/responses/RequestError"
+        "409":
           "$ref": "#/components/responses/RequestError"
         "500":
           "$ref": "#/components/responses/RequestError"
@@ -801,41 +804,38 @@ components:
             action:
               type: "string"
               enum:
-                - "ping"
+                - "test"
                 - "outgoing_meta"
             data:
               oneOf:
                 -
-                  "$ref": "#/components/schemas/PingData"
+                  "$ref": "#/components/schemas/TestData"
                 -
                   "$ref": "#/components/schemas/OutgoingMetaData"
-    PingData:
+    TestData:
       type: "object"
       required:
         - "base_url"
-        - "target_action"
-        - "direction"
+        - "actions"
       properties:
         base_url:
           type: "string"
           description: "Registered sender URL"
           format: "uri"
-        target_action:
-          type: "string"
-          enum:
-            - "login"
-            - "logout"
-            - "create"
-            - "update"
-            - "delete"
-            - "password"
-            - "role"
-            - "meta"
-        direction:
-          type: "string"
-          enum:
+        actions:
+          type: "object"
+          required:
             - "incoming"
             - "outgoing"
+          properties:
+            incoming:
+              type: "object"
+              additionalProperties:
+                type: "boolean"
+            outgoing:
+              type: "object"
+              additionalProperties:
+                type: "boolean"
     OutgoingMetaData:
       type: "object"
       required:

@@ -84,10 +84,9 @@ class Wprus_Test_Peer {
 			unset( $this->tokens[ $body['token'] ] );
 		}
 		if (
-			'/wprus/wp-admin/' === $path &&
-			'ping' === ( $data['action'] ?? '' ) &&
-			! empty( $data['data']['target_action'] ) &&
-			in_array( $data['data']['direction'] ?? '', array( 'incoming', 'outgoing' ), true )
+			'/wprus/admin/' === $path &&
+			'test' === ( $data['action'] ?? '' ) &&
+			isset( $data['data']['actions']['incoming'], $data['data']['actions']['outgoing'] )
 		) {
 			return $this->response(
 				wp_json_encode(
@@ -98,7 +97,7 @@ class Wprus_Test_Peer {
 				)
 			);
 		}
-		if ( '/wprus/wp-admin/' === $path ) {
+		if ( '/wprus/admin/' === $path ) {
 			if ( 'outgoing_meta' === ( $data['action'] ?? '' ) ) {
 				return $this->response(
 					wp_json_encode(

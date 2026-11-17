@@ -89,7 +89,7 @@ The operation request uses the **sender URL** in `base_url` and sends `Content-T
 def send_operation(action, fields):
     token = request_token(action, "post")
     message = {**fields, "base_url": sender}
-    if action == "wp-admin" and isinstance(message.get("data"), dict):
+    if action == "admin" and isinstance(message.get("data"), dict):
         message["data"] = {**message["data"], "base_url": sender}
     return requests.post(
         receiver + "/wprus/" + action + "/",

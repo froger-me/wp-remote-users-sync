@@ -286,7 +286,7 @@ if which gh > /dev/null; then
     execute_or_echo mkdir -p "$RELEASEPATH"
 
     # Create a zip file of the plugin, excluding development files.
-    execute_or_echo rsync -r --exclude=".*" --exclude="*.sh" --exclude="tests" "$GITPATH" "$RELEASEPATH"
+    execute_or_echo rsync -r --exclude=".*" --exclude="*.sh" --exclude="tests" --exclude="AGENTS.md" "$GITPATH" "$RELEASEPATH"
 
     # Create the zip file from the prepared release directory.
     execute_or_echo rm -f "/tmp/$ZIPFILE"
@@ -341,6 +341,7 @@ fi
 # Export HEAD of branch from git to SVN trunk
 execute_or_echo git checkout-index -a -f --prefix="$SVNPATH"/trunk/
 execute_or_echo rm -rf "${SVNPATH:?}/trunk/tests"
+execute_or_echo rm -f "${SVNPATH:?}/trunk/AGENTS.md"
 
 # Ignore files
 execute_or_echo svn propset svn:ignore "deploy.sh
@@ -348,7 +349,8 @@ execute_or_echo svn propset svn:ignore "deploy.sh
 .vscode
 .git
 .gitignore
-tests" "$SVNPATH/trunk/"
+tests
+AGENTS.md" "$SVNPATH/trunk/"
 
 # Add only readme.txt to SVN trunk
 execute_or_echo cd "$SVNPATH"/trunk/

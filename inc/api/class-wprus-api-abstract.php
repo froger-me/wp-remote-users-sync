@@ -359,7 +359,7 @@ abstract class Wprus_Api_Abstract {
 		$is_remote_post        = $this->doing_remote_action && 'post' === $this->method;
 
 		if (
-			! in_array( $this->endpoint, array( 'identity', 'wp-admin' ), true ) &&
+			! in_array( $this->endpoint, array( 'identity', 'admin' ), true ) &&
 			( ! isset( $this->data[ $this->method ] ) || ! is_array( $this->data[ $this->method ] ) || ! $this->data[ $this->method ] )
 		) {
 
@@ -370,7 +370,7 @@ abstract class Wprus_Api_Abstract {
 				status_header( 400 );
 			}
 		} elseif (
-			! in_array( $this->endpoint, array( 'identity', 'wp-admin' ), true ) &&
+			! in_array( $this->endpoint, array( 'identity', 'admin' ), true ) &&
 			! Wprus_Api_Identity::verify_incoming_identity( $data, $this->endpoint )
 		) {
 			Wprus_Logger::log(
@@ -384,14 +384,6 @@ abstract class Wprus_Api_Abstract {
 				$this->send_response( false, 409 );
 			} else {
 				status_header( 409 );
-			}
-		} elseif ( 'wp-admin' !== $this->endpoint && isset( $data['ping'] ) ) {
-
-			if ( $is_remote_post ) {
-				$this->set_response_error( 'invalid_' . $this->endpoint . '_request', 400 );
-				$this->send_response( false, 400 );
-			} else {
-				status_header( 400 );
 			}
 		} elseif ( method_exists( $this, 'handle_notification' ) ) {
 			do_action( 'wprus_before_handle_action_notification', $this->endpoint, $data );

@@ -106,43 +106,96 @@ table.wprus-actions {
 	width: 100%;
 }
 
+table.wprus-actions tbody {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: 1.5em;
+}
+
+table.wprus-actions tr {
+	display: table;
+	width: 100%;
+}
+
 table.wprus-actions td.action-checkbox {
     width: 15px;
 }
 
-table.wprus-actions td.action-test {
-    text-align: right;
-}
-
 .wprus-site-footer {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 1em;
 	padding-top: 1em;
     border-top: 1px solid #eee;
-    text-align: right;
+}
+
+.wp-core-ui .wprus-site-test .button,
+.wp-core-ui .wprus-match-outgoing-meta {
+	min-height: 25px;
+	line-height: 1.5;
+	padding: 0 1em;
+}
+
+.wprus-site-test .spinner {
+	float: none;
+	margin-top: 4px;
+}
+
+.wprus-site-test-result {
+	grid-column: 1 / -1;
+	margin-top: 0.75em;
+}
+
+.wprus-site-test-result:empty {
+	display: none;
+}
+
+.wprus-site-test-result ul {
+	margin: 0.5em 0 0 1.5em;
+	list-style: disc;
+}
+
+.wprus-site-test-result.success,
+.wprus-site-test-result.warning,
+.wprus-site-test-result.failure {
+	padding: 10px 12px;
+	color: #3c434a;
+}
+
+.wprus-site-test-result.success {
+	border-left: 4px solid #00a32a;
+	background: #edfaef;
+}
+
+.wprus-site-test-result.warning {
+	border-left: 4px solid #dba617;
+	background: #fcf9e8;
+}
+
+.wprus-site-test-result.failure {
+	border-left: 4px solid #d63638;
+	background: #fcf0f1;
+}
+
+.wprus-site-links {
+	margin-left: auto;
+	text-align: right;
+}
+
+.wprus-site-links a + a {
+	margin-left: 1em;
 }
 
 .wprus-site-footer .deletion {
     color: #a00;
 }
 
-.wp-core-ui .wprus-actions .button {
-    min-height: 25px;
-    line-height: 1.5;
-    padding: 0 1em;
-}
-
-.action-test-result .failure,
-.action-test-result .success {
-	display: none;
-}
-
-.action-test-result .failure,
 .wprus-export-actions .failure,
 .wprus-container #logs_view .wprus-log-row.alert .log-message,
 .wprus-security .alert {
     color: #dc3232;
 }
 
-.action-test-result .success,
 .wprus-export-actions .success,
 .wprus-container #logs_view .wprus-log-row.success .log-message {
     color: #46b450;

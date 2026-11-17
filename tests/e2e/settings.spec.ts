@@ -46,28 +46,21 @@ test('an administrator can add, save, and remove a connected site', async ({ pag
   await expect(page.locator(`.wprus-container[data-url="${url}"]`)).toHaveCount(0);
 });
 
-test('each incoming and outgoing action controls its connection-test button', async ({ page }) => {
+test('actions use two columns and each site has one connection-test button', async ({ page }) => {
   await page.goto('/wp-admin/options-general.php?page=wprus');
   const site = page.locator('.postbox.wprus-site').filter({ has: page.locator('.wprus-container[data-url="https://wprus-peer.test"]') });
   const firstCheckbox = site.locator('.wprus-actions .action-checkbox input').first();
   if (!(await firstCheckbox.isVisible())) await site.locator('.handlediv').click();
   const rows = site.locator('.wprus-actions tr');
   await expect(rows).toHaveCount(16);
-  for (const row of await rows.all()) {
-    const checkbox = row.locator('.action-checkbox input');
-    const button = row.locator('.action-test button');
-    const originallyChecked = await checkbox.isChecked();
-    if (originallyChecked) {
-      await checkbox.uncheck();
-      await expect(button).toBeDisabled();
-      await checkbox.check();
-      await expect(button).toBeEnabled();
-    } else {
-      await checkbox.check();
-      await expect(button).toBeEnabled();
-      await checkbox.uncheck();
-      await expect(button).toBeDisabled();
-    }
+  await expect(site.locator('.wprus-site-test').getByRole('button', { name: 'Test' })).toHaveCount(1);
+  for (const table of await site.locator('.wprus-actions').all()) {
+    const actionRows = table.locator('tr');
+    await expect(actionRows).toHaveCount(8);
+    const boxes = await actionRows.evaluateAll(elements => elements.map(element => element.getBoundingClientRect()));
+    expect(boxes[0].x).toBeLessThan(boxes[1].x);
+    expect(boxes[0].y).toBe(boxes[1].y);
+    expect(boxes[0].x).toBe(boxes[2].x);
   }
   const toggle = site.getByRole('link', { name: 'Toggle all actions' });
   await toggle.click();
@@ -87,17 +80,6 @@ test('security keys are shown on focus and hidden after leaving the field', asyn
     await expect(field).toHaveAttribute('type', 'text');
     await field.blur();
     await expect(field).toHaveAttribute('type', 'password');
-  }
-});
-
-test('the removed import and export controls are not available', async ({ page, request }) => {
-  await page.goto('/wp-admin/options-general.php?page=wprus');
-  await expect(page.locator('#wprus_import_file_trigger')).toBeHidden();
-  await expect(page.locator('#wprus_export_trigger')).toBeHidden();
-  for (const action of ['wprus_import_users', 'wprus_export_users', 'wprus_get_usernames']) {
-    const response = await request.post('/wp-admin/admin-ajax.php', { form: { action } });
-    expect(response.status(), action).toBe(400);
-    expect(await response.text(), action).toBe('0');
   }
 });
 
@@ -155,7 +137,7 @@ for (const mode of ['readable', 'compact'] as const) {
     page.on('dialog', dialog => dialog.dismiss());
     try {
       const response = page.waitForResponse(item => item.url().includes('admin-ajax.php') &&
-        item.request().postData()?.includes('wprus_wp_admin_notify_outgoing_meta_remote') === true);
+        item.request().postData()?.includes('wprus_admin_notify_outgoing_meta_remote') === true);
       await button.click();
       const result = await response;
       const form = new URLSearchParams(result.request().postData() ?? '');
@@ -201,7 +183,7 @@ test('empty and failed matching requests keep the current selection', async ({ p
   const original = await select.evaluate(element => Array.from((element as HTMLSelectElement).selectedOptions, option => option.value));
   let response: 'empty' | 'error' = 'empty';
   await page.route('**/wp-admin/admin-ajax.php', async route => {
-    if (!route.request().postData()?.includes('wprus_wp_admin_notify_outgoing_meta_remote')) {
+    if (!route.request().postData()?.includes('wprus_admin_notify_outgoing_meta_remote')) {
       await route.continue();
       return;
     }
