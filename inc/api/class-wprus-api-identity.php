@@ -195,7 +195,7 @@ class Wprus_Api_Identity extends Wprus_Api_Abstract {
 	/** Whether the current user can manage other users. */
 	public static function can_manage_users() {
 
-		foreach ( array( 'manage_network_users', 'promote_users', 'remove_users', 'edit_users', 'add_users', 'create_users', 'delete_users' ) as $capability ) {
+		foreach ( array( 'manage_network_users', 'edit_users', 'add_users', 'create_users' ) as $capability ) {
 
 			if ( current_user_can( $capability ) ) {
 				return true;
