@@ -9,13 +9,13 @@ Requires PHP: 8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Synchronise WordPress users across connected sites while checking account identities before registration and incoming changes.
-
-All sites connected through WPRUS **must** use the same plugin version.
+Synchronise WordPress users across connected sites and check account identities before registration and account changes.
 
 == Description ==
 
 If you run multiple websites and want to keep users separated, but synchronise them automatically and securely for specific user operations, then WP Remote Users Sync is the plugin to use.
+
+All connected sites must use the same version of WP Remote Users Sync.
 
 == Overview ==
 
