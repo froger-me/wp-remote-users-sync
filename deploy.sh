@@ -313,22 +313,27 @@ if [ -d "$SVNPATH" ]; then
     execute_or_echo rm -fr "$SVNPATH"
 fi
 
-# Create local copy of SVN repo
-execute_or_echo svn co "$SVNURL" "$SVNPATH"
+# Check out the top-level directories without downloading old release tags.
+execute_or_echo svn checkout --depth immediates "$SVNURL" "$SVNPATH"
 
 echo "SVN repository checked out to $SVNPATH"
 
-#Init directories assets, tags, trunk if they do not exist
-if [ ! -d "$SVNPATH"/assets ]; then
-    execute_or_echo mkdir "$SVNPATH"/assets
-fi
-
+# Keep tags empty locally so the script can add just the new release.
 if [ ! -d "$SVNPATH"/tags ]; then
-    execute_or_echo mkdir "$SVNPATH"/tags
+    execute_or_echo svn mkdir "$SVNPATH"/tags
 fi
 
-if [ ! -d "$SVNPATH"/trunk ]; then
-    execute_or_echo mkdir "$SVNPATH"/trunk
+# Download the existing files the script may replace or update.
+if [ -d "$SVNPATH"/trunk ]; then
+    execute_or_echo svn update --set-depth infinity "$SVNPATH"/trunk
+else
+    execute_or_echo svn mkdir "$SVNPATH"/trunk
+fi
+
+if [ ! -d "$SVNPATH"/assets ]; then
+    execute_or_echo svn mkdir "$SVNPATH"/assets
+elif ! $SKIP_ASSETS; then
+    execute_or_echo svn update --set-depth infinity "$SVNPATH"/assets
 fi
 
 # Clear SVN repo trunk only if it is not empty
@@ -362,7 +367,7 @@ echo "Added readme.txt to SVN trunk."
 execute_or_echo cd "$SVNPATH"
 
 # Check if the tag already exists
-if svn list "$SVNURL"/tags/ | grep -q "$NEWVERSION1"; then
+if svn list "${SVNURL%/}/tags/" | grep -Fxq "$NEWVERSION1/"; then
 
     # Switch back to the original branch
     execute_or_echo cd "$GITPATH"
